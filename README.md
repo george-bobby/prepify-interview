@@ -1,6 +1,6 @@
-# 🎯 PrepAI - AI-Powered Interview Preparation Platform
+# 🎯 Prepify - AI-Powered Interview Preparation Platform
 
-**PrepAI** is a SaaS platform designed to help users practice interviews with the power of AI.  
+**Prepify** is a SaaS platform designed to help users practice interviews with the power of AI.  
 Built with **Next.js**, **Tailwind CSS**, **React**, and **shadcn/ui** for a sleek, responsive frontend.  
 Powered by **Vapi SDK** for real-time voice interactions, **Gemini API**, **ChatGPT API** for AI responses, and **Firebase** for authentication and data storage.
 

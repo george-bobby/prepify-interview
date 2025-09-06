@@ -11,8 +11,11 @@ const monaSans = Mona_Sans({
 
 
 export const metadata: Metadata = {
-  title: "PrepAI",
+  title: "Prepify",
   description: "An AI-powered interview preparation tool",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -26,7 +29,7 @@ export default function RootLayout({
         className={`${monaSans.variable} antialiased pattern`}
       >
         {children}
-        <Toaster/>
+        <Toaster />
       </body>
     </html>
   );

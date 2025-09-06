@@ -1,23 +1,31 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApp, getApps } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-// TODO: Add SDKs for Firebase products that you want to use
+import { initializeApp, getApp, getApps } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Firebase configuration from environment variables (client-side)
 const firebaseConfig = {
-  apiKey: "AIzaSyCbaVIr970qKQgr22oGkpURmyQEwxaIsUg",
-  authDomain: "interview-prep-69a5b.firebaseapp.com",
-  projectId: "interview-prep-69a5b",
-  storageBucket: "interview-prep-69a5b.firebasestorage.app",
-  messagingSenderId: "754051105147",
-  appId: "1:754051105147:web:bf2e7dcbb09a53f528fdde",
-  measurementId: "G-BEJ1Q0SZ8P"
+	apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+	authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+	projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+	storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+	messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+	appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// To initialize client side firebase SDK only once
-const app = !getApps.length ? initializeApp(firebaseConfig):getApp();
+// Validate that all required config values are present
+if (
+	!firebaseConfig.apiKey ||
+	!firebaseConfig.authDomain ||
+	!firebaseConfig.projectId
+) {
+	throw new Error(
+		'Missing Firebase configuration. Please check your environment variables.'
+	);
+}
+
+// Initialize Firebase app only once
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
