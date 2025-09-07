@@ -1,16 +1,26 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { getCurrentUser } from '@/lib/actions/auth.action';
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { InterviewCard } from "@/components/InterviewCard";
+import { getCurrentUser } from "@/lib/actions/auth.action";
+import { getInterviewsByUserId, getLatestInterviews } from "@/lib/actions/general.action";
+import ClientContent from "@/components/ClientContent";
 import { redirect } from 'next/navigation';
 
 const InterviewsPage = async () => {
-    const user = await getCurrentUser();
+    const user: any = await getCurrentUser();
 
     // Redirect to signin if not authenticated
     if (!user) {
         redirect('/signin');
     }
+
+    const userInterviews: any = user?.id ? await getInterviewsByUserId(user.id) : [];
+    const latestInterviews: any = user?.id ? await getLatestInterviews({ userId: user.id }) : [];
+
+    const hasPastInterviews = userInterviews.length > 0;
+    const hasUpcomingInterviews = latestInterviews?.length > 0;
 
     const interviewTypes = [
         {
@@ -57,27 +67,65 @@ const InterviewsPage = async () => {
     ];
 
     return (
-        <div className="space-y-8">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-primary-100">AI Interview Practice</h1>
-                    <p className="text-light-400">Choose your interview type and start practicing with our AI interviewer</p>
-                </div>
-                <div className="flex items-center gap-2 text-light-400">
-                    <span>Credits: </span>
-                    <span className="text-success-100 font-semibold">{user?.credits || 0}</span>
-                </div>
-            </div>
+        <main className="flex flex-col gap-10 relative">
+            {/* Hero Section */}
+            <section className="card-cta flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="flex flex-col gap-6 max-w-lg">
+                    <h2>Get Interview-Ready with AI-Powered Practice & Feedback</h2>
+                    <p className="text-lg">
+                        Practice on real interview questions & get instant feedback
+                    </p>
 
-            {/* Quick Start Section */}
-            <div className="bg-gradient-to-r from-dark-200 to-dark-300 rounded-lg p-6 border border-dark-300">
-                <h2 className="text-xl font-bold text-primary-100 mb-3">Quick Start</h2>
-                <p className="text-light-400 mb-4">Jump right into a general technical interview or customize your experience below.</p>
-                <Button asChild>
-                    <Link href="/interview">Start General Interview</Link>
-                </Button>
-            </div>
+                    {user?.credits > 0 ? (
+                        <div>
+                            <Button asChild className="btn-primary w-full sm:w-auto m-1">
+                                <Link href="/interview">Start an Interview</Link>
+                            </Button>
+                            <Button className="btn-primary w-full sm:w-auto m-1">
+                                Credits: {user?.credits}
+                            </Button>
+                        </div>
+                    ) : (
+                        <ClientContent user={user} />
+                    )}
+                </div>
+
+                <Image
+                    src="/robot.png"
+                    alt="robot"
+                    width={400}
+                    height={400}
+                    className="max-sm:hidden"
+                />
+            </section>
+
+            {/* User Interviews Section */}
+            <section className="flex flex-col gap-6">
+                <h2>Your Interviews</h2>
+                <div className="interviews-section">
+                    {hasPastInterviews ? (
+                        userInterviews.map((interview: any) => (
+                            <InterviewCard {...interview} key={interview.id} />
+                        ))
+                    ) : (
+                        <p>You haven&apos;t taken any interviews yet</p>
+                    )}
+                </div>
+            </section>
+
+            {/* Latest Interviews Section */}
+            <section className="flex flex-col gap-6">
+                <h2>Take an Interview</h2>
+                <div className="interviews-section">
+                    {hasUpcomingInterviews ? (
+                        latestInterviews.map((interview: any) => (
+                            <InterviewCard {...interview} key={interview.id} />
+                        ))
+                    ) : (
+                        <p>There are no new interviews available</p>
+                    )}
+                </div>
+            </section>
 
             {/* Interview Types */}
             <div>
@@ -172,7 +220,7 @@ const InterviewsPage = async () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     );
 };
 
