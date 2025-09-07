@@ -24,7 +24,7 @@ return{
     message:"User created successfully"
 }
     }catch(error:any){
-        console.log("Error creatigna user",error);
+        console.log("Error creating user",error);
         if(error.code==="auth/email-already-exists"){
             return {
                 success:false,
@@ -35,12 +35,12 @@ return{
                 success:false,
                 message:"Invalid email"
             }
+        }
+        return {
+            success:false,
+            message:"Failed to create an account"
+        }
     }
-    return {
-        success:"false",
-        message:"Failed to create an account"
-    }
-}
 }
 export async function signIn(params:SignInParams){
     const {email,idToken}=params
@@ -52,7 +52,11 @@ if(!userRecord){
         message:"User does not exist"       
     }       
 }
-await setSessionCookie(idToken)  
+await setSessionCookie(idToken)
+return {
+    success:true,
+    message:"Signed in successfully"
+}  
     }catch(error:any){
         console.log(error)
         return{

@@ -59,7 +59,21 @@ const AuthForm = ({ type }: { type: FormType }) => {
           return
         }
         toast.success("Account created successfully")
-        router.push('/signin')
+        
+        // Auto-login the user after successful signup
+        const idToken = await userCredentials.user.getIdToken()
+        const signInResult = await signIn({
+          email,
+          idToken
+        })
+        
+        if (signInResult?.success) {
+          toast.success("Welcome! You're now logged in.")
+          router.push('/')
+        } else {
+          // If auto-login fails, redirect to signin page
+          router.push('/signin')
+        }
       } else {
         const { email, password } = values
         const userCredentials = await signInWithEmailAndPassword(auth, email, password)
@@ -69,10 +83,16 @@ const AuthForm = ({ type }: { type: FormType }) => {
           toast.error("Failed to sign in")
           return
         }
-        await signIn({
+        const result = await signIn({
           email,
           idToken
         })
+        
+        if (!result?.success) {
+          toast.error(result?.message)
+          return
+        }
+        
         toast.success("Logged in successfully")
         router.push('/')
       }
