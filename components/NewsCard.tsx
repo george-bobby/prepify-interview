@@ -113,3 +113,4 @@ const NewsCard = ({ article }: NewsCardProps) => {
 };
 
 export { NewsCard };
+

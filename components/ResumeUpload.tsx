@@ -165,3 +165,4 @@ const ResumeUpload = ({ onFileUpload, uploadedFile }: ResumeUploadProps) => {
 };
 
 export default ResumeUpload;
+

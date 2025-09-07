@@ -37,6 +37,8 @@ interface User {
 	email: string;
 	id: string;
 	credits?: number;
+	completedInterviews?: number;
+	coursesEnrolled?: number;
 }
 
 interface InterviewCardProps {

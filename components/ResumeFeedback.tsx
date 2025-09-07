@@ -177,3 +177,4 @@ const ResumeFeedback = ({ analysis }: ResumeFeedbackProps) => {
 };
 
 export default ResumeFeedback;
+

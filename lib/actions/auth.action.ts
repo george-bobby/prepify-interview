@@ -117,4 +117,23 @@ export  async function isAuthenticated(){
     // !!null->false
     return !!user
 }
+
+export async function signOut() {
+    try {
+        const cookieStore = await cookies();
+        // Remove the session cookie
+        cookieStore.delete('session');
+        
+        return {
+            success: true,
+            message: "Signed out successfully"
+        };
+    } catch (error: any) {
+        console.log("Error signing out:", error);
+        return {
+            success: false,
+            message: "Failed to sign out"
+        };
+    }
+}
  

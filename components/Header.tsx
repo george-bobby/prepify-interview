@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { getCurrentUser } from '@/lib/actions/auth.action';
 import NavLinks from '@/components/NavLinks';
 import MobileMenu from '@/components/MobileMenu';
+import UserDropdown from '@/components/UserDropdown';
 
 const Header = async () => {
     const user = await getCurrentUser();
@@ -17,6 +18,7 @@ const Header = async () => {
         { href: '/resume', label: 'Resume' },
         { href: '/jobs', label: 'Jobs' },
         { href: '/insights', label: 'Insights' },
+        { href: '/companies', label: 'Companies' },
     ];
 
     return (
@@ -35,13 +37,8 @@ const Header = async () => {
                     {/* Desktop User Info and Mobile Menu */}
                     <div className="flex items-center gap-4">
                         {user && (
-                            <div className="hidden sm:flex items-center gap-2 text-light-100">
-                                <span className="text-sm">Welcome, {user.name}</span>
-                                <div className="w-8 h-8 bg-primary-200 rounded-full flex items-center justify-center">
-                                    <span className="text-dark-100 text-sm font-medium">
-                                        {user.name?.charAt(0).toUpperCase()}
-                                    </span>
-                                </div>
+                            <div className="hidden sm:block">
+                                <UserDropdown user={user} />
                             </div>
                         )}
 
