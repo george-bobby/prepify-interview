@@ -2,9 +2,15 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { getCurrentUser } from '@/lib/actions/auth.action';
+import { redirect } from 'next/navigation';
 
 const InterviewsPage = async () => {
     const user = await getCurrentUser();
+
+    // Redirect to signin if not authenticated
+    if (!user) {
+        redirect('/signin');
+    }
 
     const interviewTypes = [
         {

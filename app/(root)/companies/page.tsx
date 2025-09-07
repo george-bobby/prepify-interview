@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useCallback, useMemo, useState } from 'react';
-import SearchBar from '@/components/SearchBar';
+import AutocompleteSearchBar from '@/components/AutocompleteSearchBar';
+import { findCompanyMatch } from '@/constants/companies';
 
 type CompanyInsights = {
     name: string;
@@ -115,6 +116,213 @@ const COMPANY_FALLBACK_DATA: Record<string, CompanyInsights> = {
         keyTechnologies: ["Swift", "Objective-C", "C++", "Metal", "WebKit", "iOS", "macOS"],
         notableFacts: ["Most valuable company by market cap", "iPhone generates 50%+ of revenue", "Strong ecosystem of products"],
         sources: [{ name: "Glassdoor" }, { name: "Apple Careers" }]
+    },
+    "Amazon": {
+        name: "Amazon",
+        website: "https://www.amazon.com",
+        headquarters: "Seattle, WA",
+        foundedYear: 1994,
+        size: "1,500,000+ employees",
+        industry: "E-commerce/Cloud Computing",
+        averageSalary: {
+            overall: "$130k-270k",
+            byRole: [
+                { role: "Software Engineer", salaryRange: "$115k-230k", median: "$165k" },
+                { role: "Product Manager", salaryRange: "$140k-270k", median: "$200k" },
+                { role: "Solutions Architect", salaryRange: "$130k-250k", median: "$185k" }
+            ]
+        },
+        benefits: ["Health insurance", "401k matching", "Stock options", "Career Choice program", "Parental leave"],
+        culture: ["Customer obsession", "Ownership", "Invent and simplify", "High performance", "Data-driven"],
+        interviewDifficulty: "Hard",
+        growthOutlook: "Continued dominance in cloud computing and e-commerce expansion",
+        keyTechnologies: ["Java", "Python", "C++", "AWS", "React", "DynamoDB", "Lambda"],
+        notableFacts: ["Largest e-commerce platform", "AWS leads cloud market", "Prime has 200M+ subscribers"],
+        sources: [{ name: "Glassdoor" }, { name: "Amazon Jobs" }]
+    },
+    "Meta": {
+        name: "Meta",
+        website: "https://www.meta.com",
+        headquarters: "Menlo Park, CA",
+        foundedYear: 2004,
+        size: "70,000+ employees",
+        industry: "Social Media/Technology",
+        averageSalary: {
+            overall: "$170k-350k",
+            byRole: [
+                { role: "Software Engineer", salaryRange: "$140k-300k", median: "$210k" },
+                { role: "Product Manager", salaryRange: "$180k-350k", median: "$260k" },
+                { role: "Data Scientist", salaryRange: "$150k-320k", median: "$220k" }
+            ]
+        },
+        benefits: ["Health insurance", "Stock options", "Free meals", "Wellness programs", "Learning budget"],
+        culture: ["Move fast", "Be bold", "Focus on impact", "Be open", "Build social value"],
+        interviewDifficulty: "Hard",
+        growthOutlook: "Heavy investment in metaverse and VR technologies",
+        keyTechnologies: ["React", "PHP", "Python", "C++", "GraphQL", "PyTorch", "Oculus SDK"],
+        notableFacts: ["3.8B+ monthly active users across platforms", "Leading VR/AR development", "Owns Instagram, WhatsApp"],
+        sources: [{ name: "Glassdoor" }, { name: "Meta Careers" }]
+    },
+    "Netflix": {
+        name: "Netflix",
+        website: "https://www.netflix.com",
+        headquarters: "Los Gatos, CA",
+        foundedYear: 1997,
+        size: "12,000+ employees",
+        industry: "Entertainment/Streaming",
+        averageSalary: {
+            overall: "$150k-400k",
+            byRole: [
+                { role: "Software Engineer", salaryRange: "$130k-350k", median: "$220k" },
+                { role: "Data Engineer", salaryRange: "$140k-320k", median: "$210k" },
+                { role: "Product Manager", salaryRange: "$160k-400k", median: "$280k" }
+            ]
+        },
+        benefits: ["Unlimited PTO", "Stock options", "Health insurance", "Parental leave", "Learning budget"],
+        culture: ["Freedom and responsibility", "High performance", "Candid feedback", "Innovation", "Inclusion"],
+        interviewDifficulty: "Hard",
+        growthOutlook: "Global expansion and original content investment",
+        keyTechnologies: ["Java", "Python", "JavaScript", "React", "Scala", "Kafka", "Cassandra"],
+        notableFacts: ["230M+ subscribers globally", "Spends $15B+ on content annually", "Available in 190+ countries"],
+        sources: [{ name: "Glassdoor" }, { name: "Netflix Jobs" }]
+    },
+    "Tesla": {
+        name: "Tesla",
+        website: "https://www.tesla.com",
+        headquarters: "Austin, TX",
+        foundedYear: 2003,
+        size: "120,000+ employees",
+        industry: "Automotive/Clean Energy",
+        averageSalary: {
+            overall: "$100k-200k",
+            byRole: [
+                { role: "Software Engineer", salaryRange: "$110k-180k", median: "$140k" },
+                { role: "Mechanical Engineer", salaryRange: "$90k-160k", median: "$120k" },
+                { role: "Product Manager", salaryRange: "$130k-200k", median: "$165k" }
+            ]
+        },
+        benefits: ["Health insurance", "Stock options", "401k matching", "Employee discounts", "Wellness programs"],
+        culture: ["Innovation", "Sustainability", "Fast-paced", "Mission-driven", "High expectations"],
+        interviewDifficulty: "Medium to Hard",
+        growthOutlook: "Rapid expansion in EVs, energy storage, and autonomous driving",
+        keyTechnologies: ["Python", "C++", "JavaScript", "React", "MATLAB", "TensorFlow", "ROS"],
+        notableFacts: ["Leading EV manufacturer", "Autopilot technology pioneer", "Gigafactory network expansion"],
+        sources: [{ name: "Glassdoor" }, { name: "Tesla Careers" }]
+    },
+    "Spotify": {
+        name: "Spotify",
+        website: "https://www.spotify.com",
+        headquarters: "Stockholm, Sweden",
+        foundedYear: 2006,
+        size: "9,000+ employees",
+        industry: "Music Streaming/Technology",
+        averageSalary: {
+            overall: "$120k-250k",
+            byRole: [
+                { role: "Software Engineer", salaryRange: "$110k-200k", median: "$150k" },
+                { role: "Data Scientist", salaryRange: "$120k-220k", median: "$170k" },
+                { role: "Product Manager", salaryRange: "$130k-250k", median: "$190k" }
+            ]
+        },
+        benefits: ["Health insurance", "Spotify Premium", "Flexible work", "Parental leave", "Learning budget"],
+        culture: ["Agile", "Collaborative", "Innovation", "Diversity", "Work-life balance"],
+        interviewDifficulty: "Medium",
+        growthOutlook: "Expansion in podcasts and audio content beyond music",
+        keyTechnologies: ["Java", "Python", "Scala", "React", "TypeScript", "Kafka", "BigQuery"],
+        notableFacts: ["400M+ monthly active users", "Leading podcast platform", "Available in 180+ markets"],
+        sources: [{ name: "Glassdoor" }, { name: "Spotify Jobs" }]
+    },
+    "Airbnb": {
+        name: "Airbnb",
+        website: "https://www.airbnb.com",
+        headquarters: "San Francisco, CA",
+        foundedYear: 2008,
+        size: "6,000+ employees",
+        industry: "Travel/Hospitality Technology",
+        averageSalary: {
+            overall: "$140k-280k",
+            byRole: [
+                { role: "Software Engineer", salaryRange: "$130k-250k", median: "$185k" },
+                { role: "Product Manager", salaryRange: "$150k-280k", median: "$210k" },
+                { role: "Data Scientist", salaryRange: "$140k-260k", median: "$195k" }
+            ]
+        },
+        benefits: ["Health insurance", "Stock options", "Annual travel credit", "Flexible work", "Wellness programs"],
+        culture: ["Belong anywhere", "Champion the mission", "Be a host", "Embrace the adventure", "Be a cereal entrepreneur"],
+        interviewDifficulty: "Medium to Hard",
+        growthOutlook: "Recovery and expansion post-pandemic, focus on experiences",
+        keyTechnologies: ["Ruby", "JavaScript", "React", "Java", "Python", "Kafka", "Elasticsearch"],
+        notableFacts: ["4M+ hosts worldwide", "Available in 220+ countries", "Experiences platform expansion"],
+        sources: [{ name: "Glassdoor" }, { name: "Airbnb Careers" }]
+    },
+    "Uber": {
+        name: "Uber",
+        website: "https://www.uber.com",
+        headquarters: "San Francisco, CA",
+        foundedYear: 2009,
+        size: "29,000+ employees",
+        industry: "Transportation/Technology",
+        averageSalary: {
+            overall: "$130k-260k",
+            byRole: [
+                { role: "Software Engineer", salaryRange: "$120k-230k", median: "$170k" },
+                { role: "Product Manager", salaryRange: "$140k-260k", median: "$195k" },
+                { role: "Data Scientist", salaryRange: "$130k-240k", median: "$180k" }
+            ]
+        },
+        benefits: ["Health insurance", "Stock options", "Uber credits", "Flexible work", "Parental leave"],
+        culture: ["Customer obsession", "Make magic", "Big bold bets", "Do the right thing", "Earn growth"],
+        interviewDifficulty: "Medium to Hard",
+        growthOutlook: "Expansion in delivery, freight, and autonomous vehicles",
+        keyTechnologies: ["Go", "Java", "Python", "React", "Swift", "Kafka", "Cassandra"],
+        notableFacts: ["Available in 70+ countries", "5B+ trips completed", "Leading food delivery platform"],
+        sources: [{ name: "Glassdoor" }, { name: "Uber Careers" }]
+    },
+    "LinkedIn": {
+        name: "LinkedIn",
+        website: "https://www.linkedin.com",
+        headquarters: "Sunnyvale, CA",
+        foundedYear: 2003,
+        size: "20,000+ employees",
+        industry: "Professional Networking/Technology",
+        averageSalary: {
+            overall: "$140k-280k",
+            byRole: [
+                { role: "Software Engineer", salaryRange: "$130k-250k", median: "$185k" },
+                { role: "Product Manager", salaryRange: "$150k-280k", median: "$210k" },
+                { role: "Data Scientist", salaryRange: "$140k-260k", median: "$195k" }
+            ]
+        },
+        benefits: ["Health insurance", "Stock options", "LinkedIn Learning", "Flexible work", "InDay volunteer time"],
+        culture: ["Members first", "Relationships matter", "Be open honest and constructive", "Demand excellence", "Take intelligent risks"],
+        interviewDifficulty: "Medium to Hard",
+        growthOutlook: "Growth in learning platform and talent solutions",
+        keyTechnologies: ["Java", "Scala", "JavaScript", "Python", "Kafka", "Voldemort", "Espresso"],
+        notableFacts: ["900M+ members globally", "Owned by Microsoft", "Leading professional network"],
+        sources: [{ name: "Glassdoor" }, { name: "LinkedIn Careers" }]
+    },
+    "Salesforce": {
+        name: "Salesforce",
+        website: "https://www.salesforce.com",
+        headquarters: "San Francisco, CA",
+        foundedYear: 1999,
+        size: "73,000+ employees",
+        industry: "CRM/Cloud Computing",
+        averageSalary: {
+            overall: "$130k-270k",
+            byRole: [
+                { role: "Software Engineer", salaryRange: "$120k-240k", median: "$175k" },
+                { role: "Product Manager", salaryRange: "$140k-270k", median: "$200k" },
+                { role: "Solutions Engineer", salaryRange: "$110k-220k", median: "$160k" }
+            ]
+        },
+        benefits: ["Health insurance", "Stock options", "Volunteer time off", "Mindfulness programs", "Career development"],
+        culture: ["Trust", "Customer success", "Innovation", "Equality", "Sustainability"],
+        interviewDifficulty: "Medium",
+        growthOutlook: "Continued growth in CRM and enterprise cloud solutions",
+        keyTechnologies: ["Java", "JavaScript", "Apex", "Lightning", "React", "Heroku", "Tableau"],
+        notableFacts: ["#1 CRM platform globally", "150,000+ customers", "Trailhead learning platform"],
+        sources: [{ name: "Glassdoor" }, { name: "Salesforce Careers" }]
     }
 };
 
@@ -263,9 +471,12 @@ const CompaniesPage: React.FC = () => {
             const apiData = body.insights as CompanyInsights;
             const hasMinimalData = !apiData.industry && !apiData.size && !apiData.headquarters && !apiData.averageSalary;
             
-            if (hasMinimalData && COMPANY_FALLBACK_DATA[q]) {
-                console.log('Using fallback data for:', q);
-                setData(COMPANY_FALLBACK_DATA[q]);
+            // Try to find exact match or fuzzy match for fallback data
+            const matchedCompany = findCompanyMatch(q);
+            
+            if (hasMinimalData && matchedCompany && COMPANY_FALLBACK_DATA[matchedCompany]) {
+                console.log('Using fallback data for:', matchedCompany);
+                setData(COMPANY_FALLBACK_DATA[matchedCompany]);
             } else {
                 setData(apiData);
             }
@@ -286,7 +497,7 @@ const CompaniesPage: React.FC = () => {
         <div className="max-w-6xl mx-auto px-6 py-10">
             <h1 className="text-2xl md:text-3xl font-semibold text-light-100 mb-6">Companies</h1>
 
-            <SearchBar
+            <AutocompleteSearchBar
                 onSearch={onSearch}
                 placeholder={placeholder}
                 isLoading={isLoading}

@@ -26,24 +26,35 @@ const Header = async () => {
             <div className="max-w-7xl mx-auto px-6 py-4">
                 <div className="flex items-center justify-between">
                     {/* Logo */}
-                    <Link href="/dashboard" className="flex items-center gap-2">
+                    <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2">
                         <Image src="/logo.svg" alt="Prepify Logo" height={32} width={38} />
                         <h2 className="text-primary-100 text-xl font-semibold">Prepify</h2>
                     </Link>
 
-                    {/* Desktop Navigation Links */}
-                    <NavLinks navLinks={navLinks} />
+                    {/* Desktop Navigation Links - only show for authenticated users */}
+                    {user && <NavLinks navLinks={navLinks} />}
 
                     {/* Desktop User Info and Mobile Menu */}
                     <div className="flex items-center gap-4">
-                        {user && (
-                            <div className="hidden sm:block">
-                                <UserDropdown user={user} />
+                        {user ? (
+                            <>
+                                <div className="hidden sm:block">
+                                    <UserDropdown user={user} />
+                                </div>
+                                {/* Mobile Menu */}
+                                <MobileMenu navLinks={navLinks} user={user} />
+                            </>
+                        ) : (
+                            /* Show Sign In / Sign Up for non-authenticated users */
+                            <div className="flex items-center gap-4">
+                                <Link href="/signin" className="text-light-400 hover:text-primary-200 transition-colors">
+                                    Sign In
+                                </Link>
+                                <Link href="/signup" className="bg-primary-200 text-white px-4 py-2 rounded-lg hover:bg-primary-300 transition-colors">
+                                    Sign Up
+                                </Link>
                             </div>
                         )}
-
-                        {/* Mobile Menu */}
-                        <MobileMenu navLinks={navLinks} user={user} />
                     </div>
                 </div>
             </div>
