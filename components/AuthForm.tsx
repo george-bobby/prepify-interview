@@ -59,17 +59,17 @@ const AuthForm = ({ type }: { type: FormType }) => {
           return
         }
         toast.success("Account created successfully")
-        
+
         // Auto-login the user after successful signup
         const idToken = await userCredentials.user.getIdToken()
         const signInResult = await signIn({
           email,
           idToken
         })
-        
+
         if (signInResult?.success) {
           toast.success("Welcome! You're now logged in.")
-          router.push('/')
+          router.push('/dashboard')
         } else {
           // If auto-login fails, redirect to signin page
           router.push('/signin')
@@ -87,14 +87,14 @@ const AuthForm = ({ type }: { type: FormType }) => {
           email,
           idToken
         })
-        
+
         if (!result?.success) {
           toast.error(result?.message)
           return
         }
-        
+
         toast.success("Logged in successfully")
-        router.push('/')
+        router.push('/dashboard')
       }
     } catch (error) {
       console.log(error)
