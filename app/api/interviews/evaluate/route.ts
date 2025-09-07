@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 			interviewerResponse,
 			followUpQuestion,
 			shouldContinue: evaluation.shouldContinue,
-			isLastQuestion: questionIndex + 1 >= interviewData.questions.length,
+			isLastQuestion: questionIndex + 1 >= interview.questions.length,
 		});
 	} catch (error) {
 		console.error('Error evaluating response:', error);
