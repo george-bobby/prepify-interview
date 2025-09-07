@@ -1,29 +1,24 @@
 import React from 'react';
 import { getCurrentUser } from '@/lib/actions/auth.action';
 import { getDashboardStats, getUserProgress } from '@/lib/actions/general.action';
-import { addSampleData } from '@/lib/actions/sample-data.action';
+
+import { interviewService } from '@/lib/firebase/interview-service';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 const DashboardPage = async () => {
     const user = await getCurrentUser();
 
     if (!user) {
-        return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <div className="text-center">
-                    <h2 className="text-2xl font-bold text-primary-100 mb-4">Please sign in to view your dashboard</h2>
-                    <Button asChild>
-                        <Link href="/signin">Sign In</Link>
-                    </Button>
-                </div>
-            </div>
-        );
+        redirect('/signin');
     }
 
-    const [dashboardStats, userProgress] = await Promise.all([
+    // Fetch data using both old and new services for comprehensive dashboard
+    const [dashboardStats, userProgress, interviewStats] = await Promise.all([
         getDashboardStats(user.id),
-        getUserProgress(user.id)
+        getUserProgress(user.id),
+        interviewService.getUserInterviewStats(user.id)
     ]);
 
     const getScoreColor = (score: number) => {
@@ -51,18 +46,18 @@ const DashboardPage = async () => {
                 <p className="text-light-400 text-lg">
                     Ready to ace your next interview? Let's get you prepared.
                 </p>
-                {dashboardStats.averageScore > 0 && (
+                {interviewStats.averageScore > 0 && (
                     <div className="mt-4 flex items-center gap-4">
                         <div className="flex items-center gap-2">
                             <span className="text-light-400">Overall Score:</span>
-                            <span className={`text-xl font-bold ${getScoreColor(dashboardStats.averageScore)}`}>
-                                {dashboardStats.averageScore}%
+                            <span className={`text-xl font-bold ${getScoreColor(interviewStats.averageScore)}`}>
+                                {interviewStats.averageScore}/100
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="text-light-400">Level:</span>
-                            <span className={`text-lg font-semibold ${getLevelColor(dashboardStats.userLevel)}`}>
-                                {dashboardStats.userLevel}
+                            <span className="text-light-400">Interviews:</span>
+                            <span className="text-lg font-semibold text-primary-200">
+                                {interviewStats.completed} completed
                             </span>
                         </div>
                     </div>
@@ -78,8 +73,8 @@ const DashboardPage = async () => {
                 </div>
                 <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
                     <h3 className="text-primary-100 font-semibold mb-2">Total Interviews</h3>
-                    <p className="text-2xl font-bold text-primary-200">{dashboardStats.totalInterviews}</p>
-                    <p className="text-light-400 text-sm">All time completed</p>
+                    <p className="text-2xl font-bold text-primary-200">{interviewStats.total}</p>
+                    <p className="text-light-400 text-sm">{interviewStats.completed} completed, {interviewStats.inProgress} in progress</p>
                 </div>
                 <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
                     <h3 className="text-primary-100 font-semibold mb-2">This Month</h3>
@@ -88,8 +83,8 @@ const DashboardPage = async () => {
                 </div>
                 <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
                     <h3 className="text-primary-100 font-semibold mb-2">Average Score</h3>
-                    <p className={`text-2xl font-bold ${getScoreColor(dashboardStats.averageScore)}`}>
-                        {dashboardStats.averageScore}%
+                    <p className={`text-2xl font-bold ${getScoreColor(interviewStats.averageScore)}`}>
+                        {interviewStats.averageScore > 0 ? `${interviewStats.averageScore}/100` : '-'}
                     </p>
                     <p className="text-light-400 text-sm">Overall performance</p>
                 </div>
@@ -265,7 +260,7 @@ const DashboardPage = async () => {
                                     </span>
                                     {interview.finalized && (
                                         <Button asChild size="sm">
-                                            <Link href={`/interview/${interview.id}/feedback`}>View Feedback</Link>
+                                            <Link href={`/interviews/${interview.id}/feedback`}>View Feedback</Link>
                                         </Button>
                                     )}
                                 </div>
@@ -279,29 +274,65 @@ const DashboardPage = async () => {
                             <Button asChild>
                                 <Link href="/interviews">Start Your First Interview</Link>
                             </Button>
-                            <form action={addSampleData.bind(null, user.id)}>
-                                <Button type="submit" variant="outline">
-                                    Add Sample Data (Dev)
-                                </Button>
-                            </form>
+                            <Button asChild variant="outline">
+                                <Link href="/interviews/history">View Interview History</Link>
+                            </Button>
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* Development Tools - Only show if no data exists */}
-            {dashboardStats.totalInterviews === 0 && (
+            {/* Performance Insights */}
+            {interviewStats.completed > 0 && (
                 <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
-                    <h3 className="text-primary-100 font-semibold mb-4">Development Tools</h3>
-                    <div className="flex flex-wrap gap-4">
-                        <form action={addSampleData.bind(null, user.id)}>
-                            <Button type="submit" variant="outline">
-                                Add Sample Data for Testing
-                            </Button>
-                        </form>
-                        <p className="text-light-400 text-sm">
-                            This will add sample interviews and feedback data to test the dashboard functionality.
-                        </p>
+                    <h3 className="text-primary-100 font-semibold mb-4">Performance Insights</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                            <h4 className="text-primary-200 font-medium">Quick Stats</h4>
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-light-400">Completion Rate</span>
+                                    <span className="text-success-100 font-semibold">
+                                        {Math.round((interviewStats.completed / interviewStats.total) * 100)}%
+                                    </span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-light-400">Best Score</span>
+                                    <span className="text-primary-200 font-semibold">
+                                        {Math.max(...dashboardStats.recentInterviews
+                                            .filter(i => i.finalScore)
+                                            .map(i => i.finalScore || 0), 0) || '-'}/100
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <h4 className="text-primary-200 font-medium">Recommendations</h4>
+                            <div className="space-y-3">
+                                {interviewStats.averageScore < 70 && (
+                                    <div className="bg-warning-100/10 border border-warning-100/30 rounded-lg p-3">
+                                        <p className="text-warning-100 text-sm">
+                                            💡 Focus on improving your interview skills with more practice.
+                                        </p>
+                                    </div>
+                                )}
+                                {interviewStats.inProgress > 0 && (
+                                    <div className="bg-primary-200/10 border border-primary-200/30 rounded-lg p-3">
+                                        <p className="text-primary-200 text-sm">
+                                            🎯 Complete your {interviewStats.inProgress} in-progress interview{interviewStats.inProgress !== 1 ? 's' : ''}.
+                                        </p>
+                                    </div>
+                                )}
+                                {interviewStats.averageScore >= 80 && (
+                                    <div className="bg-success-100/10 border border-success-100/30 rounded-lg p-3">
+                                        <p className="text-success-100 text-sm">
+                                            🌟 Excellent performance! Keep up the great work!
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
