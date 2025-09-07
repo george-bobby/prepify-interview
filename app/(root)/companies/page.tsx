@@ -48,7 +48,7 @@ type FamousCompany = {
 const FAMOUS_COMPANIES: FamousCompany[] = [
     {
         name: "Google",
-        logo: "https://logo.clearbit.com/google.com",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg",
         industry: "Technology",
         headquarters: "Mountain View, CA",
         description: "Leading search engine and cloud services provider",
@@ -104,7 +104,7 @@ const FAMOUS_COMPANIES: FamousCompany[] = [
     },
     {
         name: "Spotify",
-        logo: "https://logo.clearbit.com/spotify.com",
+        logo: "https://storage.googleapis.com/pr-newsroom-wp/1/2018/11/Spotify_Logo_CMYK_Green.png",
         industry: "Music Streaming",
         headquarters: "Stockholm, Sweden",
         description: "Digital music streaming platform",
@@ -219,15 +219,20 @@ const CompaniesPage: React.FC = () => {
                                 className="bg-dark-200 rounded-lg p-6 cursor-pointer hover:bg-dark-300 transition-colors duration-200 border border-transparent hover:border-primary-200/30"
                             >
                                 <div className="flex items-center gap-4 mb-4">
-                                    <img 
-                                        src={company.logo} 
-                                        alt={`${company.name} logo`}
-                                        className="w-12 h-12 rounded-lg object-contain bg-white p-1"
-                                        onError={(e) => {
-                                            const target = e.target as HTMLImageElement;
-                                            target.style.display = 'none';
-                                        }}
-                                    />
+                                    <div className="w-12 h-12 rounded-lg bg-white p-1 flex items-center justify-center">
+                                        <img 
+                                            src={company.logo} 
+                                            alt={`${company.name} logo`}
+                                            className="w-full h-full object-contain"
+                                            onError={(e) => {
+                                                const target = e.target as HTMLImageElement;
+                                                const parent = target.parentElement;
+                                                if (parent) {
+                                                    parent.innerHTML = `<div class="w-full h-full bg-primary-200 rounded flex items-center justify-center text-white text-xs font-bold">${company.name.charAt(0)}</div>`;
+                                                }
+                                            }}
+                                        />
+                                    </div>
                                     <div>
                                         <h3 className="text-lg font-semibold text-light-100">{company.name}</h3>
                                         <p className="text-sm text-light-300">{company.industry}</p>
