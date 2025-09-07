@@ -36,6 +36,114 @@ type CompanyInsights = {
     } | null;
 };
 
+type FamousCompany = {
+    name: string;
+    logo: string;
+    industry: string;
+    headquarters: string;
+    description: string;
+    keyTech: string[];
+};
+
+const FAMOUS_COMPANIES: FamousCompany[] = [
+    {
+        name: "Google",
+        logo: "https://logo.clearbit.com/google.com",
+        industry: "Technology",
+        headquarters: "Mountain View, CA",
+        description: "Leading search engine and cloud services provider",
+        keyTech: ["Go", "Python", "Java", "C++", "JavaScript"]
+    },
+    {
+        name: "Microsoft",
+        logo: "https://logo.clearbit.com/microsoft.com",
+        industry: "Technology",
+        headquarters: "Redmond, WA",
+        description: "Software giant and cloud computing leader",
+        keyTech: ["C#", ".NET", "TypeScript", "Azure", "Python"]
+    },
+    {
+        name: "Apple",
+        logo: "https://logo.clearbit.com/apple.com",
+        industry: "Technology",
+        headquarters: "Cupertino, CA",
+        description: "Consumer electronics and software innovator",
+        keyTech: ["Swift", "Objective-C", "C++", "Metal", "WebKit"]
+    },
+    {
+        name: "Amazon",
+        logo: "https://logo.clearbit.com/amazon.com",
+        industry: "E-commerce/Cloud",
+        headquarters: "Seattle, WA",
+        description: "E-commerce and cloud computing giant",
+        keyTech: ["Java", "Python", "C++", "AWS", "React"]
+    },
+    {
+        name: "Meta",
+        logo: "https://logo.clearbit.com/meta.com",
+        industry: "Social Media",
+        headquarters: "Menlo Park, CA",
+        description: "Social networking and metaverse company",
+        keyTech: ["React", "PHP", "Python", "C++", "GraphQL"]
+    },
+    {
+        name: "Netflix",
+        logo: "https://logo.clearbit.com/netflix.com",
+        industry: "Entertainment",
+        headquarters: "Los Gatos, CA",
+        description: "Streaming entertainment service",
+        keyTech: ["Java", "Python", "JavaScript", "React", "Scala"]
+    },
+    {
+        name: "Tesla",
+        logo: "https://logo.clearbit.com/tesla.com",
+        industry: "Automotive",
+        headquarters: "Austin, TX",
+        description: "Electric vehicles and clean energy",
+        keyTech: ["Python", "C++", "JavaScript", "React", "MATLAB"]
+    },
+    {
+        name: "Spotify",
+        logo: "https://logo.clearbit.com/spotify.com",
+        industry: "Music Streaming",
+        headquarters: "Stockholm, Sweden",
+        description: "Digital music streaming platform",
+        keyTech: ["Java", "Python", "Scala", "React", "TypeScript"]
+    },
+    {
+        name: "Airbnb",
+        logo: "https://logo.clearbit.com/airbnb.com",
+        industry: "Travel",
+        headquarters: "San Francisco, CA",
+        description: "Online marketplace for lodging and experiences",
+        keyTech: ["Ruby", "JavaScript", "React", "Java", "Python"]
+    },
+    {
+        name: "Uber",
+        logo: "https://logo.clearbit.com/uber.com",
+        industry: "Transportation",
+        headquarters: "San Francisco, CA",
+        description: "Ride-sharing and delivery platform",
+        keyTech: ["Go", "Java", "Python", "React", "Swift"]
+    },
+    {
+        name: "LinkedIn",
+        logo: "https://logo.clearbit.com/linkedin.com",
+        industry: "Professional Network",
+        headquarters: "Sunnyvale, CA",
+        description: "Professional networking platform",
+        keyTech: ["Java", "Scala", "JavaScript", "Python", "Kafka"]
+    },
+    {
+        name: "Salesforce",
+        logo: "https://logo.clearbit.com/salesforce.com",
+        industry: "CRM/Cloud",
+        headquarters: "San Francisco, CA",
+        description: "Customer relationship management platform",
+        keyTech: ["Java", "JavaScript", "Apex", "Lightning", "React"]
+    }
+];
+
 const CompaniesPage: React.FC = () => {
     const [query, setQuery] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +156,12 @@ const CompaniesPage: React.FC = () => {
     );
 
     const onSearch = useCallback(async (q: string) => {
-        if (!q) return;
+        if (!q) {
+            // Clear search results and show default companies
+            setData(null);
+            setError(null);
+            return;
+        }
         setIsLoading(true);
         setError(null);
         setData(null);
@@ -71,6 +184,11 @@ const CompaniesPage: React.FC = () => {
         }
     }, []);
 
+    const handleCompanyClick = useCallback((companyName: string) => {
+        setQuery(companyName);
+        onSearch(companyName);
+    }, [onSearch]);
+
     return (
         <div className="max-w-6xl mx-auto px-6 py-10">
             <h1 className="text-2xl md:text-3xl font-semibold text-light-100 mb-6">Companies</h1>
@@ -86,6 +204,54 @@ const CompaniesPage: React.FC = () => {
             {error && (
                 <div className="mt-6 text-red-400 bg-red-950/30 border border-red-900 rounded-lg p-4">
                     {error}
+                </div>
+            )}
+
+            {/* Default Famous Companies Grid */}
+            {!isLoading && !data && !query && (
+                <div className="mt-8">
+                    <h2 className="text-xl font-semibold text-light-100 mb-6">Popular Companies</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {FAMOUS_COMPANIES.map((company) => (
+                            <div 
+                                key={company.name}
+                                onClick={() => handleCompanyClick(company.name)}
+                                className="bg-dark-200 rounded-lg p-6 cursor-pointer hover:bg-dark-300 transition-colors duration-200 border border-transparent hover:border-primary-200/30"
+                            >
+                                <div className="flex items-center gap-4 mb-4">
+                                    <img 
+                                        src={company.logo} 
+                                        alt={`${company.name} logo`}
+                                        className="w-12 h-12 rounded-lg object-contain bg-white p-1"
+                                        onError={(e) => {
+                                            const target = e.target as HTMLImageElement;
+                                            target.style.display = 'none';
+                                        }}
+                                    />
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-light-100">{company.name}</h3>
+                                        <p className="text-sm text-light-300">{company.industry}</p>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-light-200 mb-3">{company.description}</p>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs text-light-400">{company.headquarters}</span>
+                                    <div className="flex flex-wrap gap-1">
+                                        {company.keyTech.slice(0, 3).map((tech) => (
+                                            <span key={tech} className="px-2 py-1 rounded text-xs bg-dark-300 text-light-300">
+                                                {tech}
+                                            </span>
+                                        ))}
+                                        {company.keyTech.length > 3 && (
+                                            <span className="px-2 py-1 rounded text-xs bg-dark-300 text-light-300">
+                                                +{company.keyTech.length - 3}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
 
