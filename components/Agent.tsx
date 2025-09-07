@@ -92,10 +92,10 @@ export const Agent = ({ userName, userId, type, interviewId, questions }: AgentP
     // Handler: Generates feedback after the call ends
     const handleGenerateFeedback = async (messages: SavedMessage[]) => {
         console.log('Generate feedback here.');
-        const { success, feedbackId: id } =await createFeedback({
-            interviewId:interviewId!,
-            userId:userId!,
-            transcript:messages
+        const { success, feedbackId: id } = await createFeedback({
+            interviewId: interviewId!,
+            userId: userId!,
+            transcript: messages
         })
         // TODO: Replace this mock logic with real API call to generate feedback
 
@@ -176,7 +176,19 @@ export const Agent = ({ userName, userId, type, interviewId, questions }: AgentP
                 {/* User Profile Card */}
                 <div className="card-border">
                     <div className="card-content">
-                        <Image src="/user-avatar.png" alt="User avatar" width={540} height={540} className="rounded-full object-cover size-[120px]" />
+                        {typeof window !== 'undefined' && window.localStorage.getItem('profileImage') ? (
+                            <Image
+                                src={window.localStorage.getItem('profileImage')!}
+                                alt="User profile image"
+                                width={120}
+                                height={120}
+                                className="rounded-full object-cover size-[120px]"
+                            />
+                        ) : (
+                            <div className="rounded-full bg-gray-300 flex items-center justify-center size-[120px] text-4xl font-bold object-cover">
+                                {userName ? userName[0].toUpperCase() : '?'}
+                            </div>
+                        )}
                         <h3>{userName}</h3>
                     </div>
                 </div>
