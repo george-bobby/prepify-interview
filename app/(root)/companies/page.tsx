@@ -2,7 +2,7 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 import AutocompleteSearchBar from '@/components/AutocompleteSearchBar';
-import { findCompanyMatch } from '@/constants/companies';
+import { findCompanyMatch, getCompanyLogo } from '@/constants/companies';
 
 type CompanyInsights = {
     name: string;
@@ -588,104 +588,130 @@ const CompaniesPage: React.FC = () => {
                     </button>
                     
                     <div className="bg-dark-200 rounded-lg p-6">
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                            <div>
-                                <h2 className="text-xl font-semibold text-light-100">{data.name}</h2>
-                                {data.website && (
-                                    <a href={data.website} target="_blank" rel="noreferrer" className="text-primary-200 text-sm">
-                                        {data.website}
-                                    </a>
-                                )}
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="w-16 h-16 rounded-lg bg-white p-2 flex items-center justify-center flex-shrink-0">
+                                    <img 
+                                        src={getCompanyLogo(data.name)} 
+                                        alt={`${data.name} logo`}
+                                        className="w-full h-full object-contain"
+                                        onError={(e) => {
+                                            const target = e.target as HTMLImageElement;
+                                            const parent = target.parentElement;
+                                            if (parent) {
+                                                parent.innerHTML = `<div class="w-full h-full bg-primary-200 rounded flex items-center justify-center text-white text-lg font-bold">${data.name.charAt(0)}</div>`;
+                                            }
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-semibold text-light-100">{data.name}</h2>
+                                    {data.website ? (
+                                        <a href={data.website} target="_blank" rel="noreferrer" className="text-primary-200 text-sm hover:text-primary-100">
+                                            {data.website}
+                                        </a>
+                                    ) : (
+                                        <span className="text-light-400 text-sm">Website: Data unavailable</span>
+                                    )}
+                                </div>
                             </div>
                             <div className="text-sm text-light-300">
-                                {data.industry && <span className="mr-3">Industry: {data.industry}</span>}
-                                {data.size && <span className="mr-3">Size: {data.size}</span>}
-                                {data.headquarters && <span>HQ: {data.headquarters}</span>}
+                                <span className="mr-3">Industry: {data.industry || 'Data unavailable'}</span>
+                                <span className="mr-3">Size: {data.size || 'Data unavailable'}</span>
+                                <span>HQ: {data.headquarters || 'Data unavailable'}</span>
                             </div>
                         </div>
                         
-                        {/* Show message if minimal data */}
-                        {!data.industry && !data.size && !data.headquarters && !data.averageSalary && (
-                            <div className="mt-4 p-4 bg-yellow-900/20 border border-yellow-700 rounded-lg">
-                                <p className="text-yellow-200 text-sm">
-                                    Limited company information available. The AI service may need additional configuration to provide detailed insights.
-                                </p>
+                    </div>
+
+                    {/* Always show salary section */}
+                    <div className="bg-dark-200 rounded-lg p-6">
+                        <h3 className="text-lg font-semibold mb-3">Average Salary</h3>
+                        {data.averageSalary?.overall ? (
+                            <p className="text-light-200 mb-2">Overall: {data.averageSalary.overall}</p>
+                        ) : (
+                            <p className="text-light-400 mb-2">Overall: Data unavailable</p>
+                        )}
+                        {data.averageSalary?.byRole?.length ? (
+                            <div className="grid md:grid-cols-2 gap-3">
+                                {data.averageSalary.byRole.map((r) => (
+                                    <div key={r.role} className="bg-dark-300 rounded p-3">
+                                        <div className="font-medium">{r.role}</div>
+                                        <div className="text-sm text-light-300">{r.salaryRange}{r.median ? ` • Median ${r.median}` : ''}</div>
+                                    </div>
+                                ))}
                             </div>
+                        ) : (
+                            <p className="text-light-400 text-sm">Role-specific data: Data unavailable</p>
                         )}
                     </div>
 
-                    {data.averageSalary && (
+                    {/* Always show culture, benefits, and technologies sections */}
+                    <div className="grid md:grid-cols-3 gap-6">
                         <div className="bg-dark-200 rounded-lg p-6">
-                            <h3 className="text-lg font-semibold mb-3">Average Salary</h3>
-                            {data.averageSalary.overall && (
-                                <p className="text-light-200 mb-2">Overall: {data.averageSalary.overall}</p>
-                            )}
-                            {data.averageSalary.byRole?.length ? (
-                                <div className="grid md:grid-cols-2 gap-3">
-                                    {data.averageSalary.byRole.map((r) => (
-                                        <div key={r.role} className="bg-dark-300 rounded p-3">
-                                            <div className="font-medium">{r.role}</div>
-                                            <div className="text-sm text-light-300">{r.salaryRange}{r.median ? ` • Median ${r.median}` : ''}</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : null}
-                        </div>
-                    )}
-
-                    {(data.culture?.length || data.benefits?.length || data.keyTechnologies?.length) && (
-                        <div className="grid md:grid-cols-3 gap-6">
+                            <h3 className="text-lg font-semibold mb-3">Culture</h3>
                             {data.culture?.length ? (
-                                <div className="bg-dark-200 rounded-lg p-6">
-                                    <h3 className="text-lg font-semibold mb-3">Culture</h3>
-                                    <ul className="list-disc ml-5 space-y-1 text-light-200">
-                                        {data.culture.map((c, idx) => (
-                                            <li key={idx}>{c}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ) : null}
-
-                            {data.benefits?.length ? (
-                                <div className="bg-dark-200 rounded-lg p-6">
-                                    <h3 className="text-lg font-semibold mb-3">Benefits</h3>
-                                    <ul className="list-disc ml-5 space-y-1 text-light-200">
-                                        {data.benefits.map((b, idx) => (
-                                            <li key={idx}>{b}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ) : null}
-
-                            {data.keyTechnologies?.length ? (
-                                <div className="bg-dark-200 rounded-lg p-6">
-                                    <h3 className="text-lg font-semibold mb-3">Key Technologies</h3>
-                                    <div className="flex flex-wrap gap-2">
-                                        {data.keyTechnologies.map((t, idx) => (
-                                            <span key={idx} className="px-2 py-1 rounded bg-dark-300 text-sm">{t}</span>
-                                        ))}
-                                    </div>
-                                </div>
-                            ) : null}
-                        </div>
-                    )}
-
-                    {(data.growthOutlook || data.interviewDifficulty || data.notableFacts?.length) && (
-                        <div className="bg-dark-200 rounded-lg p-6">
-                            <h3 className="text-lg font-semibold mb-3">Insights</h3>
-                            {data.growthOutlook && <p className="mb-2 text-light-200">{data.growthOutlook}</p>}
-                            {data.interviewDifficulty && (
-                                <p className="text-sm text-light-300">Interview difficulty: {data.interviewDifficulty}</p>
-                            )}
-                            {data.notableFacts?.length ? (
-                                <ul className="list-disc ml-5 mt-3 space-y-1 text-light-200">
-                                    {data.notableFacts.map((f, idx) => (
-                                        <li key={idx}>{f}</li>
+                                <ul className="list-disc ml-5 space-y-1 text-light-200">
+                                    {data.culture.map((c, idx) => (
+                                        <li key={idx}>{c}</li>
                                     ))}
                                 </ul>
-                            ) : null}
+                            ) : (
+                                <p className="text-light-400 text-sm">Data unavailable</p>
+                            )}
                         </div>
-                    )}
+
+                        <div className="bg-dark-200 rounded-lg p-6">
+                            <h3 className="text-lg font-semibold mb-3">Benefits</h3>
+                            {data.benefits?.length ? (
+                                <ul className="list-disc ml-5 space-y-1 text-light-200">
+                                    {data.benefits.map((b, idx) => (
+                                        <li key={idx}>{b}</li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="text-light-400 text-sm">Data unavailable</p>
+                            )}
+                        </div>
+
+                        <div className="bg-dark-200 rounded-lg p-6">
+                            <h3 className="text-lg font-semibold mb-3">Key Technologies</h3>
+                            {data.keyTechnologies?.length ? (
+                                <div className="flex flex-wrap gap-2">
+                                    {data.keyTechnologies.map((t, idx) => (
+                                        <span key={idx} className="px-2 py-1 rounded bg-dark-300 text-sm">{t}</span>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-light-400 text-sm">Data unavailable</p>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Always show insights section */}
+                    <div className="bg-dark-200 rounded-lg p-6">
+                        <h3 className="text-lg font-semibold mb-3">Insights</h3>
+                        <div className="space-y-3">
+                            <p className="text-light-200">
+                                Growth Outlook: {data.growthOutlook || <span className="text-light-400">Data unavailable</span>}
+                            </p>
+                            <p className="text-light-300">
+                                Interview Difficulty: {data.interviewDifficulty || <span className="text-light-400">Data unavailable</span>}
+                            </p>
+                            <div>
+                                <p className="text-light-200 mb-2">Notable Facts:</p>
+                                {data.notableFacts?.length ? (
+                                    <ul className="list-disc ml-5 space-y-1 text-light-200">
+                                        {data.notableFacts.map((f, idx) => (
+                                            <li key={idx}>{f}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className="text-light-400 text-sm ml-5">Data unavailable</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
 
                     {data.glassdoor && (
                         <div className="bg-dark-200 rounded-lg p-6">
