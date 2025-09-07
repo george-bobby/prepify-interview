@@ -30,32 +30,39 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: 'Missing company' }, { status: 400 });
 		}
 
-		// Structured prompt for Gemini via Vercel AI SDK
-		const prompt = `You are a research assistant. Return a compact JSON object with fields:
+		// Enhanced prompt for better results
+		const prompt = `You are a comprehensive company research assistant. Provide detailed information about ${company} in the following JSON format:
+
 {
-  "name": string,
-  "website"?: string,
-  "headquarters"?: string,
-  "foundedYear"?: number | null,
-  "size"?: string,
-  "industry"?: string,
-  "averageSalary"?: {
-    "overall"?: string,
-    "byRole"?: [{"role": string, "salaryRange": string, "median"?: string}]
+  "name": "${company}",
+  "website": "official website URL",
+  "headquarters": "city, state/country",
+  "foundedYear": year_as_number,
+  "size": "employee count range (e.g., '10,000-50,000 employees')",
+  "industry": "primary industry",
+  "averageSalary": {
+    "overall": "overall salary range in USD",
+    "byRole": [
+      {"role": "Software Engineer", "salaryRange": "$120k-180k", "median": "$150k"},
+      {"role": "Product Manager", "salaryRange": "$140k-200k", "median": "$170k"}
+    ]
   },
-  "benefits"?: string[],
-  "culture"?: string[],
-  "interviewDifficulty"?: string,
-  "growthOutlook"?: string,
-  "keyTechnologies"?: string[],
-  "notableFacts"?: string[],
-  "sources"?: [{"name": string, "url"?: string}]
+  "benefits": ["health insurance", "401k matching", "flexible work", "stock options"],
+  "culture": ["innovation-focused", "collaborative", "fast-paced", "data-driven"],
+  "interviewDifficulty": "Medium to Hard",
+  "growthOutlook": "brief growth outlook description",
+  "keyTechnologies": ["primary technologies used"],
+  "notableFacts": ["interesting facts about the company"],
+  "sources": [{"name": "source name", "url": "optional url"}]
 }
-Company: ${company}
-Rules:
-- Output only valid JSON, no markdown.
-- Keep values concise, avoid speculation if unknown; omit unknown fields.
-- Prefer US salary ranges in USD if possible.`;
+
+IMPORTANT: 
+- Provide real, accurate information about ${company}
+- Include specific salary ranges based on known market data
+- List actual technologies the company uses
+- Include real benefits and culture aspects
+- Output ONLY valid JSON, no markdown or explanations
+- If you don't know specific details, provide reasonable estimates based on company size and industry`;
 
 		const result = await generateText({
 			model: google('gemini-1.5-flash'),

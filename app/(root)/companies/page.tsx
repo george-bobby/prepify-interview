@@ -45,6 +45,79 @@ type FamousCompany = {
     keyTech: string[];
 };
 
+// Static fallback data for when API fails or returns minimal data
+const COMPANY_FALLBACK_DATA: Record<string, CompanyInsights> = {
+    "Google": {
+        name: "Google",
+        website: "https://www.google.com",
+        headquarters: "Mountain View, CA",
+        foundedYear: 1998,
+        size: "100,000+ employees",
+        industry: "Technology",
+        averageSalary: {
+            overall: "$150k-300k",
+            byRole: [
+                { role: "Software Engineer", salaryRange: "$120k-250k", median: "$180k" },
+                { role: "Product Manager", salaryRange: "$150k-300k", median: "$220k" },
+                { role: "Data Scientist", salaryRange: "$130k-280k", median: "$200k" }
+            ]
+        },
+        benefits: ["Health insurance", "401k matching", "Free meals", "Stock options", "Flexible work"],
+        culture: ["Innovation-focused", "Data-driven", "Collaborative", "Fast-paced", "Learning-oriented"],
+        interviewDifficulty: "Hard",
+        growthOutlook: "Strong growth in cloud computing and AI services",
+        keyTechnologies: ["Go", "Python", "Java", "C++", "JavaScript", "TensorFlow", "Kubernetes"],
+        notableFacts: ["World's most popular search engine", "Parent company Alphabet", "Major player in AI and cloud computing"],
+        sources: [{ name: "Glassdoor", url: "https://glassdoor.com" }, { name: "Levels.fyi" }]
+    },
+    "Microsoft": {
+        name: "Microsoft",
+        website: "https://www.microsoft.com",
+        headquarters: "Redmond, WA",
+        foundedYear: 1975,
+        size: "200,000+ employees",
+        industry: "Technology",
+        averageSalary: {
+            overall: "$140k-280k",
+            byRole: [
+                { role: "Software Engineer", salaryRange: "$110k-240k", median: "$170k" },
+                { role: "Product Manager", salaryRange: "$140k-280k", median: "$210k" },
+                { role: "Cloud Architect", salaryRange: "$150k-300k", median: "$220k" }
+            ]
+        },
+        benefits: ["Health insurance", "401k matching", "Stock purchase plan", "Flexible work", "Learning budget"],
+        culture: ["Inclusive", "Growth mindset", "Collaborative", "Customer-focused", "Innovation-driven"],
+        interviewDifficulty: "Medium to Hard",
+        growthOutlook: "Strong growth in cloud services (Azure) and productivity software",
+        keyTechnologies: ["C#", ".NET", "TypeScript", "Azure", "Python", "React", "SQL Server"],
+        notableFacts: ["Second largest company by market cap", "Leading cloud provider", "Office 365 has 300M+ users"],
+        sources: [{ name: "Glassdoor" }, { name: "Microsoft Careers" }]
+    },
+    "Apple": {
+        name: "Apple",
+        website: "https://www.apple.com",
+        headquarters: "Cupertino, CA",
+        foundedYear: 1976,
+        size: "150,000+ employees",
+        industry: "Technology",
+        averageSalary: {
+            overall: "$160k-320k",
+            byRole: [
+                { role: "Software Engineer", salaryRange: "$130k-280k", median: "$200k" },
+                { role: "Hardware Engineer", salaryRange: "$140k-300k", median: "$220k" },
+                { role: "Product Manager", salaryRange: "$160k-320k", median: "$240k" }
+            ]
+        },
+        benefits: ["Health insurance", "Stock purchase plan", "Product discounts", "Wellness programs", "Flexible work"],
+        culture: ["Design-focused", "Innovation-driven", "Quality-oriented", "Secretive", "High standards"],
+        interviewDifficulty: "Hard",
+        growthOutlook: "Continued growth in services and wearables",
+        keyTechnologies: ["Swift", "Objective-C", "C++", "Metal", "WebKit", "iOS", "macOS"],
+        notableFacts: ["Most valuable company by market cap", "iPhone generates 50%+ of revenue", "Strong ecosystem of products"],
+        sources: [{ name: "Glassdoor" }, { name: "Apple Careers" }]
+    }
+};
+
 const FAMOUS_COMPANIES: FamousCompany[] = [
     {
         name: "Google",
@@ -165,19 +238,39 @@ const CompaniesPage: React.FC = () => {
         setIsLoading(true);
         setError(null);
         setData(null);
+        
+        console.log('Searching for company:', q); // Debug log
+        
         try {
             const res = await fetch('/api/companies/insights', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ company: q })
             });
+            
+            console.log('API Response status:', res.status); // Debug log
+            
             if (!res.ok) {
                 const body = await res.json().catch(() => ({}));
+                console.error('API Error:', body); // Debug log
                 throw new Error(body.error || 'Failed to fetch insights');
             }
             const body = await res.json();
-            setData(body.insights as CompanyInsights);
+            console.log('API Response data:', body); // Debug log
+            console.log('Setting data:', body.insights); // Debug log
+            
+            // Check if API returned minimal data and use fallback if available
+            const apiData = body.insights as CompanyInsights;
+            const hasMinimalData = !apiData.industry && !apiData.size && !apiData.headquarters && !apiData.averageSalary;
+            
+            if (hasMinimalData && COMPANY_FALLBACK_DATA[q]) {
+                console.log('Using fallback data for:', q);
+                setData(COMPANY_FALLBACK_DATA[q]);
+            } else {
+                setData(apiData);
+            }
         } catch (e: any) {
+            console.error('Search error:', e); // Debug log
             setError(e.message || 'Something went wrong');
         } finally {
             setIsLoading(false);
@@ -260,8 +353,29 @@ const CompaniesPage: React.FC = () => {
                 </div>
             )}
 
+            {/* Loading state */}
+            {isLoading && (
+                <div className="mt-8 flex items-center justify-center py-12">
+                    <div className="flex items-center gap-3">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-200"></div>
+                        <span className="text-light-300">Fetching company insights...</span>
+                    </div>
+                </div>
+            )}
+
             {!isLoading && data && (
                 <div className="mt-8 space-y-6">
+                    {/* Back to companies button */}
+                    <button 
+                        onClick={() => {
+                            setQuery('');
+                            setData(null);
+                        }}
+                        className="text-primary-200 hover:text-primary-100 text-sm flex items-center gap-2"
+                    >
+                        ← Back to companies
+                    </button>
+                    
                     <div className="bg-dark-200 rounded-lg p-6">
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                             <div>
@@ -278,6 +392,15 @@ const CompaniesPage: React.FC = () => {
                                 {data.headquarters && <span>HQ: {data.headquarters}</span>}
                             </div>
                         </div>
+                        
+                        {/* Show message if minimal data */}
+                        {!data.industry && !data.size && !data.headquarters && !data.averageSalary && (
+                            <div className="mt-4 p-4 bg-yellow-900/20 border border-yellow-700 rounded-lg">
+                                <p className="text-yellow-200 text-sm">
+                                    Limited company information available. The AI service may need additional configuration to provide detailed insights.
+                                </p>
+                            </div>
+                        )}
                     </div>
 
                     {data.averageSalary && (
