@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import ResumeUpload from '@/components/ResumeUpload';
 import ResumeFeedback from '@/components/ResumeFeedback';
@@ -18,6 +18,21 @@ const ResumePage = () => {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysis, setAnalysis] = useState<ResumeAnalysis | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [resumeCredits, setResumeCredits] = useState<number | null>(null);
+
+    useEffect(() => {
+        const fetchCredits = async () => {
+            try {
+                const res = await fetch('/api/resume/credits', { method: 'GET' });
+                if (!res.ok) return;
+                const data = await res.json();
+                setResumeCredits(data.resumeCredits);
+            } catch (e) {
+                // ignore
+            }
+        };
+        fetchCredits();
+    }, []);
 
     const handleFileUpload = (file: File) => {
         setUploadedFile(file);
@@ -69,6 +84,11 @@ const ResumePage = () => {
                 <p className="text-light-400 text-lg">
                     Upload your resume and get AI-powered feedback to improve your chances of landing your dream job.
                 </p>
+                {resumeCredits !== null && (
+                    <div className="mt-4 text-light-300">
+                        Resume review credits remaining this month: <span className="text-primary-200 font-semibold">{resumeCredits}</span>
+                    </div>
+                )}
             </div>
 
             {/* Upload Section */}
@@ -85,7 +105,7 @@ const ResumePage = () => {
                     <div className="mt-6 flex gap-4">
                         <Button
                             onClick={handleAnalyzeResume}
-                            disabled={isAnalyzing}
+                            disabled={isAnalyzing || (resumeCredits !== null && resumeCredits <= 0)}
                             className="bg-primary-200 hover:bg-primary-100 text-dark-100"
                         >
                             {isAnalyzing ? (
@@ -97,7 +117,7 @@ const ResumePage = () => {
                                     Analyzing...
                                 </>
                             ) : (
-                                'Analyze Resume'
+                                resumeCredits !== null && resumeCredits <= 0 ? 'No credits' : 'Analyze Resume'
                             )}
                         </Button>
                         <Button

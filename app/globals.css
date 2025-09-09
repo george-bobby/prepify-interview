@@ -4,6 +4,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Smooth scrolling for anchor links */
+html {
+	scroll-behavior: smooth;
+}
+
 /* Line clamp utilities */
 .line-clamp-2 {
 	display: -webkit-box;

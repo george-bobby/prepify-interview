@@ -1,7 +1,7 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import Image from 'next/image';
-import { getRandomInterviewCover } from '@/lib/utils';
+import { generateInitials, generateRoleColor } from '@/lib/utils';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { DisplayTechIcons } from './DisplayTechIcons';
@@ -67,13 +67,12 @@ export const InterviewCard = async ({
                         </div>
                     </div>
 
-                    <Image
-                        src={getRandomInterviewCover()}
-                        alt="cover image"
-                        width={90}
-                        height={90}
-                        className="rounded-full object-cover size-[90px]"
-                    />
+                    {/* Role Initials Avatar */}
+                    <div className={`rounded-full size-[90px] flex items-center justify-center ${generateRoleColor(role).backgroundColor}`}>
+                        <span className={`text-3xl font-bold ${generateRoleColor(role).textColor}`}>
+                            {generateInitials(role)}
+                        </span>
+                    </div>
 
                     <h3 className='mt-5 capitalize font-semibold'>{role} Interview</h3>
 

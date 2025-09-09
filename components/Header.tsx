@@ -45,8 +45,19 @@ const Header = async () => {
                                 <MobileMenu navLinks={navLinks} user={user} />
                             </>
                         ) : (
-                            /* Show Sign In / Sign Up for non-authenticated users */
-                            <div className="flex items-center gap-4">
+                            /* Show navigation for landing page */
+                            <div className="flex items-center gap-6">
+                                <nav className="hidden md:flex items-center gap-6">
+                                    <a href="#features" className="text-light-400 hover:text-primary-200 transition-colors">
+                                        Features
+                                    </a>
+                                    <a href="#how-it-works" className="text-light-400 hover:text-primary-200 transition-colors">
+                                        How It Works
+                                    </a>
+                                    <a href="#pricing" className="text-light-400 hover:text-primary-200 transition-colors">
+                                        Pricing
+                                    </a>
+                                </nav>
                                 <Link href="/signin" className="text-light-400 hover:text-primary-200 transition-colors">
                                     Sign In
                                 </Link>

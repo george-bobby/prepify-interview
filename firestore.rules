@@ -29,7 +29,7 @@ service cloud.firestore {
     }
     
     function isValidUserUpdate() {
-      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['credits', 'lastActive', 'profileImage']);
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['credits', 'lastActive', 'profileImage', 'lastCreditRenewalAt', 'resumeCredits', 'lastResumeCreditRenewalAt']);
     }
 
     // Users collection

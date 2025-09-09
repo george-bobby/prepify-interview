@@ -1,9 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
+import { getCurrentUser } from '@/lib/actions/auth.action';
+import { interviewService } from '@/lib/firebase/interview-service';
 
 export async function POST(request: NextRequest) {
 	try {
+		const user = await getCurrentUser();
+		if (!user) {
+			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+		}
+
+		// Ensure user has resume credits (auto-renews monthly)
+		const credits = await interviewService.getResumeCredits(user.id);
+		if (credits <= 0) {
+			return NextResponse.json(
+				{ error: 'No resume review credits remaining' },
+				{ status: 402 }
+			);
+		}
+
 		const formData = await request.formData();
 		const file = formData.get('resume') as File;
 
@@ -91,6 +107,9 @@ Provide specific, actionable feedback that will help improve the resume's effect
 		) {
 			throw new Error('Invalid analysis structure');
 		}
+
+		// Deduct a resume review credit after successful analysis
+		await interviewService.deductResumeCredit(user.id);
 
 		return NextResponse.json(analysis);
 	} catch (error) {
