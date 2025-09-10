@@ -21,6 +21,10 @@ export async function signUp(params: SignUpParams) {
 			lastCreditRenewalAt: new Date().toISOString(),
 			resumeCredits: 10,
 			lastResumeCreditRenewalAt: new Date().toISOString(),
+			isProSubscriber: false,
+			subscriptionStatus: null,
+			subscriptionId: null,
+			subscriptionPlanId: null,
 		});
 		return {
 			success: true,

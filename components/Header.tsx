@@ -26,7 +26,7 @@ const Header = async () => {
             <div className="max-w-7xl mx-auto px-6 py-4">
                 <div className="flex items-center justify-between">
                     {/* Logo */}
-                    <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2">
+                    <Link href="/home" className="flex items-center gap-2">
                         <Image src="/logo.svg" alt="Prepify Logo" height={32} width={38} />
                         <h2 className="text-primary-100 text-xl font-semibold">Prepify</h2>
                     </Link>

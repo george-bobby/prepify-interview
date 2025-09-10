@@ -6,44 +6,75 @@ import Script from "next/script";
 import { Button } from "@/components/ui/button";
 
 export default function PaymentPopup({ showPopup, setShowPopup }: { showPopup: boolean; setShowPopup: (value: boolean) => void }) {
+  const [isLoading, setIsLoading] = useState(false);
   const closePopup = () => setShowPopup(false);
 
-  const handlePayment = () => {
-    const createOrder = async () => {
-      const res = await fetch("/api/createOrder", {
+  const handleSubscription = async () => {
+    setIsLoading(true);
+    try {
+      // Create subscription
+      const res = await fetch("/api/razorpay/createSubscription", {
         method: "POST",
-        body: JSON.stringify({ amount: 1000 }),
+        body: JSON.stringify({}),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+
+      if (!res.ok) {
+        throw new Error("Failed to create subscription");
+      }
+
       const data = await res.json();
 
       const paymentData = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        order_id: data.id,
+        subscription_id: data.subscriptionId,
+        name: "Prepify Pro Subscription",
+        description: "Monthly subscription for unlimited interviews and resume reviews",
         handler: async function (response: any) {
-          const res = await fetch("/api/verifyOrder", {
-            method: "POST",
-            body: JSON.stringify({
-              orderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature,
-            }),
-          });
-          const data = await res.json();
+          try {
+            const verifyRes = await fetch("/api/razorpay/verifySubscription", {
+              method: "POST",
+              body: JSON.stringify({
+                subscriptionId: response.razorpay_subscription_id,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature,
+              }),
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
 
-          if (data.isOk) {
-            window.location.reload();
-            toast.success("Payment done successfully");
-          } else {
-            toast.error("Payment failed");
+            const verifyData = await verifyRes.json();
+
+            if (verifyData.isOk) {
+              toast.success("Subscription activated successfully! Welcome to Prepify Pro!");
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            } else {
+              toast.error("Subscription verification failed");
+            }
+          } catch (error) {
+            console.error("Verification error:", error);
+            toast.error("Subscription verification failed");
           }
         },
+        modal: {
+          ondismiss: function () {
+            setIsLoading(false);
+          }
+        }
       };
 
       const payment = new (window as any).Razorpay(paymentData);
       payment.open();
-    };
-
-    createOrder();
+    } catch (error) {
+      console.error("Subscription error:", error);
+      toast.error("Failed to create subscription");
+      setIsLoading(false);
+    }
   };
 
   if (!showPopup) return null;
@@ -56,36 +87,47 @@ export default function PaymentPopup({ showPopup, setShowPopup }: { showPopup: b
           <button
             onClick={closePopup}
             className="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors"
+            disabled={isLoading}
           >
             ✕
           </button>
-          <h3 className="text-2xl font-bold mb-4 text-center text-white">Complete your Payment</h3>
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col">
-              <label className="text-sm text-gray-400 mb-1">Currency</label>
-              <input
-                type="text"
-                value="INR"
-                disabled
-                className="border border-gray-700 rounded-lg px-3 py-2 bg-gray-800 text-white cursor-not-allowed"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label className="text-sm text-gray-400 mb-1">Amount</label>
-              <input
-                type="text"
-                value="10"
-                disabled
-                className="border border-gray-700 rounded-lg px-3 py-2 bg-gray-800 text-white cursor-not-allowed"
-              />
-            </div>
-            <Button
-              className="w-full mt-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 transition-all"
-              onClick={handlePayment}
-            >
-              Pay ₹10
-            </Button>
+          <h3 className="text-2xl font-bold mb-4 text-center text-white">Upgrade to Prepify Pro</h3>
+
+          <div className="mb-6 text-center">
+            <div className="text-4xl font-bold text-white mb-2">₹199<span className="text-lg text-gray-400">/month</span></div>
+            <p className="text-gray-300 text-sm">Unlimited interviews and resume reviews</p>
           </div>
+
+          <div className="flex flex-col gap-3 mb-6">
+            <div className="flex items-center gap-2 text-green-400 text-sm">
+              <span>✓</span>
+              <span>Unlimited AI interviews</span>
+            </div>
+            <div className="flex items-center gap-2 text-green-400 text-sm">
+              <span>✓</span>
+              <span>Unlimited resume reviews</span>
+            </div>
+            <div className="flex items-center gap-2 text-green-400 text-sm">
+              <span>✓</span>
+              <span>Priority support</span>
+            </div>
+            <div className="flex items-center gap-2 text-green-400 text-sm">
+              <span>✓</span>
+              <span>Advanced analytics</span>
+            </div>
+          </div>
+
+          <Button
+            className="w-full mt-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50"
+            onClick={handleSubscription}
+            disabled={isLoading}
+          >
+            {isLoading ? "Processing..." : "Subscribe to Pro - ₹199/month"}
+          </Button>
+
+          <p className="text-xs text-gray-400 text-center mt-3">
+            Cancel anytime. No long-term commitments.
+          </p>
         </div>
       </div>
     </>

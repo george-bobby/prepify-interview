@@ -304,6 +304,12 @@ export class InterviewFirebaseService {
 			}
 
 			const data = snapshot.data() as any;
+
+			// Pro subscribers don't need credit deduction
+			if (data?.isProSubscriber && data?.subscriptionStatus === 'active') {
+				return; // No deduction for pro subscribers
+			}
+
 			const currentCredits: number =
 				typeof data?.credits === 'number' ? data.credits : 0;
 			const lastRenewalIso: string | undefined = data?.lastCreditRenewalAt;
@@ -358,6 +364,12 @@ export class InterviewFirebaseService {
 		}
 
 		const data = doc.data() as any;
+
+		// Pro subscribers get unlimited credits (999)
+		if (data?.isProSubscriber && data?.subscriptionStatus === 'active') {
+			return 999;
+		}
+
 		const currentCredits: number =
 			typeof data?.credits === 'number' ? data.credits : 0;
 		const lastRenewalIso: string | undefined = data?.lastCreditRenewalAt;
@@ -407,6 +419,12 @@ export class InterviewFirebaseService {
 			}
 
 			const data = snapshot.data() as any;
+
+			// Pro subscribers don't need credit deduction
+			if (data?.isProSubscriber && data?.subscriptionStatus === 'active') {
+				return; // No deduction for pro subscribers
+			}
+
 			const currentCredits: number =
 				typeof data?.resumeCredits === 'number' ? data.resumeCredits : 0;
 			const lastRenewalIso: string | undefined =
@@ -459,6 +477,12 @@ export class InterviewFirebaseService {
 		}
 
 		const data = doc.data() as any;
+
+		// Pro subscribers get unlimited credits (999)
+		if (data?.isProSubscriber && data?.subscriptionStatus === 'active') {
+			return 999;
+		}
+
 		const currentCredits: number =
 			typeof data?.resumeCredits === 'number' ? data.resumeCredits : 0;
 		const lastRenewalIso: string | undefined = data?.lastResumeCreditRenewalAt;

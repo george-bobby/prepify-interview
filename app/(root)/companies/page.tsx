@@ -446,18 +446,18 @@ const CompaniesPage: React.FC = () => {
         setIsLoading(true);
         setError(null);
         setData(null);
-        
+
         console.log('Searching for company:', q); // Debug log
-        
+
         try {
-            const res = await fetch('/api/companies/insights', {
+            const res = await fetch('/api/companies', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ company: q })
             });
-            
+
             console.log('API Response status:', res.status); // Debug log
-            
+
             if (!res.ok) {
                 const body = await res.json().catch(() => ({}));
                 console.error('API Error:', body); // Debug log
@@ -466,14 +466,14 @@ const CompaniesPage: React.FC = () => {
             const body = await res.json();
             console.log('API Response data:', body); // Debug log
             console.log('Setting data:', body.insights); // Debug log
-            
+
             // Check if API returned minimal data and use fallback if available
             const apiData = body.insights as CompanyInsights;
             const hasMinimalData = !apiData.industry && !apiData.size && !apiData.headquarters && !apiData.averageSalary;
-            
+
             // Try to find exact match or fuzzy match for fallback data
             const matchedCompany = findCompanyMatch(q);
-            
+
             if (hasMinimalData && matchedCompany && COMPANY_FALLBACK_DATA[matchedCompany]) {
                 console.log('Using fallback data for:', matchedCompany);
                 setData(COMPANY_FALLBACK_DATA[matchedCompany]);
@@ -517,15 +517,15 @@ const CompaniesPage: React.FC = () => {
                     <h2 className="text-xl font-semibold text-light-100 mb-6">Popular Companies</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {FAMOUS_COMPANIES.map((company) => (
-                            <div 
+                            <div
                                 key={company.name}
                                 onClick={() => handleCompanyClick(company.name)}
                                 className="bg-dark-200 rounded-lg p-6 cursor-pointer hover:bg-dark-300 transition-colors duration-200 border border-transparent hover:border-primary-200/30"
                             >
                                 <div className="flex items-center gap-4 mb-4">
                                     <div className="w-12 h-12 rounded-lg bg-white p-1 flex items-center justify-center">
-                                        <img 
-                                            src={company.logo} 
+                                        <img
+                                            src={company.logo}
                                             alt={`${company.name} logo`}
                                             className="w-full h-full object-contain"
                                             onError={(e) => {
@@ -577,7 +577,7 @@ const CompaniesPage: React.FC = () => {
             {!isLoading && data && (
                 <div className="mt-8 space-y-6">
                     {/* Back to companies button */}
-                    <button 
+                    <button
                         onClick={() => {
                             setQuery('');
                             setData(null);
@@ -586,13 +586,13 @@ const CompaniesPage: React.FC = () => {
                     >
                         ← Back to companies
                     </button>
-                    
+
                     <div className="bg-dark-200 rounded-lg p-6">
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                             <div className="flex items-center gap-4">
                                 <div className="w-16 h-16 rounded-lg bg-white p-2 flex items-center justify-center flex-shrink-0">
-                                    <img 
-                                        src={getCompanyLogo(data.name)} 
+                                    <img
+                                        src={getCompanyLogo(data.name)}
                                         alt={`${data.name} logo`}
                                         className="w-full h-full object-contain"
                                         onError={(e) => {
@@ -621,7 +621,7 @@ const CompaniesPage: React.FC = () => {
                                 <span>HQ: {data.headquarters || 'Data unavailable'}</span>
                             </div>
                         </div>
-                        
+
                     </div>
 
                     {/* Always show salary section */}
