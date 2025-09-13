@@ -366,7 +366,10 @@ const ProjectsPage = () => {
     }
 
     if (item.createdById === currentUser.id) {
-      toast.error("You cannot request to join your own project");
+      toast.error(
+        "You cannot request to join your own " +
+          (item.type === "project" ? "project" : "research paper")
+      );
       return;
     }
 
@@ -376,7 +379,10 @@ const ProjectsPage = () => {
     );
     if (existingRequest) {
       if (existingRequest.status === "pending") {
-        toast.error("You have already requested to join this project");
+        toast.error(
+          "You have already requested to join this " +
+            (item.type === "project" ? "project" : "research paper")
+        );
       } else if (existingRequest.status === "accepted") {
         toast.success("Your request has been accepted!");
       } else {
@@ -396,28 +402,48 @@ const ProjectsPage = () => {
         createdAt: new Date().toISOString(),
       };
 
+      console.log("Sending join request:", {
+        item: item.type,
+        id: item.id,
+        request: newRequest,
+      });
+
       // Make API call to send join request
       const endpoint =
-        item.type === "project" ? "/api/projects" : "/api/research";
-      const response = await fetch(`${endpoint}/${item.id}/requests`, {
+        item.type === "project"
+          ? `/api/projects/${item.id}/requests`
+          : `/api/research/${item.id}/requests`;
+
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newRequest),
       });
 
-      if (!response.ok) throw new Error("Failed to send join request");
+      console.log(
+        "Join request response:",
+        response.status,
+        response.statusText
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Join request failed:", errorData);
+        throw new Error(errorData.error || "Failed to send join request");
+      }
+
+      const updatedItem = await response.json();
+      console.log("Join request successful:", updatedItem);
 
       // Update local state
       if (item.type === "project") {
-        const updatedProjects = projects.map((p) =>
-          p.id === item.id ? { ...p, requests: [...p.requests, newRequest] } : p
+        setProjects((prev) =>
+          prev.map((p) => (p.id === item.id ? updatedItem : p))
         );
-        setProjects(updatedProjects);
       } else {
-        const updatedResearch = researchPapers.map((r) =>
-          r.id === item.id ? { ...r, requests: [...r.requests, newRequest] } : r
+        setResearchPapers((prev) =>
+          prev.map((r) => (r.id === item.id ? updatedItem : r))
         );
-        setResearchPapers(updatedResearch);
       }
 
       toast.success("Join request sent successfully!");
@@ -433,9 +459,15 @@ const ProjectsPage = () => {
     action: "accept" | "reject"
   ) => {
     try {
-      // Make API call to update request status
       const item = selectedProjectForRequests;
       if (!item) return;
+
+      console.log("Handling request action:", {
+        projectId,
+        requestId,
+        action,
+        itemType: item.type,
+      });
 
       const endpoint =
         item.type === "project" ? "/api/projects" : "/api/research";
@@ -450,70 +482,41 @@ const ProjectsPage = () => {
         }
       );
 
-      if (!response.ok) throw new Error(`Failed to ${action} request`);
+      console.log(
+        "Request action response:",
+        response.status,
+        response.statusText
+      );
 
-      // Update local state
-      const updateRequests = (items: ProjectOrResearch[]) =>
-        items.map((item) =>
-          item.id === projectId
-            ? {
-                ...item,
-                requests: item.requests.map((req) =>
-                  req.id === requestId
-                    ? {
-                        ...req,
-                        status:
-                          action === "accept"
-                            ? ("accepted" as const)
-                            : ("rejected" as const),
-                      }
-                    : req
-                ),
-              }
-            : item
-        );
-
-      if (selectedProjectForRequests?.type === "project") {
-        const updatedProjects = updateRequests(projects) as Project[];
-        setProjects(updatedProjects);
-      } else {
-        const updatedResearch = updateRequests(
-          researchPapers
-        ) as ResearchPaper[];
-        setResearchPapers(updatedResearch);
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Request action failed:", errorData);
+        throw new Error(errorData.error || `Failed to ${action} request`);
       }
+
+      const updatedItem = await response.json();
+      console.log("Request action successful:", updatedItem);
+
+      // Update local state with the updated item from the backend
+      if (item.type === "project") {
+        setProjects((prev) =>
+          prev.map((p) => (p.id === projectId ? updatedItem : p))
+        );
+      } else {
+        setResearchPapers((prev) =>
+          prev.map((r) => (r.id === projectId ? updatedItem : r))
+        );
+      }
+
+      // Update the selected project for the modal
+      setSelectedProjectForRequests(updatedItem);
 
       toast.success(`Request ${action}ed successfully!`);
 
-      // Update the selected project for the modal
-      if (selectedProjectForRequests) {
-        const updatedProject = {
-          ...selectedProjectForRequests,
-          requests: selectedProjectForRequests.requests.map((req) =>
-            req.id === requestId
-              ? {
-                  ...req,
-                  status:
-                    action === "accept"
-                      ? ("accepted" as const)
-                      : ("rejected" as const),
-                }
-              : req
-          ),
-        };
-        setSelectedProjectForRequests(updatedProject);
-      }
-
-      // If accepting, optionally send notification to user
-      if (action === "accept") {
-        const acceptedRequest = selectedProjectForRequests?.requests.find(
-          (req) => req.id === requestId
-        );
-        if (acceptedRequest) {
-          // You could add notification logic here
-          console.log(`Notifying ${acceptedRequest.userName} about acceptance`);
-        }
-      }
+      // Force a refresh to ensure data consistency
+      setTimeout(() => {
+        handleRefresh();
+      }, 1000);
     } catch (error) {
       console.error("Error handling request:", error);
       toast.error("Failed to handle request. Please try again.");
@@ -545,6 +548,54 @@ const ProjectsPage = () => {
       toast.error("Failed to refresh data");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDeleteProject = async (item: ProjectOrResearch) => {
+    if (!currentUser || item.createdById !== currentUser.id) {
+      toast.error("You can only delete your own projects");
+      return;
+    }
+
+    const itemType = item.type === "project" ? "Project" : "Research paper";
+    if (
+      !confirm(
+        `Are you sure you want to delete "${item.name}"?\n\nThis action cannot be undone and will remove all associated requests.`
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const endpoint =
+        item.type === "project"
+          ? `/api/projects/${item.id}`
+          : `/api/research/${item.id}`;
+
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to delete");
+      }
+
+      // Update local state
+      if (item.type === "project") {
+        setProjects((prev) => prev.filter((p) => p.id !== item.id));
+        setFilteredProjects((prev) => prev.filter((p) => p.id !== item.id));
+      } else {
+        setResearchPapers((prev) => prev.filter((r) => r.id !== item.id));
+        setFilteredResearch((prev) => prev.filter((r) => r.id !== item.id));
+      }
+
+      toast.success(`${itemType} deleted successfully!`);
+    } catch (error) {
+      console.error("Error deleting:", error);
+      toast.error(
+        `Failed to delete ${itemType.toLowerCase()}. Please try again.`
+      );
     }
   };
 
@@ -673,20 +724,19 @@ const ProjectsPage = () => {
           </div>
           <div className="flex gap-2">
             {isOwner ? (
-              <button
-                onClick={() => openRequestsModal(item)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors duration-200 relative"
-              >
-                Manage Requests
-                {pendingRequestsCount > 0 && (
-                  <span className="ml-1 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                    {pendingRequestsCount}
-                  </span>
-                )}
-                <span className="text-xs opacity-75 ml-1">
-                  ({totalRequestsCount} total)
-                </span>
-              </button>
+              <>
+                <button
+                  onClick={() => openRequestsModal(item)}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200 flex items-center"
+                >
+                  Manage Requests
+                  {pendingRequestsCount > 0 && (
+                    <span className="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                      {pendingRequestsCount}
+                    </span>
+                  )}
+                </button>
+              </>
             ) : (
               <button
                 onClick={() => handleJoinRequest(item)}
@@ -887,10 +937,6 @@ const ProjectsPage = () => {
                       <div className="flex gap-3 pt-4 border-t border-dark-400">
                         <button
                           onClick={() => {
-                            console.log(
-                              "Accept button clicked for request:",
-                              request.id
-                            );
                             handleRequestAction(
                               selectedProjectForRequests.id,
                               request.id,
@@ -903,10 +949,6 @@ const ProjectsPage = () => {
                         </button>
                         <button
                           onClick={() => {
-                            console.log(
-                              "Reject button clicked for request:",
-                              request.id
-                            );
                             handleRequestAction(
                               selectedProjectForRequests.id,
                               request.id,
