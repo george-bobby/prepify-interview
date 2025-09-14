@@ -17,6 +17,9 @@ export async function signUp(params: SignUpParams) {
 		await db.collection('users').doc(uid).set({
 			name: name,
 			email: email,
+			role: 'User', // Default role for social features
+			avatar: null, // Default avatar for social features
+			verified: false, // Default verification status
 			credits: 10,
 			lastCreditRenewalAt: new Date().toISOString(),
 			resumeCredits: 10,

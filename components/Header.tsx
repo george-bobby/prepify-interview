@@ -14,6 +14,7 @@ const Header = async () => {
     { href: "/dashboard", label: "Dashboard" },
     { href: "/project", label: "P & R" },
     { href: "/courses", label: "Courses" },
+    { href: "/social", label: "Social" },
     { href: "/coding", label: "Coding" },
     { href: "/roadmaps", label: "Roadmaps" },
     { href: "/resume", label: "Resume" },
