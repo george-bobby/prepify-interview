@@ -86,6 +86,8 @@ const ProjectsPage = () => {
   const [filteredResearch, setFilteredResearch] = useState<ResearchPaper[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showFloatingInput, setShowFloatingInput] = useState(true); // Always show floating input
+  const [floatingInputExpanded, setFloatingInputExpanded] = useState<false | "description" | "team" | "skills">(false);
   const [showRequestsModal, setShowRequestsModal] = useState(false);
   const [selectedProjectForRequests, setSelectedProjectForRequests] =
     useState<ProjectOrResearch | null>(null);
@@ -137,7 +139,17 @@ const ProjectsPage = () => {
     };
 
     fetchUserAndData();
-  }, []);
+
+    // Set up periodic refresh to catch status updates from other users
+    const intervalId = setInterval(() => {
+      if (!isLoading) {
+        console.log("Periodic refresh to check for updates...");
+        fetchUserAndData();
+      }
+    }, 30000); // Refresh every 30 seconds
+
+    return () => clearInterval(intervalId);
+  }, [isLoading]);
 
   // Calculate skill match score - exact matching for better accuracy
   const calculateSkillMatchScore = (
@@ -228,6 +240,10 @@ const ProjectsPage = () => {
       filterItems(researchPapers, searchQuery) as ResearchPaper[]
     );
   }, [searchQuery, projects, researchPapers, currentUser?.skills]);
+
+  // Combine all items for unified display
+  const allFilteredItems = [...filteredProjects, ...filteredResearch];
+  const sortedAllItems = sortBySkillMatch(allFilteredItems);
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
@@ -348,6 +364,8 @@ const ProjectsPage = () => {
         skillInput: "",
       });
       setShowCreateModal(false);
+      setShowFloatingInput(false);
+      setFloatingInputExpanded(false);
       toast.success(
         `${
           createType === "project" ? "Project" : "Research paper"
@@ -373,22 +391,27 @@ const ProjectsPage = () => {
       return;
     }
 
-    // Check if already requested
-    const existingRequest = item.requests.find(
-      (req) => req.userId === currentUser.id
-    );
-    if (existingRequest) {
-      if (existingRequest.status === "pending") {
-        toast.error(
-          "You have already requested to join this " +
-            (item.type === "project" ? "project" : "research paper")
-        );
-      } else if (existingRequest.status === "accepted") {
-        toast.success("Your request has been accepted!");
-      } else {
-        toast.error("Your previous request was rejected");
+    // First, refresh the item to get the latest status
+    try {
+      const endpoint = item.type === "project" ? "/api/projects" : "/api/research";
+      const response = await fetch(`${endpoint}/${item.id}`);
+      if (response.ok) {
+        const latestItem = await response.json();
+        const latestRequest = latestItem.requests.find((req: any) => req.userId === currentUser.id);
+        
+        if (latestRequest) {
+          if (latestRequest.status === "pending") {
+            toast.error("You have already requested to join this " + (item.type === "project" ? "project" : "research paper"));
+          } else if (latestRequest.status === "accepted") {
+            toast.success("Your request has been accepted!");
+          } else if (latestRequest.status === "rejected") {
+            toast.error("Your previous request was rejected");
+          }
+          return;
+        }
       }
-      return;
+    } catch (error) {
+      console.warn("Could not check latest status, proceeding with request");
     }
 
     try {
@@ -440,13 +463,24 @@ const ProjectsPage = () => {
         setProjects((prev) =>
           prev.map((p) => (p.id === item.id ? updatedItem : p))
         );
+        setFilteredProjects((prev) =>
+          prev.map((p) => (p.id === item.id ? updatedItem : p))
+        );
       } else {
         setResearchPapers((prev) =>
+          prev.map((r) => (r.id === item.id ? updatedItem : r))
+        );
+        setFilteredResearch((prev) =>
           prev.map((r) => (r.id === item.id ? updatedItem : r))
         );
       }
 
       toast.success("Join request sent successfully!");
+      
+      // Refresh data to ensure consistency
+      setTimeout(() => {
+        handleRefresh();
+      }, 500);
     } catch (error) {
       console.error("Error sending join request:", error);
       toast.error("Failed to send join request. Please try again.");
@@ -497,13 +531,19 @@ const ProjectsPage = () => {
       const updatedItem = await response.json();
       console.log("Request action successful:", updatedItem);
 
-      // Update local state with the updated item from the backend
+      // Immediately update all related state
       if (item.type === "project") {
         setProjects((prev) =>
           prev.map((p) => (p.id === projectId ? updatedItem : p))
         );
+        setFilteredProjects((prev) =>
+          prev.map((p) => (p.id === projectId ? updatedItem : p))
+        );
       } else {
         setResearchPapers((prev) =>
+          prev.map((r) => (r.id === projectId ? updatedItem : r))
+        );
+        setFilteredResearch((prev) =>
           prev.map((r) => (r.id === projectId ? updatedItem : r))
         );
       }
@@ -513,9 +553,19 @@ const ProjectsPage = () => {
 
       toast.success(`Request ${action}ed successfully!`);
 
-      // Force a refresh to ensure data consistency
-      setTimeout(() => {
-        handleRefresh();
+      // Force a complete refresh to ensure all users see the update
+      setTimeout(async () => {
+        try {
+          const [allProjects, allResearch] = await Promise.all([
+            fetchAllProjects(),
+            fetchAllResearch(),
+          ]);
+          setProjects(allProjects);
+          setResearchPapers(allResearch);
+          console.log("Global data refreshed after request action");
+        } catch (error) {
+          console.error("Error during global refresh:", error);
+        }
       }, 1000);
     } catch (error) {
       console.error("Error handling request:", error);
@@ -617,13 +667,14 @@ const ProjectsPage = () => {
 
     const getRequestButtonText = () => {
       if (!userRequest) return "Request to Join";
+      console.log("User request status:", userRequest.status, "for item:", item.id, "user:", currentUser?.id);
       switch (userRequest.status) {
         case "pending":
-          return "Request Pending";
+          return "Request Pending ⏳";
         case "accepted":
-          return "Request Accepted ✓";
+          return "Request Accepted ✅";
         case "rejected":
-          return "Request Rejected";
+          return "Request Rejected ❌";
         default:
           return "Request to Join";
       }
@@ -635,11 +686,11 @@ const ProjectsPage = () => {
       }
       switch (userRequest.status) {
         case "pending":
-          return "bg-yellow-600 text-white cursor-not-allowed";
+          return "bg-yellow-600/80 text-white cursor-not-allowed";
         case "accepted":
-          return "bg-green-600 text-white cursor-not-allowed";
+          return "bg-green-600/80 text-white cursor-not-allowed";
         case "rejected":
-          return "bg-red-600 text-white cursor-not-allowed";
+          return "bg-red-600/80 text-white cursor-not-allowed";
         default:
           return "bg-primary-200 text-dark-100 hover:bg-primary-100";
       }
@@ -670,6 +721,13 @@ const ProjectsPage = () => {
               {isOwner && <span className="text-primary-200 ml-2">(You)</span>}
             </div>
           </div>
+          <span className={`inline-block px-3 py-1 rounded text-sm font-medium ${
+            type === "project" 
+              ? "bg-blue-400/20 text-blue-400" 
+              : "bg-purple-400/20 text-purple-400"
+          }`}>
+            {type === "project" ? "Project" : "Research"}
+          </span>
         </div>
 
         <div className="text-light-300 text-sm mb-4 line-clamp-3">
@@ -719,9 +777,6 @@ const ProjectsPage = () => {
         </div>
 
         <div className="flex justify-between items-center">
-          <div className="text-light-400 text-xs">
-            {type === "project" ? "Project" : "Research"} ID: {item.id}
-          </div>
           <div className="flex gap-2">
             {isOwner ? (
               <>
@@ -1196,136 +1251,258 @@ const ProjectsPage = () => {
   return (
     <div className="min-h-screen bg-dark-100">
       <div className="container mx-auto px-4 py-8">
+        {/* Search Bar at Top */}
+        <div className="mb-8">
+          <div className="max-w-md mx-auto">
+            <AutocompleteInput
+              value={searchQuery}
+              onChange={handleSearch}
+              placeholder="Search projects and research papers"
+              label=""
+              apiEndpoint="/api/projects/search"
+            />
+          </div>
+        </div>
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-light-100 mb-2">
             Projects & Research
           </h1>
-          <p className="text-light-200">
-            Discover and collaborate on exciting projects and research papers
-          </p>
-          {currentUser && (
-            <p className="text-light-300 text-sm mt-2">
-              Welcome back, {currentUser.name}!{" "}
-              {currentUser.skills && currentUser.skills.length > 0
-                ? "Projects are sorted by skill match."
-                : "Complete your profile skills to see personalized matches."}
-            </p>
-          )}
         </div>
 
-        {/* Search Bar */}
+        {/* Projects & Research Papers Section */}
         <div className="bg-dark-200 rounded-lg p-6 mb-8">
-          <div className="flex justify-between items-center">
-            <div className="max-w-md flex-1">
-              <AutocompleteInput
-                value={searchQuery}
-                onChange={handleSearch}
-                placeholder="Search by title, description, creator, or skills..."
-                label="Search Projects & Research"
-                apiEndpoint="/api/projects/search"
-              />
-            </div>
-            <button
-              onClick={handleRefresh}
-              className="ml-4 px-4 py-2 bg-primary-200 text-dark-100 rounded-lg hover:bg-primary-100 transition-colors"
-            >
-              Refresh
-            </button>
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-light-100 font-semibold text-xl">Projects & Research Papers</h3>
+            
+            <span className="text-light-300 text-sm whitespace-nowrap">
+              {sortedAllItems.length} total ({filteredProjects.length} projects, {filteredResearch.length} research papers)
+            </span>
           </div>
-          <p className="text-light-400 text-sm mt-2">
-            Total: {projects.length} projects, {researchPapers.length} research
-            papers
-          </p>
-        </div>
 
-        {/* Projects and Research Papers Grid */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-8">
-          {/* Projects Section */}
-          <div className="bg-dark-200 rounded-lg p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-light-100 font-semibold text-xl">Projects</h3>
-              <span className="text-light-300 text-sm">
-                {filteredProjects.length} projects
-              </span>
+          {sortedAllItems.length > 0 ? (
+            <div className="grid gap-4">
+              {sortedAllItems.map((item) => (
+                <ProjectCard 
+                  key={item.id} 
+                  item={item} 
+                  type={item.type === "project" ? "project" : "research"} 
+                />
+              ))}
             </div>
-
-            {filteredProjects.length > 0 ? (
-              <div className="space-y-4 max-h-96 overflow-y-auto">
-                {filteredProjects.map((project) => (
-                  <ProjectCard key={project.id} item={project} type="project" />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <div className="text-4xl mb-2">🚀</div>
-                <p className="text-light-300">
-                  {searchQuery
-                    ? "No projects found matching your search"
-                    : "No projects available yet"}
+          ) : (
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">�</div>
+              <p className="text-light-300 text-lg">
+                {searchQuery
+                  ? "No projects or research papers found matching your search"
+                  : "No projects or research papers available yet"}
+              </p>
+              {!searchQuery && (
+                <p className="text-light-400 text-sm mt-2">
+                  Be the first to create a project or research paper!
                 </p>
-                {!searchQuery && (
-                  <p className="text-light-400 text-sm mt-2">
-                    Be the first to create a project!
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Research Papers Section */}
-          <div className="bg-dark-200 rounded-lg p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-light-100 font-semibold text-xl">
-                Research Papers
-              </h3>
-              <span className="text-light-300 text-sm">
-                {filteredResearch.length} papers
-              </span>
+              )}
             </div>
-
-            {filteredResearch.length > 0 ? (
-              <div className="space-y-4 max-h-96 overflow-y-auto">
-                {filteredResearch.map((paper) => (
-                  <ProjectCard key={paper.id} item={paper} type="research" />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <div className="text-4xl mb-2">📚</div>
-                <p className="text-light-300">
-                  {searchQuery
-                    ? "No research papers found matching your search"
-                    : "No research papers available yet"}
-                </p>
-                {!searchQuery && (
-                  <p className="text-light-400 text-sm mt-2">
-                    Be the first to create a research paper!
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Create Button */}
-        <div className="text-center">
-          <button
-            onClick={() => setShowCreateModal(true)}
-            disabled={!currentUser}
-            className="bg-primary-200 text-dark-100 px-8 py-4 rounded-lg font-semibold hover:bg-primary-100 transition-colors duration-200 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {currentUser
-              ? "Create New Project or Research Paper"
-              : "Login to Create Projects"}
-          </button>
-          {!currentUser && (
-            <p className="text-light-400 text-sm mt-2">
-              Please log in to create and join projects
-            </p>
           )}
         </div>
       </div>
+
+      {/* Floating Input Container - Perplexity AI Style */}
+      {showFloatingInput && currentUser && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-2xl px-4">
+          <div className="bg-dark-200/95 backdrop-blur-lg rounded-2xl border border-dark-400/50 shadow-2xl">
+            {/* Expanded Content - Now appears above the main input */}
+            {floatingInputExpanded && (
+              <div className="border-b border-dark-400/50 p-4">
+                {floatingInputExpanded === "description" && (
+                  <div>
+                    <label className="block text-light-200 text-sm font-medium mb-2">
+                      Description
+                    </label>
+                    <textarea
+                      value={formData.description}
+                      onChange={(e) => handleFormChange("description", e.target.value)}
+                      placeholder={`Describe your ${createType} in detail...`}
+                      rows={3}
+                      className="w-full px-4 py-3 bg-dark-300/50 border border-dark-400/50 rounded-lg text-light-100 placeholder-light-400 focus:outline-none focus:border-primary-200/50 focus:ring-1 focus:ring-primary-200/50"
+                    />
+                  </div>
+                )}
+
+                {floatingInputExpanded === "team" && (
+                  <div>
+                    <label className="block text-light-200 text-sm font-medium mb-2">
+                      Team Size
+                    </label>
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="range"
+                        min="1"
+                        max="20"
+                        value={formData.teamMembers}
+                        onChange={(e) => handleFormChange("teamMembers", parseInt(e.target.value))}
+                        className="flex-1 h-2 bg-dark-300 rounded-lg appearance-none cursor-pointer"
+                      />
+                      <span className="text-light-100 font-medium w-12 text-center">
+                        {formData.teamMembers}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {floatingInputExpanded === "skills" && (
+                  <div>
+                    <label className="block text-light-200 text-sm font-medium mb-2">
+                      Required Skills
+                    </label>
+                    <div className="flex gap-2 mb-3">
+                      <input
+                        type="text"
+                        value={formData.skillInput}
+                        onChange={(e) => handleFormChange("skillInput", e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addSkill();
+                          }
+                        }}
+                        placeholder="Type a skill and press Enter"
+                        className="flex-1 px-4 py-2 bg-dark-300/50 border border-dark-400/50 rounded-lg text-light-100 placeholder-light-400 focus:outline-none focus:border-primary-200/50"
+                      />
+                      <button
+                        type="button"
+                        onClick={addSkill}
+                        disabled={!formData.skillInput.trim()}
+                        className="px-4 py-2 bg-primary-200/20 text-primary-200 rounded-lg hover:bg-primary-200/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Add
+                      </button>
+                    </div>
+                    {formData.skillsRequired.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {formData.skillsRequired.map((skill, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center gap-2 bg-primary-200/20 text-primary-200 px-3 py-1 rounded-full text-sm"
+                          >
+                            {skill}
+                            <button
+                              type="button"
+                              onClick={() => removeSkill(skill)}
+                              className="text-primary-200/70 hover:text-primary-200"
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Main Input Container */}
+            <div className="relative">
+              <div className="flex items-center p-4">
+                {/* Toggle Pills */}
+                <div className="flex bg-dark-300/80 rounded-full p-1 mr-3">
+                  <button
+                    onClick={() => setCreateType("project")}
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
+                      createType === "project"
+                        ? "bg-blue-500 text-white shadow-md"
+                        : "text-light-400 hover:text-light-200"
+                    }`}
+                  >
+                    Project
+                  </button>
+                  <button
+                    onClick={() => setCreateType("research")}
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
+                      createType === "research"
+                        ? "bg-purple-500 text-white shadow-md"
+                        : "text-light-400 hover:text-light-200"
+                    }`}
+                  >
+                    Research
+                  </button>
+                </div>
+
+                {/* Main Input */}
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => handleFormChange("name", e.target.value)}
+                  placeholder={createType === "project" ? "Project title" : "Research title"}
+                  className="flex-1 bg-transparent text-light-100 placeholder-light-400 text-lg focus:outline-none"
+                />
+
+                {/* Action Icons */}
+                <div className="flex items-center gap-2 ml-3">
+                  <button
+                    type="button"
+                    onClick={() => setFloatingInputExpanded(floatingInputExpanded === "description" ? false : "description")}
+                    className={`p-2 rounded-lg transition-all duration-200 ${
+                      floatingInputExpanded === "description"
+                        ? "bg-primary-200/20 text-primary-200"
+                        : "text-light-400 hover:text-light-200 hover:bg-dark-300/50"
+                    }`}
+                    title="Add Description"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                    </svg>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setFloatingInputExpanded(floatingInputExpanded === "team" ? false : "team")}
+                    className={`p-2 rounded-lg transition-all duration-200 ${
+                      floatingInputExpanded === "team"
+                        ? "bg-primary-200/20 text-primary-200"
+                        : "text-light-400 hover:text-light-200 hover:bg-dark-300/50"
+                    }`}
+                    title="Set Team Size"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
+                    </svg>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setFloatingInputExpanded(floatingInputExpanded === "skills" ? false : "skills")}
+                    className={`p-2 rounded-lg transition-all duration-200 ${
+                      floatingInputExpanded === "skills"
+                        ? "bg-primary-200/20 text-primary-200"
+                        : "text-light-400 hover:text-light-200 hover:bg-dark-300/50"
+                    }`}
+                    title="Add Skills"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M22.7,19L13.6,9.9C14.5,7.6 14,4.9 12.1,3C10.1,1 7.1,0.6 4.7,1.7L9,6L6,9L1.6,4.7C0.4,7.1 0.9,10.1 2.9,12.1C4.8,14 7.5,14.5 9.8,13.6L18.9,22.7C19.3,23.1 19.9,23.1 20.3,22.7L22.6,20.4C23.1,20 23.1,19.3 22.7,19Z" />
+                    </svg>
+                  </button>
+
+                  <button
+                    onClick={handleSubmit}
+                    disabled={!isFormValid()}
+                    className="p-2 rounded-lg bg-primary-200 text-dark-100 hover:bg-primary-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Create"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modals */}
       <CreateModal />
