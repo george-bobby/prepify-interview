@@ -1,49 +1,55 @@
-// app/api/research/[id]/requests/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/firebase';
+import { db } from '@/firebase/admin';
+import { getCurrentUser } from '@/lib/actions/auth.action';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = params;
-    const requestData = await request.json();
-    
-    const researchRef = db.collection('researchPapers').doc(id);
-    const researchDoc = await researchRef.get();
-    
-    if (!researchDoc.exists) {
-      return NextResponse.json({ error: 'Research paper not found' }, { status: 404 });
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const researchId = params.id;
+    const newRequest = await request.json();
     
+    console.log('Research request data:', { researchId, newRequest, userId: user.id });
+    
+    const researchRef = db.collection('projects').doc(researchId);
+    const researchDoc = await researchRef.get();
+
+    if (!researchDoc.exists) {
+      console.log('Research not found:', researchId);
+      return NextResponse.json({ error: 'Research not found' }, { status: 404 });
+    }
+
     const researchData = researchDoc.data();
-    const existingRequest = researchData?.requests?.find(
-      (req: any) => req.userId === requestData.userId
-    );
+    const currentRequests = researchData?.requests || [];
     
+    // Check if user already requested
+    const existingRequest = currentRequests.find((req: any) => req.userId === user.id);
     if (existingRequest) {
+      console.log('Request already exists:', existingRequest);
       return NextResponse.json({ error: 'Request already exists' }, { status: 400 });
     }
+
+    const updatedRequests = [...currentRequests, newRequest];
     
-    const newRequest = {
-      ...requestData,
-      createdAt: new Date().toISOString(),
-    };
+    console.log('Updating research with requests:', updatedRequests);
+    await researchRef.update({ requests: updatedRequests });
     
-    await researchRef.update({
-      requests: [...(researchData?.requests || []), newRequest],
-    });
-    
-    const updatedResearchPaper = {
-      id: researchDoc.id,
+    const updatedResearch = {
+      id: researchId,
       ...researchData,
-      requests: [...(researchData?.requests || []), newRequest],
+      requests: updatedRequests,
     };
-    
-    return NextResponse.json(updatedResearchPaper);
+
+    console.log('Research updated successfully');
+    return NextResponse.json(updatedResearch);
   } catch (error) {
-    console.error('Error adding request to research paper:', error);
+    console.error('Error adding research request:', error);
     return NextResponse.json({ error: 'Failed to add request' }, { status: 500 });
   }
 }
