@@ -39,6 +39,17 @@ interface User {
 	credits?: number;
 	completedInterviews?: number;
 	coursesEnrolled?: number;
+	skills?: string[];
+	isProSubscriber?: boolean;
+	role?: string;
+	avatar?: string;
+	verified?: boolean;
+	lastCreditRenewalAt?: string;
+	resumeCredits?: number;
+	lastResumeCreditRenewalAt?: string;
+	subscriptionStatus?: string;
+	subscriptionId?: string;
+	subscriptionPlanId?: string;
 }
 
 interface InterviewCardProps {

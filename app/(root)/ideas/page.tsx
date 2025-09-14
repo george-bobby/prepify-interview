@@ -337,6 +337,9 @@ const ProjectsPage = () => {
         requests: [],
       };
 
+      console.log('Submitting data:', newItemData);
+      console.log('Skills being sent:', formData.skillsRequired);
+
       const endpoint =
         createType === "project" ? "/api/projects" : "/api/research";
       const response = await fetch(endpoint, {
@@ -367,8 +370,7 @@ const ProjectsPage = () => {
       setShowFloatingInput(false);
       setFloatingInputExpanded(false);
       toast.success(
-        `${
-          createType === "project" ? "Project" : "Research paper"
+        `${createType === "project" ? "Project" : "Research paper"
         } created successfully!`
       );
     } catch (error) {
@@ -386,7 +388,7 @@ const ProjectsPage = () => {
     if (item.createdById === currentUser.id) {
       toast.error(
         "You cannot request to join your own " +
-          (item.type === "project" ? "project" : "research paper")
+        (item.type === "project" ? "project" : "research paper")
       );
       return;
     }
@@ -398,7 +400,7 @@ const ProjectsPage = () => {
       if (response.ok) {
         const latestItem = await response.json();
         const latestRequest = latestItem.requests.find((req: any) => req.userId === currentUser.id);
-        
+
         if (latestRequest) {
           if (latestRequest.status === "pending") {
             toast.error("You have already requested to join this " + (item.type === "project" ? "project" : "research paper"));
@@ -476,7 +478,7 @@ const ProjectsPage = () => {
       }
 
       toast.success("Join request sent successfully!");
-      
+
       // Refresh data to ensure consistency
       setTimeout(() => {
         handleRefresh();
@@ -721,11 +723,10 @@ const ProjectsPage = () => {
               {isOwner && <span className="text-primary-200 ml-2">(You)</span>}
             </div>
           </div>
-          <span className={`inline-block px-3 py-1 rounded text-sm font-medium ${
-            type === "project" 
-              ? "bg-blue-400/20 text-blue-400" 
-              : "bg-purple-400/20 text-purple-400"
-          }`}>
+          <span className={`inline-block px-3 py-1 rounded text-sm font-medium ${type === "project"
+            ? "bg-blue-400/20 text-blue-400"
+            : "bg-purple-400/20 text-purple-400"
+            }`}>
             {type === "project" ? "Project" : "Research"}
           </span>
         </div>
@@ -752,11 +753,10 @@ const ProjectsPage = () => {
               return (
                 <span
                   key={index}
-                  className={`inline-block px-2 py-1 rounded text-xs ${
-                    userHasSkill
-                      ? "bg-green-400/20 text-green-400 font-medium"
-                      : "bg-primary-200/20 text-primary-200"
-                  }`}
+                  className={`inline-block px-2 py-1 rounded text-xs ${userHasSkill
+                    ? "bg-green-400/20 text-green-400 font-medium"
+                    : "bg-primary-200/20 text-primary-200"
+                    }`}
                 >
                   {skill}
                   {userHasSkill && " ✓"}
@@ -881,11 +881,10 @@ const ProjectsPage = () => {
                 .map((request) => (
                   <div
                     key={request.id}
-                    className={`bg-dark-300 rounded-lg p-6 border transition-all duration-200 ${
-                      request.status === "pending"
-                        ? "border-yellow-400/50 shadow-md"
-                        : "border-dark-400"
-                    }`}
+                    className={`bg-dark-300 rounded-lg p-6 border transition-all duration-200 ${request.status === "pending"
+                      ? "border-yellow-400/50 shadow-md"
+                      : "border-dark-400"
+                      }`}
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">
@@ -894,13 +893,12 @@ const ProjectsPage = () => {
                             {request.userName}
                           </h4>
                           <span
-                            className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              request.status === "pending"
-                                ? "bg-yellow-400/20 text-yellow-400"
-                                : request.status === "accepted"
+                            className={`px-3 py-1 rounded-full text-xs font-medium ${request.status === "pending"
+                              ? "bg-yellow-400/20 text-yellow-400"
+                              : request.status === "accepted"
                                 ? "bg-green-400/20 text-green-400"
                                 : "bg-red-400/20 text-red-400"
-                            }`}
+                              }`}
                           >
                             {request.status.toUpperCase()}
                           </span>
@@ -935,11 +933,10 @@ const ProjectsPage = () => {
                           return (
                             <span
                               key={index}
-                              className={`inline-block px-3 py-1 rounded-full text-sm ${
-                                isMatchingSkill
-                                  ? "bg-green-400/20 text-green-400 font-medium border border-green-400/30"
-                                  : "bg-primary-200/20 text-primary-200"
-                              }`}
+                              className={`inline-block px-3 py-1 rounded-full text-sm ${isMatchingSkill
+                                ? "bg-green-400/20 text-green-400 font-medium border border-green-400/30"
+                                : "bg-primary-200/20 text-primary-200"
+                                }`}
                             >
                               {skill}
                               {isMatchingSkill && " ✓"}
@@ -969,7 +966,7 @@ const ProjectsPage = () => {
                               ) /
                                 selectedProjectForRequests.skillsRequired
                                   .length) *
-                                100
+                              100
                             )}
                             % match)
                           </span>
@@ -1264,18 +1261,11 @@ const ProjectsPage = () => {
           </div>
         </div>
 
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-light-100 mb-2">
-            Projects & Research
-          </h1>
-        </div>
-
         {/* Projects & Research Papers Section */}
         <div className="bg-dark-200 rounded-lg p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-light-100 font-semibold text-xl">Projects & Research Papers</h3>
-            
+
             <span className="text-light-300 text-sm whitespace-nowrap">
               {sortedAllItems.length} total ({filteredProjects.length} projects, {filteredResearch.length} research papers)
             </span>
@@ -1284,10 +1274,10 @@ const ProjectsPage = () => {
           {sortedAllItems.length > 0 ? (
             <div className="grid gap-4">
               {sortedAllItems.map((item) => (
-                <ProjectCard 
-                  key={item.id} 
-                  item={item} 
-                  type={item.type === "project" ? "project" : "research"} 
+                <ProjectCard
+                  key={item.id}
+                  item={item}
+                  type={item.type === "project" ? "project" : "research"}
                 />
               ))}
             </div>
@@ -1411,21 +1401,19 @@ const ProjectsPage = () => {
                 <div className="flex bg-dark-300/80 rounded-full p-1 mr-3">
                   <button
                     onClick={() => setCreateType("project")}
-                    className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
-                      createType === "project"
-                        ? "bg-blue-500 text-white shadow-md"
-                        : "text-light-400 hover:text-light-200"
-                    }`}
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${createType === "project"
+                      ? "bg-blue-500 text-white shadow-md"
+                      : "text-light-400 hover:text-light-200"
+                      }`}
                   >
                     Project
                   </button>
                   <button
                     onClick={() => setCreateType("research")}
-                    className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
-                      createType === "research"
-                        ? "bg-purple-500 text-white shadow-md"
-                        : "text-light-400 hover:text-light-200"
-                    }`}
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${createType === "research"
+                      ? "bg-purple-500 text-white shadow-md"
+                      : "text-light-400 hover:text-light-200"
+                      }`}
                   >
                     Research
                   </button>
@@ -1445,11 +1433,10 @@ const ProjectsPage = () => {
                   <button
                     type="button"
                     onClick={() => setFloatingInputExpanded(floatingInputExpanded === "description" ? false : "description")}
-                    className={`p-2 rounded-lg transition-all duration-200 ${
-                      floatingInputExpanded === "description"
-                        ? "bg-primary-200/20 text-primary-200"
-                        : "text-light-400 hover:text-light-200 hover:bg-dark-300/50"
-                    }`}
+                    className={`p-2 rounded-lg transition-all duration-200 ${floatingInputExpanded === "description"
+                      ? "bg-primary-200/20 text-primary-200"
+                      : "text-light-400 hover:text-light-200 hover:bg-dark-300/50"
+                      }`}
                     title="Add Description"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -1460,11 +1447,10 @@ const ProjectsPage = () => {
                   <button
                     type="button"
                     onClick={() => setFloatingInputExpanded(floatingInputExpanded === "team" ? false : "team")}
-                    className={`p-2 rounded-lg transition-all duration-200 ${
-                      floatingInputExpanded === "team"
-                        ? "bg-primary-200/20 text-primary-200"
-                        : "text-light-400 hover:text-light-200 hover:bg-dark-300/50"
-                    }`}
+                    className={`p-2 rounded-lg transition-all duration-200 ${floatingInputExpanded === "team"
+                      ? "bg-primary-200/20 text-primary-200"
+                      : "text-light-400 hover:text-light-200 hover:bg-dark-300/50"
+                      }`}
                     title="Set Team Size"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -1475,11 +1461,10 @@ const ProjectsPage = () => {
                   <button
                     type="button"
                     onClick={() => setFloatingInputExpanded(floatingInputExpanded === "skills" ? false : "skills")}
-                    className={`p-2 rounded-lg transition-all duration-200 ${
-                      floatingInputExpanded === "skills"
-                        ? "bg-primary-200/20 text-primary-200"
-                        : "text-light-400 hover:text-light-200 hover:bg-dark-300/50"
-                    }`}
+                    className={`p-2 rounded-lg transition-all duration-200 ${floatingInputExpanded === "skills"
+                      ? "bg-primary-200/20 text-primary-200"
+                      : "text-light-400 hover:text-light-200 hover:bg-dark-300/50"
+                      }`}
                     title="Add Skills"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">

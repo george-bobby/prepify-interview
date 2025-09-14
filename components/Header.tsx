@@ -12,9 +12,9 @@ const Header = async () => {
   const navLinks = [
     { href: "/interviews", label: "Interviews" },
     { href: "/dashboard", label: "Dashboard" },
-    { href: "/project", label: "P & R" },
+    { href: "/ideas", label: "Ideas" },
     { href: "/courses", label: "Courses" },
-    { href: "/social", label: "Social" },
+    { href: "/feed", label: "Feed" },
     { href: "/coding", label: "Coding" },
     { href: "/roadmaps", label: "Roadmaps" },
     { href: "/resume", label: "Resume" },

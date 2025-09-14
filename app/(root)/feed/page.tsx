@@ -361,12 +361,11 @@ const SocialTab = () => {
               type: "share",
               postId: postToShare.id!,
               title: "Post Shared With You",
-              message: `${
-                currentUser?.name || "Someone"
-              } shared a post with you: "${postToShare.content.substring(
-                0,
-                100
-              )}${postToShare.content.length > 100 ? "..." : ""}"`,
+              message: `${currentUser?.name || "Someone"
+                } shared a post with you: "${postToShare.content.substring(
+                  0,
+                  100
+                )}${postToShare.content.length > 100 ? "..." : ""}"`,
             });
           } catch (error) {
             console.error(
@@ -382,8 +381,7 @@ const SocialTab = () => {
 
         if (foundUsers.length > 0) {
           toast.success(
-            `Notifications sent to ${foundUsers.length} user${
-              foundUsers.length > 1 ? "s" : ""
+            `Notifications sent to ${foundUsers.length} user${foundUsers.length > 1 ? "s" : ""
             }`
           );
           // Refresh unread count since we may have created notifications for the current user
@@ -403,8 +401,7 @@ const SocialTab = () => {
       );
 
       toast.success(
-        `Post shared with ${usernames.length} user${
-          usernames.length > 1 ? "s" : ""
+        `Post shared with ${usernames.length} user${usernames.length > 1 ? "s" : ""
         }!`
       );
       setShowShareModal(false);
@@ -546,39 +543,6 @@ const SocialTab = () => {
           </div>
         )}
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <div className="flex items-center space-x-3">
-              <User className="w-8 h-8 text-blue-400" />
-              <div>
-                <p className="text-2xl font-bold text-white">1,247</p>
-                <p className="text-gray-400 text-sm">Community Members</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <div className="flex items-center space-x-3">
-              <Briefcase className="w-8 h-8 text-green-400" />
-              <div>
-                <p className="text-2xl font-bold text-white">89</p>
-                <p className="text-gray-400 text-sm">Job Offers This Week</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <div className="flex items-center space-x-3">
-              <MessageCircle className="w-8 h-8 text-purple-400" />
-              <div>
-                <p className="text-2xl font-bold text-white">456</p>
-                <p className="text-gray-400 text-sm">Active Discussions</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Feed */}
         <div className="space-y-6">
           {loading ? (
@@ -677,16 +641,14 @@ const SocialTab = () => {
                     <div className="flex items-center space-x-6">
                       <button
                         onClick={() => handleLike(post.id!)}
-                        className={`flex items-center space-x-2 transition-colors ${
-                          post.isLikedByUser
+                        className={`flex items-center space-x-2 transition-colors ${post.isLikedByUser
                             ? "text-red-400"
                             : "text-gray-400 hover:text-red-400"
-                        }`}
+                          }`}
                       >
                         <Heart
-                          className={`w-5 h-5 ${
-                            post.isLikedByUser ? "fill-current" : ""
-                          }`}
+                          className={`w-5 h-5 ${post.isLikedByUser ? "fill-current" : ""
+                            }`}
                         />
                         <span className="text-sm">{post.likesCount}</span>
                       </button>
@@ -701,11 +663,10 @@ const SocialTab = () => {
 
                       <button
                         onClick={() => handleShare(post.id!)}
-                        className={`flex items-center space-x-2 transition-colors ${
-                          post.isSharedByUser
+                        className={`flex items-center space-x-2 transition-colors ${post.isSharedByUser
                             ? "text-green-400"
                             : "text-gray-400 hover:text-green-400"
-                        }`}
+                          }`}
                       >
                         <Share className="w-5 h-5" />
                         <span className="text-sm">{post.sharesCount}</span>

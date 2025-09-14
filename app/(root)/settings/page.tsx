@@ -5,17 +5,6 @@ import { getCurrentUser } from "@/lib/actions/auth.action";
 import { redirect } from "next/navigation";
 import SubscriptionSection from "@/components/SubscriptionSection";
 
-interface User {
-  id: string;
-  name: string;
-  email?: string;
-  skills?: string[];
-  isProSubscriber?: boolean;
-  credits?: number;
-  completedInterviews?: number;
-  coursesEnrolled?: number;
-}
-
 const AccountSettingsPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [skills, setSkills] = useState<string[]>([]);
@@ -67,24 +56,33 @@ const AccountSettingsPage = () => {
     setIsEditingProfile(true);
   };
 
-  const handleSaveProfile = () => {
-    // Here you would typically make an API call to save the profile
-    // For now, we'll just update the local state
-    if (user) {
-      setUser({
-        ...user,
-        name: editedName,
-        email: editedEmail,
-        skills: skills,
+  const handleSaveProfile = async () => {
+    try {
+      const response = await fetch('/api/user/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: editedName,
+          email: editedEmail,
+          skills: skills,
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to save profile');
+      }
+
+      const updatedUser = await response.json();
+      setUser(updatedUser);
+      setIsEditingProfile(false);
+
+      // Show success message (you can add a toast library for better UX)
+      console.log("Profile saved successfully!");
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      // Show error message (you can add a toast library for better UX)
+      alert("Failed to save profile. Please try again.");
     }
-    setIsEditingProfile(false);
-    // TODO: Add API call to save profile changes
-    console.log("Saving profile:", {
-      name: editedName,
-      email: editedEmail,
-      skills,
-    });
   };
 
   const handleCancelEdit = () => {
@@ -290,11 +288,10 @@ const AccountSettingsPage = () => {
                       type="button"
                       onClick={() => addSuggestedSkill(skill)}
                       disabled={skills.includes(skill)}
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm transition-colors border border-dark-500 ${
-                        skills.includes(skill)
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm transition-colors border border-dark-500 ${skills.includes(skill)
                           ? "bg-dark-500 text-light-300 cursor-not-allowed"
                           : "bg-dark-400 hover:bg-primary-200 hover:text-dark-100 text-light-200"
-                      }`}
+                        }`}
                     >
                       {skill}
                       {!skills.includes(skill) && (
