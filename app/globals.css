@@ -25,26 +25,68 @@ html {
 }
 
 @theme {
-	--color-success-100: #49de50;
-	--color-success-200: #42c748;
-	--color-destructive-100: #f75353;
-	--color-destructive-200: #c44141;
+	--color-success-100: #10b981;
+	--color-success-200: #059669;
+	--color-success-300: #047857;
+	--color-destructive-100: #ef4444;
+	--color-destructive-200: #dc2626;
+	--color-destructive-300: #b91c1c;
 
-	--color-primary-100: #dddfff;
-	--color-primary-200: #cac5fe;
+	--color-primary-100: #e0e7ff;
+	--color-primary-200: #c7d2fe;
+	--color-primary-300: #a5b4fc;
+	--color-primary-400: #818cf8;
+	--color-primary-500: #6366f1;
 
-	--color-light-100: #d6e0ff;
-	--color-light-400: #6870a6;
-	--color-light-600: #4f557d;
-	--color-light-800: #24273a;
+	--color-light-100: #f8fafc;
+	--color-light-200: #f1f5f9;
+	--color-light-300: #e2e8f0;
+	--color-light-400: #94a3b8;
+	--color-light-500: #64748b;
+	--color-light-600: #475569;
+	--color-light-700: #334155;
+	--color-light-800: #1e293b;
 
-	--color-dark-100: #020408;
-	--color-dark-200: #27282f;
-	--color-dark-300: #242633;
+	--color-dark-100: #0f172a;
+	--color-dark-200: #1e293b;
+	--color-dark-300: #334155;
+	--color-dark-400: #475569;
+
+	/* Glass morphism colors */
+	--color-glass-light: rgba(255, 255, 255, 0.1);
+	--color-glass-dark: rgba(0, 0, 0, 0.2);
+
+	/* Gradient stops */
+	--gradient-primary: linear-gradient(135deg, var(--color-primary-400), var(--color-primary-500));
+	--gradient-success: linear-gradient(135deg, var(--color-success-100), var(--color-success-200));
+	--gradient-glass: linear-gradient(135deg, var(--color-glass-light), var(--color-glass-dark));
 
 	--font-mona-sans: 'Mona Sans', sans-serif;
-
 	--bg-pattern: url('/pattern.png');
+
+	/* Enhanced spacing scale */
+	--spacing-xs: 0.25rem;
+	--spacing-sm: 0.5rem;
+	--spacing-md: 1rem;
+	--spacing-lg: 1.5rem;
+	--spacing-xl: 2rem;
+	--spacing-2xl: 3rem;
+
+	/* Enhanced border radius */
+	--radius-xs: 0.25rem;
+	--radius-sm: 0.375rem;
+	--radius-md: 0.5rem;
+	--radius-lg: 0.75rem;
+	--radius-xl: 1rem;
+	--radius-2xl: 1.5rem;
+	--radius-full: 9999px;
+
+	/* Shadows */
+	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+	--shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+	--shadow-glow: 0 0 20px var(--color-primary-400);
 }
 
 :root {
@@ -338,17 +380,111 @@ html {
 	@apply flex items-center justify-center;
 }
 
+/* Enhanced Animation Utilities */
 @utility animate-fadeIn {
 	animation: fadeIn 0.3s ease-in-out;
+}
+
+@utility animate-slideUp {
+	animation: slideUp 0.4s ease-out;
+}
+
+@utility animate-slideDown {
+	animation: slideDown 0.4s ease-out;
+}
+
+@utility animate-scaleIn {
+	animation: scaleIn 0.3s ease-out;
+}
+
+@utility animate-glow {
+	animation: glow 2s ease-in-out infinite alternate;
+}
+
+/* Glass Morphism Utilities */
+@utility glass-light {
+	@apply backdrop-blur-md bg-white/10 border border-white/20;
+}
+
+@utility glass-dark {
+	@apply backdrop-blur-md bg-black/10 border border-white/10;
+}
+
+/* Enhanced Gradient Utilities */
+@utility gradient-primary {
+	@apply bg-gradient-to-r from-primary-400 to-primary-500;
+}
+
+@utility gradient-success {
+	@apply bg-gradient-to-r from-success-100 to-success-200;
+}
+
+@utility gradient-glass {
+	@apply bg-gradient-to-br from-white/10 to-black/10 backdrop-blur-sm;
+}
+
+/* Interactive States */
+@utility hover-lift {
+	@apply hover:-translate-y-1 hover:shadow-lg transition-all duration-200;
+}
+
+@utility hover-glow {
+	@apply hover:shadow-lg hover:shadow-primary/25 transition-all duration-300;
+}
+
+@utility focus-ring {
+	@apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
 }
 
 @keyframes fadeIn {
 	from {
 		opacity: 0;
-		transform: translateY(5px);
+		transform: translateY(10px);
 	}
 	to {
 		opacity: 1;
 		transform: translateY(0);
+	}
+}
+
+@keyframes slideUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideDown {
+	from {
+		opacity: 0;
+		transform: translateY(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes scaleIn {
+	from {
+		opacity: 0;
+		transform: scale(0.9);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes glow {
+	from {
+		box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+	}
+	to {
+		box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
 	}
 }
