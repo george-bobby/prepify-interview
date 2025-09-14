@@ -7,6 +7,8 @@ import {
   Loader2,
   MoreHorizontal,
   Calendar,
+  Share2,
+  X,
 } from "lucide-react";
 import { socialAPI } from "@/lib/services/social-api";
 import { CommentWithInteractions } from "@/lib/schemas/social";
@@ -31,6 +33,11 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
   const [submittingComment, setSubmittingComment] = useState(false);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [commentToShare, setCommentToShare] =
+    useState<CommentWithInteractions | null>(null);
+  const [shareUsername, setShareUsername] = useState("");
+  const [sharingComment, setSharingComment] = useState(false);
 
   useEffect(() => {
     if (isOpen && postId) {
@@ -150,6 +157,45 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
     }
   };
 
+  const handleShareComment = (comment: CommentWithInteractions) => {
+    setCommentToShare(comment);
+    setShowShareModal(true);
+  };
+
+  const handleConfirmShare = async () => {
+    if (!commentToShare || !shareUsername.trim()) {
+      toast.error("Please enter a username to share with");
+      return;
+    }
+
+    try {
+      setSharingComment(true);
+
+      // For now, we'll just show a success message
+      // In a real implementation, you would send this to a notification system or messaging API
+      const shareMessage = `${commentToShare.authorName} commented: "${commentToShare.content}"`;
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      toast.success(`Comment shared with @${shareUsername}!`);
+      setShowShareModal(false);
+      setCommentToShare(null);
+      setShareUsername("");
+    } catch (error) {
+      console.error("Error sharing comment:", error);
+      toast.error("Failed to share comment");
+    } finally {
+      setSharingComment(false);
+    }
+  };
+
+  const handleCancelShare = () => {
+    setShowShareModal(false);
+    setCommentToShare(null);
+    setShareUsername("");
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -236,6 +282,14 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
                       >
                         Reply
                       </button>
+
+                      <button
+                        onClick={() => handleShareComment(comment)}
+                        className="text-gray-400 hover:text-blue-400"
+                        title="Share comment"
+                      >
+                        <Share2 className="w-3 h-3" />
+                      </button>
                     </div>
 
                     {/* Reply Input */}
@@ -298,21 +352,31 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
                                   {reply.content}
                                 </p>
                               </div>
-                              <button
-                                onClick={() => handleLikeComment(reply.id!)}
-                                className={`flex items-center space-x-1 mt-1 text-xs ${
-                                  reply.isLikedByUser
-                                    ? "text-red-400"
-                                    : "text-gray-400 hover:text-red-400"
-                                }`}
-                              >
-                                <Heart
-                                  className={`w-3 h-3 ${
-                                    reply.isLikedByUser ? "fill-current" : ""
+                              <div className="flex items-center space-x-3 mt-1">
+                                <button
+                                  onClick={() => handleLikeComment(reply.id!)}
+                                  className={`flex items-center space-x-1 text-xs ${
+                                    reply.isLikedByUser
+                                      ? "text-red-400"
+                                      : "text-gray-400 hover:text-red-400"
                                   }`}
-                                />
-                                <span>{reply.likesCount}</span>
-                              </button>
+                                >
+                                  <Heart
+                                    className={`w-3 h-3 ${
+                                      reply.isLikedByUser ? "fill-current" : ""
+                                    }`}
+                                  />
+                                  <span>{reply.likesCount}</span>
+                                </button>
+
+                                <button
+                                  onClick={() => handleShareComment(reply)}
+                                  className="text-gray-400 hover:text-blue-400 text-xs"
+                                  title="Share reply"
+                                >
+                                  <Share2 className="w-3 h-3" />
+                                </button>
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -359,6 +423,75 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Share Comment Modal */}
+      {showShareModal && commentToShare && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60">
+          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-white">
+                Share Comment
+              </h3>
+              <button
+                onClick={handleCancelShare}
+                className="text-gray-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="mb-4 p-3 bg-gray-700 rounded-lg">
+              <div className="flex items-center space-x-2 mb-2">
+                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
+                  {commentToShare.authorName.charAt(0).toUpperCase()}
+                </div>
+                <span className="text-sm font-medium text-white">
+                  {commentToShare.authorName}
+                </span>
+              </div>
+              <p className="text-gray-300 text-sm">{commentToShare.content}</p>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Share with username:
+              </label>
+              <input
+                type="text"
+                value={shareUsername}
+                onChange={(e) => setShareUsername(e.target.value)}
+                placeholder="Enter username..."
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    handleConfirmShare();
+                  }
+                }}
+              />
+            </div>
+
+            <div className="flex space-x-3">
+              <button
+                onClick={handleCancelShare}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-white"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmShare}
+                disabled={!shareUsername.trim() || sharingComment}
+                className="flex-1 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 px-4 py-2 rounded-lg text-white flex items-center justify-center"
+              >
+                {sharingComment ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  "Share"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

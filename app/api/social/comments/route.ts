@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   try {
     // Get current user for personalized data
     const currentUser = await getCurrentUser();
-    
+
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const queryParams = {
@@ -50,11 +50,18 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response);
   } catch (error) {
     console.error('Error fetching comments:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
         { status: 400 }
+      );
+    }
+
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 }
       );
     }
 

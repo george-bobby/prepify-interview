@@ -337,22 +337,37 @@ export class SocialService {
   }
 
   async getComments(query: GetCommentsQuery, currentUserId?: string): Promise<{ comments: CommentWithInteractions[], totalCount: number }> {
-    // Get top-level comments first
-    let commentsQuery = this.commentsCollection
-      .where('postId', '==', query.postId)
-      .where('parentCommentId', '==', null)
-      .orderBy(query.sortBy, query.sortOrder)
-      .limit(query.limit)
-      .offset(query.offset);
+    try {
+      // Get top-level comments first - use the simplest possible query
+      const snapshot = await this.commentsCollection
+        .where('postId', '==', query.postId)
+        .get();
+      // Filter to only top-level comments (no parent)
+      let comments: Comment[] = snapshot.docs
+        .map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        } as Comment))
+        .filter(comment => !comment.parentCommentId);
 
-    const snapshot = await commentsQuery.get();
-    const comments: Comment[] = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    } as Comment));
+      // Sort comments in memory
+      comments.sort((a, b) => {
+        if (query.sortBy === 'createdAt') {
+          const dateA = new Date(a.createdAt).getTime();
+          const dateB = new Date(b.createdAt).getTime();
+          return query.sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+        } else if (query.sortBy === 'likesCount') {
+          return query.sortOrder === 'asc' ? a.likesCount - b.likesCount : b.likesCount - a.likesCount;
+        }
+        return 0;
+      });
 
-    // Get replies for each comment and user interactions
-    const commentsWithInteractions: CommentWithInteractions[] = await Promise.all(
+      // Apply pagination in memory
+      const totalCount = comments.length;
+      comments = comments.slice(query.offset, query.offset + query.limit);
+
+      // Get replies for each comment and user interactions
+      const commentsWithInteractions: CommentWithInteractions[] = await Promise.all(
       comments.map(async (comment) => {
         let isLikedByUser = false;
         let userLikeId: string | undefined;
@@ -371,14 +386,22 @@ export class SocialService {
           }
         }
 
-        // Get replies for this comment
+        // Get replies for this comment - simplified query to avoid index issues
         const repliesSnapshot = await this.commentsCollection
           .where('parentCommentId', '==', comment.id)
-          .orderBy('createdAt', 'asc')
           .get();
 
+        // Sort replies in memory by createdAt
+        const sortedReplyDocs = repliesSnapshot.docs.sort((a, b) => {
+          const dataA = a.data();
+          const dataB = b.data();
+          const dateA = new Date(dataA.createdAt).getTime();
+          const dateB = new Date(dataB.createdAt).getTime();
+          return dateA - dateB; // ascending order
+        });
+
         const replies: CommentWithInteractions[] = await Promise.all(
-          repliesSnapshot.docs.map(async (replyDoc) => {
+          sortedReplyDocs.map(async (replyDoc) => {
             const reply = { id: replyDoc.id, ...replyDoc.data() } as Comment;
             let replyIsLikedByUser = false;
             let replyUserLikeId: string | undefined;
@@ -411,16 +434,14 @@ export class SocialService {
           replies,
         };
       })
-    );
+      );
 
-    // Get total count for pagination
-    const totalSnapshot = await this.commentsCollection
-      .where('postId', '==', query.postId)
-      .where('parentCommentId', '==', null)
-      .get();
-    const totalCount = totalSnapshot.size;
-
-    return { comments: commentsWithInteractions, totalCount };
+      // Total count is already calculated above
+      return { comments: commentsWithInteractions, totalCount };
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      throw new Error('Failed to fetch comments from database');
+    }
   }
 
   async updateComment(commentId: string, userId: string, updateData: UpdateCommentRequest): Promise<Comment> {

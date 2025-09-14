@@ -5,19 +5,18 @@ import {
   MessageCircle,
   Share,
   Image,
-  Video,
-  FileText,
   User,
   Briefcase,
   Calendar,
   Loader2,
   Trash2,
-  MoreHorizontal,
+  X,
 } from "lucide-react";
 import { socialAPI } from "@/lib/services/social-api";
 import { PostWithInteractions } from "@/lib/schemas/social";
 import { toast } from "sonner";
 import CommentsSection from "@/components/CommentsSection";
+import { getCurrentUser } from "@/lib/actions/auth.action";
 
 const SocialTab = () => {
   const [posts, setPosts] = useState<PostWithInteractions[]>([]);
@@ -34,11 +33,28 @@ const SocialTab = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
   const [deletingPost, setDeletingPost] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [postToShare, setPostToShare] = useState<PostWithInteractions | null>(
+    null
+  );
+  const [shareUsernames, setShareUsernames] = useState("");
+  const [sharingPost, setSharingPost] = useState(false);
 
-  // Load initial posts
+  // Load initial posts and current user
   useEffect(() => {
     loadPosts();
+    loadCurrentUser();
   }, []);
+
+  const loadCurrentUser = async () => {
+    try {
+      const user = await getCurrentUser();
+      setCurrentUser(user);
+    } catch (error) {
+      console.error("Error loading current user:", error);
+    }
+  };
 
   const loadPosts = async (offset = 0, append = false) => {
     try {
@@ -257,56 +273,69 @@ const SocialTab = () => {
     }
   };
 
-  const handleShare = async (postId: string) => {
-    try {
-      // Optimistic update
-      setPosts(
-        posts.map((post) => {
-          if (post.id === postId) {
-            return {
-              ...post,
-              isSharedByUser: !post.isSharedByUser,
-              sharesCount: post.isSharedByUser
-                ? post.sharesCount - 1
-                : post.sharesCount + 1,
-            };
-          }
-          return post;
-        })
-      );
-
-      // API call
-      const currentPost = posts.find((p) => p.id === postId);
-      if (currentPost?.isSharedByUser) {
-        await socialAPI.unsharePost(postId);
-        toast.success("Post unshared");
-      } else {
-        await socialAPI.sharePost({
-          postId,
-          shareType: "direct",
-        });
-        toast.success("Post shared successfully!");
-      }
-    } catch (error) {
-      console.error("Error toggling share:", error);
-      toast.error("Failed to update share");
-
-      // Revert optimistic update
-      setPosts(
-        posts.map((post) => {
-          if (post.id === postId) {
-            return {
-              ...post,
-              isSharedByUser: !post.isSharedByUser,
-              sharesCount: post.isSharedByUser
-                ? post.sharesCount + 1
-                : post.sharesCount - 1,
-            };
-          }
-          return post;
-        })
-      );
+  const handleShare = (postId: string) => {
+    const post = posts.find((p) => p.id === postId);
+    if (post) {
+      setPostToShare(post);
+      setShowShareModal(true);
     }
+  };
+
+  const handleConfirmShare = async () => {
+    if (!postToShare || !shareUsernames.trim()) {
+      toast.error("Please enter at least one username to share with");
+      return;
+    }
+
+    try {
+      setSharingPost(true);
+
+      // Parse usernames (comma-separated)
+      const usernames = shareUsernames
+        .split(",")
+        .map((username) => username.trim())
+        .filter((username) => username.length > 0);
+
+      if (usernames.length === 0) {
+        toast.error("Please enter valid usernames");
+        return;
+      }
+
+      // For now, we'll simulate the sharing process
+      // In a real implementation, you would send this to a notification system or messaging API
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Update the post's share count
+      setPosts(
+        posts.map((post) =>
+          post.id === postToShare.id
+            ? { ...post, sharesCount: post.sharesCount + usernames.length }
+            : post
+        )
+      );
+
+      toast.success(
+        `Post shared with ${usernames.length} user${
+          usernames.length > 1 ? "s" : ""
+        }!`
+      );
+      setShowShareModal(false);
+      setPostToShare(null);
+      setShareUsernames("");
+    } catch (error) {
+      console.error("Error sharing post:", error);
+      toast.error("Failed to share post");
+    } finally {
+      setSharingPost(false);
+    }
+  };
+
+  const handleCancelShare = () => {
+    setShowShareModal(false);
+    setPostToShare(null);
+    setShareUsernames("");
   };
 
   return (
@@ -390,8 +419,6 @@ const SocialTab = () => {
                       className="hidden"
                     />
                   </label>
-                  <Video className="w-5 h-5 cursor-pointer hover:text-white" />
-                  <FileText className="w-5 h-5 cursor-pointer hover:text-white" />
                 </div>
 
                 <button
@@ -505,16 +532,18 @@ const SocialTab = () => {
                       </div>
                     </div>
 
-                    {/* Post Actions Menu */}
-                    <div className="relative">
-                      <button
-                        onClick={() => handleDeletePost(post.id!)}
-                        className="text-gray-400 hover:text-red-400 transition-colors p-1"
-                        title="Delete post"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+                    {/* Post Actions Menu - Only show for post creator */}
+                    {currentUser && currentUser.id === post.userId && (
+                      <div className="relative">
+                        <button
+                          onClick={() => handleDeletePost(post.id!)}
+                          className="text-gray-400 hover:text-red-400 transition-colors p-1"
+                          title="Delete post"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -646,6 +675,89 @@ const SocialTab = () => {
                   </>
                 ) : (
                   "Delete"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share Post Modal */}
+      {showShareModal && postToShare && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-white">Share Post</h3>
+              <button
+                onClick={handleCancelShare}
+                className="text-gray-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="mb-4 p-3 bg-gray-700 rounded-lg">
+              <div className="flex items-center space-x-2 mb-2">
+                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
+                  {postToShare.authorName.charAt(0).toUpperCase()}
+                </div>
+                <span className="text-sm font-medium text-white">
+                  {postToShare.authorName}
+                </span>
+              </div>
+              <p className="text-gray-300 text-sm">
+                {postToShare.content.length > 150
+                  ? `${postToShare.content.substring(0, 150)}...`
+                  : postToShare.content}
+              </p>
+              {postToShare.imageUrl && (
+                <div className="mt-2">
+                  <img
+                    src={postToShare.imageUrl}
+                    alt="Post content"
+                    className="w-full h-32 object-cover rounded-lg"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Share with usernames (comma-separated):
+              </label>
+              <textarea
+                value={shareUsernames}
+                onChange={(e) => setShareUsernames(e.target.value)}
+                placeholder="Enter usernames separated by commas (e.g., john_doe, jane_smith, alex_wilson)"
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 resize-none"
+                rows={3}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && e.ctrlKey) {
+                    handleConfirmShare();
+                  }
+                }}
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                Tip: Press Ctrl+Enter to share quickly
+              </p>
+            </div>
+
+            <div className="flex space-x-3">
+              <button
+                onClick={handleCancelShare}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-white"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmShare}
+                disabled={!shareUsernames.trim() || sharingPost}
+                className="flex-1 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 px-4 py-2 rounded-lg text-white flex items-center justify-center"
+              >
+                {sharingPost ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  "Share"
                 )}
               </button>
             </div>
