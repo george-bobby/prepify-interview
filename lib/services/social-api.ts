@@ -1,15 +1,19 @@
-import { 
-  PostWithInteractions, 
+import {
+  PostWithInteractions,
   CommentWithInteractions,
-  CreatePostRequest, 
+  Notification,
+  CreatePostRequest,
   CreateCommentRequest,
   UpdatePostRequest,
   UpdateCommentRequest,
   PostsResponse,
   CommentsResponse,
+  NotificationsResponse,
   GetPostsQuery,
   GetCommentsQuery,
-  ShareActionRequest
+  GetNotificationsQuery,
+  ShareActionRequest,
+  CreateNotificationRequest
 } from '@/lib/schemas/social';
 
 export class SocialAPI {
@@ -202,8 +206,8 @@ export class SocialAPI {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to share post');
+      const errorData = await response.json();
+      throw new Error(errorData.error || `HTTP ${response.status}: Failed to share post`);
     }
   }
 
@@ -216,6 +220,94 @@ export class SocialAPI {
       const error = await response.json();
       throw new Error(error.error || 'Failed to unshare post');
     }
+  }
+
+  // Notifications API
+  async getNotifications(query: Partial<GetNotificationsQuery> = {}): Promise<NotificationsResponse> {
+    const searchParams = new URLSearchParams();
+
+    if (query.limit) searchParams.set('limit', query.limit.toString());
+    if (query.offset) searchParams.set('offset', query.offset.toString());
+    if (query.unreadOnly) searchParams.set('unreadOnly', query.unreadOnly.toString());
+
+    const response = await fetch(`${this.baseUrl}/notifications?${searchParams}`);
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to fetch notifications');
+    }
+
+    return response.json();
+  }
+
+  async createNotification(notificationData: CreateNotificationRequest): Promise<Notification> {
+    const response = await fetch(`${this.baseUrl}/notifications`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(notificationData),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to create notification');
+    }
+
+    const result = await response.json();
+    return result.notification;
+  }
+
+  async markNotificationAsRead(notificationId: string): Promise<void> {
+    const response = await fetch(`${this.baseUrl}/notifications?id=${notificationId}`, {
+      method: 'PATCH',
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to mark notification as read');
+    }
+  }
+
+  async markAllNotificationsAsRead(): Promise<void> {
+    const response = await fetch(`${this.baseUrl}/notifications?action=markAllRead`, {
+      method: 'PATCH',
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to mark all notifications as read');
+    }
+  }
+
+  async deleteNotification(notificationId: string): Promise<void> {
+    const response = await fetch(`${this.baseUrl}/notifications?id=${notificationId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to delete notification');
+    }
+  }
+
+  // User lookup API
+  async findUsersByIdentifiers(identifiers: string[]): Promise<Array<{id: string, name: string, email: string, matchedBy: 'name' | 'email'}>> {
+    const response = await fetch(`${this.baseUrl}/users/find`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ identifiers }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to find users');
+    }
+
+    const result = await response.json();
+    return result.users || [];
   }
 }
 

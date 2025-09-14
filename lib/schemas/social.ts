@@ -63,6 +63,20 @@ export const commentLikeSchema = z.object({
   createdAt: z.string(),
 });
 
+export const notificationSchema = z.object({
+  id: z.string().optional(),
+  userId: z.string(), // User who will receive the notification
+  fromUserId: z.string(), // User who triggered the notification
+  fromUserName: z.string(),
+  type: z.enum(['share', 'like', 'comment', 'follow']),
+  postId: z.string().optional(), // For post-related notifications
+  commentId: z.string().optional(), // For comment-related notifications
+  title: z.string(),
+  message: z.string(),
+  isRead: z.boolean().default(false),
+  createdAt: z.string(),
+});
+
 // Request/Response schemas for API endpoints
 export const createPostSchema = z.object({
   content: z.string().min(1).max(5000),
@@ -102,6 +116,23 @@ export const commentLikeActionSchema = z.object({
   commentId: z.string(),
 });
 
+export const createNotificationSchema = z.object({
+  userId: z.string(),
+  fromUserId: z.string(),
+  fromUserName: z.string(),
+  type: z.enum(['share', 'like', 'comment', 'follow']),
+  postId: z.string().optional(),
+  commentId: z.string().optional(),
+  title: z.string(),
+  message: z.string(),
+});
+
+export const getNotificationsQuerySchema = z.object({
+  limit: z.number().min(1).max(100).default(20),
+  offset: z.number().min(0).default(0),
+  unreadOnly: z.boolean().default(false),
+});
+
 // Query schemas
 export const getPostsQuerySchema = z.object({
   limit: z.number().min(1).max(50).default(20),
@@ -125,6 +156,7 @@ export type Like = z.infer<typeof likeSchema>;
 export type Comment = z.infer<typeof commentSchema>;
 export type Share = z.infer<typeof shareSchema>;
 export type CommentLike = z.infer<typeof commentLikeSchema>;
+export type Notification = z.infer<typeof notificationSchema>;
 
 export type CreatePostRequest = z.infer<typeof createPostSchema>;
 export type UpdatePostRequest = z.infer<typeof updatePostSchema>;
@@ -133,9 +165,11 @@ export type UpdateCommentRequest = z.infer<typeof updateCommentSchema>;
 export type LikeActionRequest = z.infer<typeof likeActionSchema>;
 export type ShareActionRequest = z.infer<typeof shareActionSchema>;
 export type CommentLikeActionRequest = z.infer<typeof commentLikeActionSchema>;
+export type CreateNotificationRequest = z.infer<typeof createNotificationSchema>;
 
 export type GetPostsQuery = z.infer<typeof getPostsQuerySchema>;
 export type GetCommentsQuery = z.infer<typeof getCommentsQuerySchema>;
+export type GetNotificationsQuery = z.infer<typeof getNotificationsQuerySchema>;
 
 // Extended post type with user interaction status
 export interface PostWithInteractions extends Post {
@@ -162,6 +196,13 @@ export interface PostsResponse {
 export interface CommentsResponse {
   comments: CommentWithInteractions[];
   totalCount: number;
+  hasMore: boolean;
+}
+
+export interface NotificationsResponse {
+  notifications: Notification[];
+  totalCount: number;
+  unreadCount: number;
   hasMore: boolean;
 }
 

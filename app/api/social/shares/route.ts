@@ -40,29 +40,46 @@ export async function POST(request: NextRequest) {
     }
 
     if (error instanceof Error) {
+      console.log('Share API: Specific error message:', error.message);
+
       if (error.message === 'Post not found') {
         return NextResponse.json(
-          { error: 'Post not found' },
+          { error: 'The post you are trying to share does not exist or has been deleted.' },
           { status: 404 }
         );
       }
-      
+
       if (error.message === 'User not found') {
         return NextResponse.json(
-          { error: 'User not found' },
+          { error: 'User account not found. Please try logging in again.' },
           { status: 404 }
         );
       }
 
       if (error.message === 'Post already shared by user') {
         return NextResponse.json(
-          { error: 'Post already shared' },
+          { error: 'You have already shared this post.' },
           { status: 409 }
         );
       }
 
+      // Check for Firebase/Firestore specific errors
+      if (error.message.includes('permission-denied')) {
+        return NextResponse.json(
+          { error: 'Permission denied. Please check your authentication.' },
+          { status: 403 }
+        );
+      }
+
+      if (error.message.includes('unavailable')) {
+        return NextResponse.json(
+          { error: 'Database temporarily unavailable. Please try again later.' },
+          { status: 503 }
+        );
+      }
+
       return NextResponse.json(
-        { error: error.message },
+        { error: `Share failed: ${error.message}` },
         { status: 400 }
       );
     }

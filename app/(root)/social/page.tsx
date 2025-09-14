@@ -11,11 +11,13 @@ import {
   Loader2,
   Trash2,
   X,
+  Bell,
 } from "lucide-react";
 import { socialAPI } from "@/lib/services/social-api";
 import { PostWithInteractions } from "@/lib/schemas/social";
 import { toast } from "sonner";
 import CommentsSection from "@/components/CommentsSection";
+import { NotificationsPanel } from "@/components/NotificationsPanel";
 import { getCurrentUser } from "@/lib/actions/auth.action";
 
 const SocialTab = () => {
@@ -40,12 +42,31 @@ const SocialTab = () => {
   );
   const [shareUsernames, setShareUsernames] = useState("");
   const [sharingPost, setSharingPost] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
 
   // Load initial posts and current user
   useEffect(() => {
     loadPosts();
     loadCurrentUser();
+    loadUnreadNotificationsCount();
   }, []);
+
+  const loadUnreadNotificationsCount = async () => {
+    try {
+      if (currentUser) {
+        const response = await socialAPI.getNotifications({
+          limit: 1,
+          offset: 0,
+          unreadOnly: false,
+        });
+        setUnreadNotificationsCount(response.unreadCount);
+      }
+    } catch (error) {
+      console.error("Error loading unread notifications count:", error);
+      // Don't show error toast for this background operation
+    }
+  };
 
   const loadCurrentUser = async () => {
     try {
@@ -301,19 +322,84 @@ const SocialTab = () => {
         return;
       }
 
-      // For now, we'll simulate the sharing process
-      // In a real implementation, you would send this to a notification system or messaging API
+      // Share the post in the database (this will increment the share count)
+      await socialAPI.sharePost({
+        postId: postToShare.id!,
+        shareType: "direct",
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Create notifications for each user the post was shared with
+      // First, resolve the usernames/emails to actual user IDs
+      try {
+        const foundUsers = await socialAPI.findUsersByIdentifiers(usernames);
 
-      // Update the post's share count
+        if (foundUsers.length === 0) {
+          toast.warning("No valid users found with the provided names/emails");
+        } else if (foundUsers.length < usernames.length) {
+          const foundIdentifiers = foundUsers.map((u) =>
+            u.matchedBy === "email" ? u.email : u.name
+          );
+          const notFoundIdentifiers = usernames.filter(
+            (identifier) =>
+              !foundIdentifiers.some(
+                (found) =>
+                  found.toLowerCase() === identifier.trim().toLowerCase()
+              )
+          );
+          toast.warning(
+            `Some users not found: ${notFoundIdentifiers.join(", ")}`
+          );
+        }
+
+        // Create notifications for found users
+        const notificationPromises = foundUsers.map(async (user) => {
+          try {
+            await socialAPI.createNotification({
+              userId: user.id,
+              fromUserId: currentUser?.id || "",
+              fromUserName: currentUser?.name || "Someone",
+              type: "share",
+              postId: postToShare.id!,
+              title: "Post Shared With You",
+              message: `${
+                currentUser?.name || "Someone"
+              } shared a post with you: "${postToShare.content.substring(
+                0,
+                100
+              )}${postToShare.content.length > 100 ? "..." : ""}"`,
+            });
+          } catch (error) {
+            console.error(
+              `Failed to create notification for ${user.name}:`,
+              error
+            );
+            // Don't fail the entire operation if one notification fails
+          }
+        });
+
+        // Wait for all notifications to be created (but don't fail if some fail)
+        await Promise.allSettled(notificationPromises);
+
+        if (foundUsers.length > 0) {
+          toast.success(
+            `Notifications sent to ${foundUsers.length} user${
+              foundUsers.length > 1 ? "s" : ""
+            }`
+          );
+          // Refresh unread count since we may have created notifications for the current user
+          loadUnreadNotificationsCount();
+        }
+      } catch (error) {
+        console.error("Error resolving users for notifications:", error);
+        toast.warning("Could not send notifications to users");
+      }
+
+      // Refresh the post to get updated share count from database
+      const updatedPost = await socialAPI.getPost(postToShare.id!);
+
+      // Update the posts list with the refreshed data
       setPosts(
-        posts.map((post) =>
-          post.id === postToShare.id
-            ? { ...post, sharesCount: post.sharesCount + usernames.length }
-            : post
-        )
+        posts.map((post) => (post.id === postToShare.id ? updatedPost : post))
       );
 
       toast.success(
@@ -326,7 +412,11 @@ const SocialTab = () => {
       setShareUsernames("");
     } catch (error) {
       console.error("Error sharing post:", error);
-      toast.error("Failed to share post");
+
+      // Provide more specific error message if available
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to share post";
+      toast.error(errorMessage);
     } finally {
       setSharingPost(false);
     }
@@ -349,12 +439,28 @@ const SocialTab = () => {
               Connect with the Prepify community
             </p>
           </div>
-          <button
-            onClick={() => setShowCreatePost(true)}
-            className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            Create Post
-          </button>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={() => setShowNotifications(true)}
+              className="relative p-2 text-gray-400 hover:text-white transition-colors"
+              title="Notifications"
+            >
+              <Bell className="w-6 h-6" />
+              {unreadNotificationsCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {unreadNotificationsCount > 9
+                    ? "9+"
+                    : unreadNotificationsCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setShowCreatePost(true)}
+              className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              Create Post
+            </button>
+          </div>
         </div>
       </div>
 
@@ -723,12 +829,12 @@ const SocialTab = () => {
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Share with usernames (comma-separated):
+                Share with users (comma-separated):
               </label>
               <textarea
                 value={shareUsernames}
                 onChange={(e) => setShareUsernames(e.target.value)}
-                placeholder="Enter usernames separated by commas (e.g., john_doe, jane_smith, alex_wilson)"
+                placeholder="Enter names or emails separated by commas (e.g., John Doe, jane@example.com, Alex Wilson)"
                 className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 resize-none"
                 rows={3}
                 onKeyDown={(e) => {
@@ -737,6 +843,10 @@ const SocialTab = () => {
                   }
                 }}
               />
+              <p className="text-xs text-gray-400 mt-1">
+                You can enter user names or email addresses. We'll find matching
+                users and send them notifications.
+              </p>
               <p className="text-xs text-gray-400 mt-1">
                 Tip: Press Ctrl+Enter to share quickly
               </p>
@@ -764,6 +874,13 @@ const SocialTab = () => {
           </div>
         </div>
       )}
+
+      {/* Notifications Panel */}
+      <NotificationsPanel
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+        onUnreadCountChange={setUnreadNotificationsCount}
+      />
     </div>
   );
 };
