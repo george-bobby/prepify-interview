@@ -289,8 +289,8 @@ const AccountSettingsPage = () => {
                       onClick={() => addSuggestedSkill(skill)}
                       disabled={skills.includes(skill)}
                       className={`inline-flex items-center px-3 py-1 rounded-full text-sm transition-colors border border-dark-500 ${skills.includes(skill)
-                          ? "bg-dark-500 text-light-300 cursor-not-allowed"
-                          : "bg-dark-400 hover:bg-primary-200 hover:text-dark-100 text-light-200"
+                        ? "bg-dark-500 text-light-300 cursor-not-allowed"
+                        : "bg-dark-400 hover:bg-primary-200 hover:text-dark-100 text-light-200"
                         }`}
                     >
                       {skill}
