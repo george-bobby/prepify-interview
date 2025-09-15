@@ -322,8 +322,8 @@ const AccountSettingsPage = () => {
                 </div>
                 <div className="text-sm text-light-200">
                   {user.isProSubscriber
-                    ? "Unlimited Credits"
-                    : "Credits Remaining"}
+                    ? "100 Credits"
+                    : "100 Remaining"}
                 </div>
               </div>
 
@@ -346,7 +346,7 @@ const AccountSettingsPage = () => {
           </div>
 
           {/* Preferences */}
-          <div className="mb-8">
+          {/* <div className="mb-8">
             <h2 className="text-lg font-semibold text-light-100 mb-4">
               Preferences
             </h2>
@@ -379,10 +379,10 @@ const AccountSettingsPage = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Actions */}
-          <div>
+          {/* <div>
             <h2 className="text-lg font-semibold text-light-100 mb-4">
               Account Actions
             </h2>
@@ -395,7 +395,7 @@ const AccountSettingsPage = () => {
                 Delete Account (Coming Soon)
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

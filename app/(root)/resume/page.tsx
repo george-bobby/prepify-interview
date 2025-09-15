@@ -62,7 +62,7 @@ const ResumePage = () => {
 
             const result = await response.json();
             setAnalysis(result);
-            
+
             // Refresh credits from server after successful analysis
             await fetchCredits();
         } catch (err) {
