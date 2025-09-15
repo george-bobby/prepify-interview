@@ -125,7 +125,7 @@ const EnhancedAuthForm = ({ type }: { type: FormType }) => {
           {/* Enhanced Logo */}
           <div className="flex flex-row gap-3 justify-center items-center group">
             <div className="relative">
-              <Image src="./logo.svg" alt="logo" height={40} width={48} className="group-hover:scale-110 transition-transform duration-200" />
+              <Image src="/logo.svg" alt="logo" height={40} width={48} className="group-hover:scale-110 transition-transform duration-200" />
               <div className="absolute inset-0 bg-gradient-to-r from-primary-400 to-primary-500 opacity-0 group-hover:opacity-20 rounded-lg transition-opacity duration-200"></div>
             </div>
             <div className="flex flex-col">
