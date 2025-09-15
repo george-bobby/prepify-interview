@@ -20,17 +20,18 @@ const ResumePage = () => {
     const [error, setError] = useState<string | null>(null);
     const [resumeCredits, setResumeCredits] = useState<number | null>(null);
 
+    const fetchCredits = async () => {
+        try {
+            const res = await fetch('/api/resume/credits', { method: 'GET' });
+            if (!res.ok) return;
+            const data = await res.json();
+            setResumeCredits(data.resumeCredits);
+        } catch (e) {
+            // ignore
+        }
+    };
+
     useEffect(() => {
-        const fetchCredits = async () => {
-            try {
-                const res = await fetch('/api/resume/credits', { method: 'GET' });
-                if (!res.ok) return;
-                const data = await res.json();
-                setResumeCredits(data.resumeCredits);
-            } catch (e) {
-                // ignore
-            }
-        };
         fetchCredits();
     }, []);
 
@@ -61,6 +62,9 @@ const ResumePage = () => {
 
             const result = await response.json();
             setAnalysis(result);
+            
+            // Refresh credits from server after successful analysis
+            await fetchCredits();
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred while analyzing your resume');
         } finally {
@@ -77,18 +81,49 @@ const ResumePage = () => {
     return (
         <div className="space-y-8">
             {/* Header */}
-            <div className="bg-gradient-to-r from-dark-200 to-dark-300 rounded-lg p-8 border border-dark-300">
-                <h1 className="text-3xl font-bold text-primary-100 mb-2">
-                    Resume Feedback
-                </h1>
-                <p className="text-light-400 text-lg">
-                    Upload your resume and get AI-powered feedback to improve your chances of landing your dream job.
-                </p>
-                {resumeCredits !== null && (
-                    <div className="mt-4 text-light-300">
-                        Resume review credits remaining this month: <span className="text-primary-200 font-semibold">{resumeCredits}</span>
+            <div className="relative bg-gradient-to-r from-dark-200 via-dark-250 to-dark-300 rounded-xl p-8 border border-dark-300 overflow-hidden">
+                {/* Background pattern */}
+                <div className="absolute inset-0 bg-[url('/pattern.png')] opacity-5"></div>
+
+                <div className="relative z-10">
+                    <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-primary-200/20 rounded-lg flex items-center justify-center">
+                                <svg className="w-6 h-6 text-primary-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h1 className="text-3xl font-bold text-primary-100 mb-1">
+                                    Resume Feedback
+                                </h1>
+                                <div className="flex items-center gap-2">
+                                    <span className="px-2 py-1 bg-primary-200/20 text-primary-200 text-xs font-medium rounded-full">
+                                        AI-Powered
+                                    </span>
+                                    <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-medium rounded-full">
+                                        Instant Analysis
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Credits on right side - small */}
+                        {resumeCredits !== null && (
+                            <div className="flex items-center gap-2 bg-dark-100/30 rounded-lg px-3 py-2 border border-dark-400/50">
+                                <div className="w-6 h-6 bg-primary-200/20 rounded-full flex items-center justify-center">
+                                    <svg className="w-3 h-3 text-primary-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                                    </svg>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-primary-200 font-bold text-sm">{resumeCredits}</p>
+                                    <p className="text-light-400 text-xs">credits left</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
 
             {/* Upload Section */}
