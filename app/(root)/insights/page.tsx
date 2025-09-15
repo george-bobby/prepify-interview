@@ -80,10 +80,10 @@ const InsightsPage = () => {
         <div className="space-y-8">
             {/* Header */}
             <div className="text-center space-y-4">
-                <h1 className="text-4xl font-bold text-light-100">
+                <h1 className="text-4xl md:text-5xl font-bold text-light-100 leading-tight">
                     Industry Insights
                 </h1>
-                <p className="text-light-200 text-lg max-w-2xl mx-auto">
+                <p className="text-light-200 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
                     Stay updated with the latest news, trends, and insights in technology,
                     interviews, and career development.
                 </p>
@@ -91,16 +91,16 @@ const InsightsPage = () => {
 
             {/* Search and Filter */}
             <div className="space-y-6">
-                <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
                     <SearchBar
                         value={searchQuery}
                         onChange={setSearchQuery}
                         onSearch={handleSearch}
                         placeholder="Search for articles..."
-                        className="flex-1"
+                        className="flex-1 w-full lg:max-w-md"
                     />
 
-                    <div className="flex gap-2 flex-wrap">
+                    <div className="flex gap-2 flex-wrap justify-center lg:justify-end">
                         {categories.map((category) => (
                             <button
                                 key={category.value}
@@ -119,18 +119,18 @@ const InsightsPage = () => {
 
             {/* Loading State */}
             {loading && (
-                <div className="flex justify-center items-center py-12">
+                <div className="flex justify-center items-center py-16">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-200"></div>
                 </div>
             )}
 
             {/* Error State */}
             {error && (
-                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-6 text-center">
-                    <p className="text-red-400 mb-4">{error}</p>
+                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-8 text-center max-w-md mx-auto">
+                    <p className="text-red-400 mb-6 text-lg">{error}</p>
                     <button
                         onClick={fetchNews}
-                        className="bg-primary-200 text-dark-100 px-6 py-2 rounded-lg hover:bg-primary-300 transition-colors"
+                        className="bg-primary-200 text-dark-100 px-8 py-3 rounded-lg hover:bg-primary-300 transition-colors font-medium"
                     >
                         Try Again
                     </button>
@@ -141,13 +141,13 @@ const InsightsPage = () => {
             {!loading && !error && (
                 <>
                     {filteredArticles.length === 0 ? (
-                        <div className="text-center py-12">
-                            <p className="text-light-200 text-lg">
+                        <div className="text-center py-16 max-w-lg mx-auto">
+                            <p className="text-light-200 text-xl leading-relaxed">
                                 No articles found. Try adjusting your search or category filter.
                             </p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                             {filteredArticles.map((article) => (
                                 <NewsCard key={article.id} article={article} />
                             ))}
@@ -158,10 +158,10 @@ const InsightsPage = () => {
 
             {/* Refresh Button */}
             {!loading && !error && articles.length > 0 && (
-                <div className="text-center pt-8">
+                <div className="text-center pt-12">
                     <button
                         onClick={fetchNews}
-                        className="bg-primary-200 text-dark-100 px-6 py-3 rounded-lg hover:bg-primary-300 transition-colors font-medium"
+                        className="bg-primary-200 text-dark-100 px-8 py-3 rounded-lg hover:bg-primary-300 transition-colors font-medium text-lg"
                     >
                         Refresh News
                     </button>
