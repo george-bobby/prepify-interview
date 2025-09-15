@@ -31,12 +31,47 @@ export async function POST(request: NextRequest) {
 		let fileContent: string;
 
 		if (file.type === 'application/pdf') {
-			const buffer = Buffer.from(await file.arrayBuffer());
+			try {
+				const buffer = Buffer.from(await file.arrayBuffer());
 
-			// Dynamic import to avoid Node.js compatibility issues
-			const { default: pdf } = await import('pdf-parse');
-			const pdfData = await pdf(buffer);
-			fileContent = pdfData.text;
+				// Try multiple PDF parsing approaches
+				let pdfData;
+				try {
+					// First try: Use pdf-parse with require
+					const pdf = require('pdf-parse');
+					pdfData = await pdf(buffer);
+				} catch (parseError) {
+					console.warn(
+						'pdf-parse failed, trying alternative approach:',
+						parseError
+					);
+					// Alternative: Basic text extraction (fallback)
+					const textContent = buffer.toString('utf8');
+					pdfData = { text: textContent };
+				}
+
+				fileContent = pdfData.text;
+
+				// If no text extracted, return error
+				if (!fileContent || fileContent.trim().length === 0) {
+					return NextResponse.json(
+						{
+							error:
+								'Could not extract text from PDF. Please ensure the PDF contains readable text and try again.',
+						},
+						{ status: 400 }
+					);
+				}
+			} catch (pdfError) {
+				console.error('PDF parsing error:', pdfError);
+				return NextResponse.json(
+					{
+						error:
+							'Failed to parse PDF file. Please try uploading a different format or ensure the PDF is not corrupted.',
+					},
+					{ status: 400 }
+				);
+			}
 		} else {
 			fileContent = await file.text();
 		}
@@ -71,30 +106,80 @@ Provide specific, actionable feedback that will help improve the resume's effect
 		// Parse the AI response
 		let analysis;
 		try {
+			// First try to parse as JSON directly
 			analysis = JSON.parse(result.text);
 		} catch (parseError) {
-			// If JSON parsing fails, create a structured response from the text
-			analysis = {
-				overallScore: 75,
-				strengths: [
-					'Resume contains relevant work experience',
-					'Skills section is present',
-					'Contact information is included',
-				],
-				improvements: [
-					'Could benefit from more specific achievements',
-					'Consider adding quantified results',
-					'Review formatting for consistency',
-				],
-				suggestions: [
-					'Add specific metrics and achievements to your experience',
-					'Use action verbs to start each bullet point',
-					'Ensure consistent formatting throughout',
-					'Include relevant keywords for your target role',
-					'Consider adding a professional summary section',
-				],
-				summary: result.text.substring(0, 200) + '...',
-			};
+			console.log(
+				'Direct JSON parsing failed, trying to extract JSON from text'
+			);
+			console.log('Gemini response:', result.text);
+
+			try {
+				// Try to extract JSON from the response text
+				const jsonMatch = result.text.match(/\{[\s\S]*\}/);
+				if (jsonMatch) {
+					analysis = JSON.parse(jsonMatch[0]);
+				} else {
+					throw new Error('No JSON found in response');
+				}
+			} catch (extractError) {
+				console.log('JSON extraction also failed, using intelligent parsing');
+
+				// If JSON parsing fails completely, try to extract data intelligently
+				const text = result.text;
+
+				// Try to extract score
+				const scoreMatch = text.match(/(?:score|rating).*?(\d+)/i);
+				const overallScore = scoreMatch ? parseInt(scoreMatch[1]) : 75;
+
+				// Try to extract sections
+				const strengthsMatch = text.match(
+					/strengths?[:\s]*(.*?)(?=improvements?|suggestions?|summary|$)/gi
+				);
+				const improvementsMatch = text.match(
+					/improvements?[:\s]*(.*?)(?=strengths?|suggestions?|summary|$)/gi
+				);
+				const suggestionsMatch = text.match(
+					/suggestions?[:\s]*(.*?)(?=strengths?|improvements?|summary|$)/gi
+				);
+
+				analysis = {
+					overallScore,
+					strengths: strengthsMatch
+						? strengthsMatch[1]
+								.split(/[,\n]/)
+								.map((s) => s.trim())
+								.filter((s) => s)
+						: [
+								'Resume contains relevant work experience',
+								'Skills section is present',
+								'Contact information is included',
+						  ],
+					improvements: improvementsMatch
+						? improvementsMatch[1]
+								.split(/[,\n]/)
+								.map((s) => s.trim())
+								.filter((s) => s)
+						: [
+								'Could benefit from more specific achievements',
+								'Consider adding quantified results',
+								'Review formatting for consistency',
+						  ],
+					suggestions: suggestionsMatch
+						? suggestionsMatch[1]
+								.split(/[,\n]/)
+								.map((s) => s.trim())
+								.filter((s) => s)
+						: [
+								'Add specific metrics and achievements to your experience',
+								'Use action verbs to start each bullet point',
+								'Ensure consistent formatting throughout',
+								'Include relevant keywords for your target role',
+								'Consider adding a professional summary section',
+						  ],
+					summary: text.substring(0, 200) + '...',
+				};
+			}
 		}
 
 		// Validate the response structure
