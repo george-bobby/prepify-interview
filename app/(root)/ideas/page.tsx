@@ -265,13 +265,13 @@ const ProjectsPage = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "open":
-        return "text-green-400 bg-green-400/20";
+        return "text-success-100 bg-success-100/20";
       case "in-progress":
         return "text-yellow-400 bg-yellow-400/20";
       case "completed":
-        return "text-blue-400 bg-blue-400/20";
+        return "text-primary-200 bg-primary-200/20";
       default:
-        return "text-gray-400 bg-gray-400/20";
+        return "text-light-400 bg-light-400/20";
     }
   };
 
@@ -684,22 +684,22 @@ const ProjectsPage = () => {
 
     const getRequestButtonStyle = () => {
       if (!userRequest) {
-        return "bg-primary-200 text-dark-100 hover:bg-primary-100";
+        return "bg-primary-200 text-dark-100 hover:bg-primary-200/80";
       }
       switch (userRequest.status) {
         case "pending":
           return "bg-yellow-600/80 text-white cursor-not-allowed";
         case "accepted":
-          return "bg-green-600/80 text-white cursor-not-allowed";
+          return "bg-success-100/80 text-white cursor-not-allowed";
         case "rejected":
-          return "bg-red-600/80 text-white cursor-not-allowed";
+          return "bg-destructive-100/80 text-white cursor-not-allowed";
         default:
-          return "bg-primary-200 text-dark-100 hover:bg-primary-100";
+          return "bg-primary-200 text-dark-100 hover:bg-primary-200/80";
       }
     };
 
     return (
-      <div className="bg-dark-300 rounded-lg p-6 border border-dark-400 hover:border-primary-300 transition-all duration-200">
+      <div className="bg-dark-200 border border-dark-300 rounded-2xl p-6 hover:border-primary-200/30 transition-all duration-200">
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
             <h3 className="text-light-100 font-semibold text-lg mb-2 line-clamp-2">
@@ -723,8 +723,8 @@ const ProjectsPage = () => {
               {isOwner && <span className="text-primary-200 ml-2">(You)</span>}
             </div>
           </div>
-          <span className={`inline-block px-3 py-1 rounded text-sm font-medium ${type === "project"
-            ? "bg-blue-400/20 text-blue-400"
+          <span className={`inline-block px-3 py-1 rounded-lg text-sm font-medium ${type === "project"
+            ? "bg-primary-200/20 text-primary-200"
             : "bg-purple-400/20 text-purple-400"
             }`}>
             {type === "project" ? "Project" : "Research"}
@@ -753,8 +753,8 @@ const ProjectsPage = () => {
               return (
                 <span
                   key={index}
-                  className={`inline-block px-2 py-1 rounded text-xs ${userHasSkill
-                    ? "bg-green-400/20 text-green-400 font-medium"
+                  className={`inline-block px-2 py-1 rounded-lg text-xs ${userHasSkill
+                    ? "bg-success-100/20 text-success-100 font-medium"
                     : "bg-primary-200/20 text-primary-200"
                     }`}
                 >
@@ -782,11 +782,11 @@ const ProjectsPage = () => {
               <>
                 <button
                   onClick={() => openRequestsModal(item)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200 flex items-center"
+                  className="bg-primary-200 text-dark-100 px-4 py-2 rounded-lg font-medium hover:bg-primary-200/80 transition-colors duration-200 flex items-center"
                 >
                   Manage Requests
                   {pendingRequestsCount > 0 && (
-                    <span className="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                    <span className="ml-2 bg-destructive-100 text-white text-xs px-2 py-1 rounded-full">
                       {pendingRequestsCount}
                     </span>
                   )}
@@ -810,8 +810,8 @@ const ProjectsPage = () => {
   const RequestsModal = () =>
     showRequestsModal &&
     selectedProjectForRequests && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-dark-200 rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-dark-200 border border-dark-300 rounded-2xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
           <div className="flex justify-between items-center mb-6">
             <div>
               <h3 className="text-light-100 font-semibold text-xl mb-2">
@@ -881,9 +881,9 @@ const ProjectsPage = () => {
                 .map((request) => (
                   <div
                     key={request.id}
-                    className={`bg-dark-300 rounded-lg p-6 border transition-all duration-200 ${request.status === "pending"
+                    className={`bg-dark-300 rounded-2xl p-6 border transition-all duration-200 ${request.status === "pending"
                       ? "border-yellow-400/50 shadow-md"
-                      : "border-dark-400"
+                      : "border-dark-300"
                       }`}
                   >
                     <div className="flex justify-between items-start mb-4">
@@ -995,7 +995,7 @@ const ProjectsPage = () => {
                               "accept"
                             );
                           }}
-                          className="flex-1 bg-green-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors duration-200 flex items-center justify-center gap-2"
+                          className="flex-1 bg-success-100 text-white px-4 py-3 rounded-lg font-medium hover:bg-success-200 transition-colors duration-200 flex items-center justify-center gap-2"
                         >
                           ✓ Accept Request
                         </button>
@@ -1007,7 +1007,7 @@ const ProjectsPage = () => {
                               "reject"
                             );
                           }}
-                          className="flex-1 bg-red-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors duration-200 flex items-center justify-center gap-2"
+                          className="flex-1 bg-destructive-100 text-white px-4 py-3 rounded-lg font-medium hover:bg-destructive-200 transition-colors duration-200 flex items-center justify-center gap-2"
                         >
                           ✕ Reject Request
                         </button>
@@ -1016,8 +1016,8 @@ const ProjectsPage = () => {
 
                     {request.status === "accepted" && (
                       <div className="pt-4 border-t border-dark-400">
-                        <div className="bg-green-400/10 border border-green-400/30 rounded-lg p-3">
-                          <p className="text-green-400 text-sm font-medium">
+                        <div className="bg-success-100/10 border border-success-100/30 rounded-lg p-3">
+                          <p className="text-success-100 text-sm font-medium">
                             ✓ Request Accepted
                           </p>
                           <p className="text-light-300 text-xs mt-1">
@@ -1030,8 +1030,8 @@ const ProjectsPage = () => {
 
                     {request.status === "rejected" && (
                       <div className="pt-4 border-t border-dark-400">
-                        <div className="bg-red-400/10 border border-red-400/30 rounded-lg p-3">
-                          <p className="text-red-400 text-sm font-medium">
+                        <div className="bg-destructive-100/10 border border-destructive-100/30 rounded-lg p-3">
+                          <p className="text-destructive-100 text-sm font-medium">
                             ✕ Request Rejected
                           </p>
                           <p className="text-light-300 text-xs mt-1">
@@ -1053,7 +1053,7 @@ const ProjectsPage = () => {
               </div>
               <button
                 onClick={() => setShowRequestsModal(false)}
-                className="bg-dark-400 text-light-300 px-6 py-2 rounded-lg hover:bg-dark-300 transition-colors duration-200"
+                className="bg-dark-300 text-light-100 px-6 py-2 rounded-lg hover:bg-dark-200 transition-colors duration-200"
               >
                 Close
               </button>
@@ -1065,8 +1065,8 @@ const ProjectsPage = () => {
 
   const CreateModal = () =>
     showCreateModal && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-dark-200 rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-dark-200 border border-dark-300 rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-light-100 font-semibold text-lg">
               Create New{" "}
@@ -1122,7 +1122,7 @@ const ProjectsPage = () => {
                 type="text"
                 value={formData.name}
                 onChange={(e) => handleFormChange("name", e.target.value)}
-                className="w-full px-4 py-3 bg-dark-300 border border-dark-400 rounded-lg text-light-100 focus:outline-none focus:border-primary-200 focus:ring-1 focus:ring-primary-200"
+                className="w-full px-4 py-3 bg-dark-300 border border-input rounded-lg text-light-100 focus:outline-none focus:ring-2 focus:ring-primary-200"
                 placeholder={`Enter ${createType} name`}
                 required
                 autoFocus
@@ -1140,7 +1140,7 @@ const ProjectsPage = () => {
                   handleFormChange("description", e.target.value)
                 }
                 rows={4}
-                className="w-full px-4 py-3 bg-dark-300 border border-dark-400 rounded-lg text-light-100 focus:outline-none focus:border-primary-200 focus:ring-1 focus:ring-primary-200"
+                className="w-full px-4 py-3 bg-dark-300 border border-input rounded-lg text-light-100 focus:outline-none focus:ring-2 focus:ring-primary-200"
                 placeholder={`Describe your ${createType}...`}
                 required
               />
@@ -1158,7 +1158,7 @@ const ProjectsPage = () => {
                 onChange={(e) =>
                   handleFormChange("teamMembers", parseInt(e.target.value) || 1)
                 }
-                className="w-full px-4 py-3 bg-dark-300 border border-dark-400 rounded-lg text-light-100 focus:outline-none focus:border-primary-200 focus:ring-1 focus:ring-primary-200"
+                className="w-full px-4 py-3 bg-dark-300 border border-input rounded-lg text-light-100 focus:outline-none focus:ring-2 focus:ring-primary-200"
               />
             </div>
 
@@ -1180,14 +1180,14 @@ const ProjectsPage = () => {
                       addSkill();
                     }
                   }}
-                  className="flex-1 px-4 py-2 bg-dark-300 border border-dark-400 rounded-lg text-light-100 focus:outline-none focus:border-primary-200 focus:ring-1 focus:ring-primary-200"
+                  className="flex-1 px-4 py-2 bg-dark-300 border border-input rounded-lg text-light-100 focus:outline-none focus:ring-2 focus:ring-primary-200"
                   placeholder="Add a skill and press Enter"
                 />
                 <button
                   type="button"
                   onClick={addSkill}
                   disabled={!formData.skillInput.trim()}
-                  className="px-4 py-2 bg-primary-200 text-dark-100 rounded-lg hover:bg-primary-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-primary-200 text-dark-100 rounded-lg hover:bg-primary-200/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Add
                 </button>
@@ -1220,14 +1220,14 @@ const ProjectsPage = () => {
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
-                className="flex-1 px-4 py-3 bg-dark-400 text-light-300 rounded-lg hover:bg-dark-300 transition-colors"
+                className="flex-1 px-4 py-3 bg-dark-300 text-light-100 rounded-lg hover:bg-dark-200 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={!isFormValid()}
-                className="flex-1 px-4 py-3 bg-primary-200 text-dark-100 rounded-lg hover:bg-primary-100 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-3 bg-primary-200 text-dark-100 rounded-lg hover:bg-primary-200/80 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Create {createType === "project" ? "Project" : "Research Paper"}
               </button>
@@ -1248,7 +1248,15 @@ const ProjectsPage = () => {
   return (
     <div className="min-h-screen bg-dark-100">
       <div className="container mx-auto px-4 py-8">
-        {/* Search Bar at Top */}
+
+        {/* Header */}
+        <div className="text-center space-y-4 mb-8">
+          <h1 className="text-4xl font-bold text-primary-100">Projects & Research Papers</h1>
+          <p className="text-light-600 text-sm">
+            {sortedAllItems.length} total ({filteredProjects.length} projects, {filteredResearch.length} research papers)
+          </p>
+        </div>
+        {/* Search Bar*/}
         <div className="mb-8">
           <div className="max-w-md mx-auto">
             <AutocompleteInput
@@ -1262,14 +1270,7 @@ const ProjectsPage = () => {
         </div>
 
         {/* Projects & Research Papers Section */}
-        <div className="bg-dark-200 rounded-lg p-6 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-light-100 font-semibold text-xl">Projects & Research Papers</h3>
-
-            <span className="text-light-300 text-sm whitespace-nowrap">
-              {sortedAllItems.length} total ({filteredProjects.length} projects, {filteredResearch.length} research papers)
-            </span>
-          </div>
+        <div className="bg-dark-200 border border-dark-300 rounded-2xl p-6 mb-8">
 
           {sortedAllItems.length > 0 ? (
             <div className="grid gap-4">
@@ -1282,30 +1283,30 @@ const ProjectsPage = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">�</div>
-              <p className="text-light-300 text-lg">
+            <div className="text-center py-16">
+              <div className="text-6xl mb-4">📋</div>
+              <h3 className="text-xl font-semibold text-primary-100 mb-2">
                 {searchQuery
-                  ? "No projects or research papers found matching your search"
-                  : "No projects or research papers available yet"}
+                  ? "No matches found"
+                  : "No projects or research papers yet"}
+              </h3>
+              <p className="text-light-400">
+                {searchQuery
+                  ? "Try adjusting your search terms"
+                  : "Be the first to create a project or research paper!"}
               </p>
-              {!searchQuery && (
-                <p className="text-light-400 text-sm mt-2">
-                  Be the first to create a project or research paper!
-                </p>
-              )}
             </div>
           )}
         </div>
       </div>
 
-      {/* Floating Input Container - Perplexity AI Style */}
+      {/* Floating Input Container*/}
       {showFloatingInput && currentUser && (
         <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-2xl px-4">
-          <div className="bg-dark-200/95 backdrop-blur-lg rounded-2xl border border-dark-400/50 shadow-2xl">
+          <div className="bg-dark-200 border-2 border-primary-200/30 rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.5)]">
             {/* Expanded Content - Now appears above the main input */}
             {floatingInputExpanded && (
-              <div className="border-b border-dark-400/50 p-4">
+              <div className="border-b border-dark-300 p-4">
                 {floatingInputExpanded === "description" && (
                   <div>
                     <label className="block text-light-200 text-sm font-medium mb-2">
@@ -1316,7 +1317,7 @@ const ProjectsPage = () => {
                       onChange={(e) => handleFormChange("description", e.target.value)}
                       placeholder={`Describe your ${createType} in detail...`}
                       rows={3}
-                      className="w-full px-4 py-3 bg-dark-300/50 border border-dark-400/50 rounded-lg text-light-100 placeholder-light-400 focus:outline-none focus:border-primary-200/50 focus:ring-1 focus:ring-primary-200/50"
+                      className="w-full px-4 py-3 bg-dark-300 border border-input rounded-lg text-light-100 placeholder-light-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
                     />
                   </div>
                 )}
@@ -1359,13 +1360,13 @@ const ProjectsPage = () => {
                           }
                         }}
                         placeholder="Type a skill and press Enter"
-                        className="flex-1 px-4 py-2 bg-dark-300/50 border border-dark-400/50 rounded-lg text-light-100 placeholder-light-400 focus:outline-none focus:border-primary-200/50"
+                        className="flex-1 px-4 py-2 bg-dark-300 border border-input rounded-lg text-light-100 placeholder-light-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
                       />
                       <button
                         type="button"
                         onClick={addSkill}
                         disabled={!formData.skillInput.trim()}
-                        className="px-4 py-2 bg-primary-200/20 text-primary-200 rounded-lg hover:bg-primary-200/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-2 bg-primary-200 text-dark-100 rounded-lg hover:bg-primary-200/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Add
                       </button>
@@ -1398,11 +1399,11 @@ const ProjectsPage = () => {
             <div className="relative">
               <div className="flex items-center p-4">
                 {/* Toggle Pills */}
-                <div className="flex bg-dark-300/80 rounded-full p-1 mr-3">
+                <div className="flex bg-dark-300 rounded-full p-1 mr-3">
                   <button
                     onClick={() => setCreateType("project")}
                     className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${createType === "project"
-                      ? "bg-blue-500 text-white shadow-md"
+                      ? "bg-primary-200 text-dark-100 shadow-md"
                       : "text-light-400 hover:text-light-200"
                       }`}
                   >
@@ -1435,7 +1436,7 @@ const ProjectsPage = () => {
                     onClick={() => setFloatingInputExpanded(floatingInputExpanded === "description" ? false : "description")}
                     className={`p-2 rounded-lg transition-all duration-200 ${floatingInputExpanded === "description"
                       ? "bg-primary-200/20 text-primary-200"
-                      : "text-light-400 hover:text-light-200 hover:bg-dark-300/50"
+                      : "text-light-400 hover:text-light-200 hover:bg-dark-300"
                       }`}
                     title="Add Description"
                   >
@@ -1449,7 +1450,7 @@ const ProjectsPage = () => {
                     onClick={() => setFloatingInputExpanded(floatingInputExpanded === "team" ? false : "team")}
                     className={`p-2 rounded-lg transition-all duration-200 ${floatingInputExpanded === "team"
                       ? "bg-primary-200/20 text-primary-200"
-                      : "text-light-400 hover:text-light-200 hover:bg-dark-300/50"
+                      : "text-light-400 hover:text-light-200 hover:bg-dark-300"
                       }`}
                     title="Set Team Size"
                   >
@@ -1463,7 +1464,7 @@ const ProjectsPage = () => {
                     onClick={() => setFloatingInputExpanded(floatingInputExpanded === "skills" ? false : "skills")}
                     className={`p-2 rounded-lg transition-all duration-200 ${floatingInputExpanded === "skills"
                       ? "bg-primary-200/20 text-primary-200"
-                      : "text-light-400 hover:text-light-200 hover:bg-dark-300/50"
+                      : "text-light-400 hover:text-light-200 hover:bg-dark-300"
                       }`}
                     title="Add Skills"
                   >
@@ -1475,7 +1476,7 @@ const ProjectsPage = () => {
                   <button
                     onClick={handleSubmit}
                     disabled={!isFormValid()}
-                    className="p-2 rounded-lg bg-primary-200 text-dark-100 hover:bg-primary-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-2 rounded-lg bg-primary-200 text-dark-100 hover:bg-primary-200/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Create"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">

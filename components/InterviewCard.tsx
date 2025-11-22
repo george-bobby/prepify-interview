@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import dayjs from 'dayjs';
 import Image from 'next/image';
@@ -5,7 +7,6 @@ import { generateInitials, generateRoleColor } from '@/lib/utils';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { DisplayTechIcons } from './DisplayTechIcons';
-import { getFeedbackByInterviewId } from '@/lib/actions/general.action';
 
 interface EnhancedInterviewCardProps extends InterviewCardProps {
     status?: 'not_started' | 'in_progress' | 'completed' | 'paused';
@@ -14,9 +15,10 @@ interface EnhancedInterviewCardProps extends InterviewCardProps {
     questionsCount?: number;
     completedAt?: string;
     level?: string;
+    feedback?: any;
 }
 
-export const InterviewCard = async ({
+export const InterviewCard = ({
     id,
     userId,
     role,
@@ -28,9 +30,9 @@ export const InterviewCard = async ({
     estimatedDuration,
     questionsCount,
     completedAt,
-    level
+    level,
+    feedback
 }: EnhancedInterviewCardProps) => {
-    const feedback = userId && id ? await getFeedbackByInterviewId({ interviewId: id, userId }) : null;
     const normalizedType = /mix/gi.test(type) ? 'Mixed' : type;
     const formattedDate = dayjs(feedback?.createdAt || completedAt || createdAt || Date.now()).format('MMM D, YYYY');
     const isCompleted = feedback || status === 'completed';
@@ -54,7 +56,7 @@ export const InterviewCard = async ({
     };
 
     return (
-        <div className="card-border w-[360px] max-sm:w-full min-h-96 hover:border-primary-500 transition-colors">
+        <Link href={`/interviews/${id}/details`} className="card-border w-[360px] max-sm:w-full min-h-96 hover:border-primary-500 transition-colors cursor-pointer block">
             <div className="card-interview">
                 <div>
                     {/* Status and Type Badges */}
@@ -129,13 +131,14 @@ export const InterviewCard = async ({
 
                 <div className="flex flex-row justify-between items-end mt-4">
                     <DisplayTechIcons techStack={techstack} />
-                    <Button className="btn-primary">
-                        <Link href={feedback ? `/interviews/${id}/feedback` : `/interviews/${id}`}>
-                            {feedback ? 'View Feedback' : (status === 'in_progress' ? 'Continue' : 'Start Interview')}
-                        </Link>
+                    <Button className="btn-primary" onClick={(e) => {
+                        e.preventDefault();
+                        window.location.href = feedback ? `/interviews/${id}/feedback` : `/interviews/${id}`;
+                    }}>
+                        {feedback ? 'View Feedback' : (status === 'in_progress' ? 'Continue' : 'Start Interview')}
                     </Button>
                 </div>
             </div>
-        </div>
+        </Link>
     )
 }

@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/actions/auth.action";
 import NavLinks from "@/components/NavLinks";
 import MobileMenu from "@/components/MobileMenu";
 import UserDropdown from "@/components/UserDropdown";
+import NotificationsButton from "@/components/NotificationsButton";
 
 const Header = async () => {
   const user = await getCurrentUser();
@@ -40,8 +41,11 @@ const Header = async () => {
           <div className="flex items-center gap-4">
             {user ? (
               <>
-                <div className="hidden sm:block">
-                  <UserDropdown user={user} />
+                <div className="hidden sm:flex items-center gap-2">
+                  <NotificationsButton />
+                  <div className="hidden sm:block">
+                    <UserDropdown user={user} />
+                  </div>
                 </div>
                 {/* Mobile Menu */}
                 <MobileMenu navLinks={navLinks} user={user} />
