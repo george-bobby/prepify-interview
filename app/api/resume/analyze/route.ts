@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 
 		// Generate AI analysis using Gemini
 		const result = await generateText({
-			model: google('gemini-1.5-flash'),
+			model: google('gemini-2.5-flash'),
 			prompt: `Analyze the following resume and provide comprehensive feedback. Please respond with a JSON object containing the following structure:
 
 {
