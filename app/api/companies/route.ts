@@ -65,7 +65,7 @@ IMPORTANT:
 - If you don't know specific details, provide reasonable estimates based on company size and industry`;
 
 		const result = await generateText({
-			model: google('gemini-1.5-flash'),
+			model: google('gemini-2.5-flash'),
 			prompt,
 		});
 

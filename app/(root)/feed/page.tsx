@@ -11,14 +11,14 @@ import {
   Loader2,
   Trash2,
   X,
-  Bell,
+  Plus,
 } from "lucide-react";
 import { socialAPI } from "@/lib/services/social-api";
 import { PostWithInteractions } from "@/lib/schemas/social";
 import { toast } from "sonner";
 import CommentsSection from "@/components/CommentsSection";
-import { NotificationsPanel } from "@/components/NotificationsPanel";
 import { getCurrentUser } from "@/lib/actions/auth.action";
+import { Button } from "@/components/ui/button";
 
 const SocialTab = () => {
   const [posts, setPosts] = useState<PostWithInteractions[]>([]);
@@ -26,7 +26,7 @@ const SocialTab = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [newPost, setNewPost] = useState("");
-  const [showCreatePost, setShowCreatePost] = useState(false);
+  const [floatingInputExpanded, setFloatingInputExpanded] = useState(false);
   const [creatingPost, setCreatingPost] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
@@ -194,7 +194,7 @@ const SocialTab = () => {
       setNewPost("");
       setSelectedImage(null);
       setImagePreview(null);
-      setShowCreatePost(false);
+      setFloatingInputExpanded(false);
       toast.success("Post created successfully!");
     } catch (error) {
       console.error("Error creating post:", error);
@@ -426,279 +426,172 @@ const SocialTab = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      {/* Header matching your design */}
-      <div className="bg-gray-800 border-b border-gray-700 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white">Social</h1>
-            <p className="text-gray-400 mt-1">
-              Connect with the Prepify community
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3"></div>
+        </div>
+      </div>
+
+
+
+      {/* Feed */}
+      <div className="space-y-6">
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-primary-200" />
+            <span className="ml-3 text-light-400">Loading posts...</span>
+          </div>
+        ) : posts.length === 0 ? (
+          <div className="text-center py-16 bg-dark-200 border border-dark-300 rounded-2xl">
+            <div className="text-6xl mb-4">💬</div>
+            <h3 className="text-xl font-semibold text-primary-100 mb-2">
+              No posts yet
+            </h3>
+            <p className="text-light-400">
+              Be the first to share something with the community!
             </p>
           </div>
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={() => setShowNotifications(true)}
-              className="relative p-2 text-gray-400 hover:text-white transition-colors"
-              title="Notifications"
+        ) : (
+          posts.map((post) => (
+            <div
+              key={post.id}
+              className="bg-dark-200 border border-dark-300 rounded-2xl overflow-hidden hover:border-primary-200/30 transition-all"
             >
-              <Bell className="w-6 h-6" />
-              {unreadNotificationsCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {unreadNotificationsCount > 9
-                    ? "9+"
-                    : unreadNotificationsCount}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => setShowCreatePost(true)}
-              className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-medium transition-colors"
-            >
-              Create Post
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-6 py-6">
-        {/* Create Post Modal */}
-        {showCreatePost && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-gray-800 rounded-lg p-6 w-full max-w-lg mx-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold">Create a post</h3>
-                <button
-                  onClick={() => setShowCreatePost(false)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div className="flex items-start space-x-3 mb-4">
-                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-bold">D</span>
-                </div>
-                <div>
-                  <p className="font-medium">DDD</p>
-                  <p className="text-sm text-gray-400">Software Engineer</p>
-                </div>
-              </div>
-
-              <textarea
-                value={newPost}
-                onChange={(e) => setNewPost(e.target.value)}
-                placeholder="Share your interview experience, tips, or achievements..."
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white placeholder-gray-400 resize-none"
-                rows={4}
-              />
-
-              {/* Image Preview */}
-              {imagePreview && (
-                <div className="mt-4 relative">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-full max-h-64 object-cover rounded-lg"
-                  />
-                  <button
-                    onClick={handleRemoveImage}
-                    className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-opacity-70"
-                  >
-                    ✕
-                  </button>
-                </div>
-              )}
-
-              <div className="flex items-center justify-between mt-4">
-                <div className="flex items-center space-x-4 text-gray-400">
-                  <label className="cursor-pointer hover:text-white">
-                    <Image className="w-5 h-5" />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageSelect}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-
-                <button
-                  onClick={handleCreatePost}
-                  disabled={(!newPost.trim() && !selectedImage) || creatingPost}
-                  className="bg-green-500 hover:bg-green-600 disabled:bg-gray-600 disabled:cursor-not-allowed px-6 py-2 rounded-lg font-medium transition-colors flex items-center"
-                >
-                  {creatingPost ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                      Posting...
-                    </>
-                  ) : (
-                    "Post"
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Feed */}
-        <div className="space-y-6">
-          {loading ? (
-            <div className="flex justify-center items-center py-8">
-              <Loader2 className="w-8 h-8 animate-spin text-green-500" />
-              <span className="ml-2 text-gray-400">Loading posts...</span>
-            </div>
-          ) : posts.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-400">
-                No posts yet. Be the first to share something!
-              </p>
-            </div>
-          ) : (
-            posts.map((post) => (
-              <div
-                key={post.id}
-                className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden"
-              >
-                {/* Post Header */}
-                <div className="p-6 pb-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
-                        <span className="text-sm font-bold">
-                          {post.authorName[0]}
+              {/* Post Header */}
+              <div className="p-6 pb-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3">
+                    <div className="w-12 h-12 bg-primary-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-bold text-dark-100">
+                        {post.authorName[0]}
+                      </span>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-bold text-light-100">
+                          {post.authorName}
+                        </h3>
+                        {post.authorVerified && (
+                          <div className="w-4 h-4 bg-primary-200 rounded-full flex items-center justify-center">
+                            <span className="text-xs text-dark-100">✓</span>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-light-400 text-sm">
+                        {post.authorRole}
+                      </p>
+                      <div className="flex items-center gap-1 mt-1">
+                        <Calendar className="w-3 h-3 text-light-600" />
+                        <span className="text-light-600 text-xs">
+                          {new Date(post.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )}
                         </span>
                       </div>
-                      <div>
-                        <div className="flex items-center space-x-2">
-                          <h3 className="font-bold text-white">
-                            {post.authorName}
-                          </h3>
-                          {post.authorVerified && (
-                            <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                              <span className="text-xs text-white">✓</span>
-                            </div>
-                          )}
-                        </div>
-                        <p className="text-gray-400 text-sm">
-                          {post.authorRole}
-                        </p>
-                        <div className="flex items-center space-x-1 mt-1">
-                          <Calendar className="w-3 h-3 text-gray-500" />
-                          <span className="text-gray-500 text-xs">
-                            {new Date(post.createdAt).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              }
-                            )}
-                          </span>
-                        </div>
-                      </div>
                     </div>
-
-                    {/* Post Actions Menu - Only show for post creator */}
-                    {currentUser && currentUser.id === post.userId && (
-                      <div className="relative">
-                        <button
-                          onClick={() => handleDeletePost(post.id!)}
-                          className="text-gray-400 hover:text-red-400 transition-colors p-1"
-                          title="Delete post"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
                   </div>
-                </div>
 
-                {/* Post Content */}
-                <div className="px-6 pb-4">
-                  <p className="text-gray-300 whitespace-pre-line leading-relaxed">
-                    {post.content}
-                  </p>
-
-                  {/* Post Image */}
-                  {post.imageUrl && (
-                    <div className="mt-4">
-                      <img
-                        src={post.imageUrl}
-                        alt="Post image"
-                        className="w-full max-h-96 object-cover rounded-lg border border-gray-600"
-                      />
-                    </div>
+                  {/* Post Actions Menu - Only show for post creator */}
+                  {currentUser && currentUser.id === post.userId && (
+                    <button
+                      onClick={() => handleDeletePost(post.id!)}
+                      className="text-light-400 hover:text-destructive-100 transition-colors p-2 rounded-lg hover:bg-dark-300"
+                      title="Delete post"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   )}
                 </div>
+              </div>
 
-                {/* Post Actions */}
-                <div className="px-6 py-4 border-t border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-6">
-                      <button
-                        onClick={() => handleLike(post.id!)}
-                        className={`flex items-center space-x-2 transition-colors ${post.isLikedByUser
-                            ? "text-red-400"
-                            : "text-gray-400 hover:text-red-400"
-                          }`}
-                      >
-                        <Heart
-                          className={`w-5 h-5 ${post.isLikedByUser ? "fill-current" : ""
-                            }`}
-                        />
-                        <span className="text-sm">{post.likesCount}</span>
-                      </button>
+              {/* Post Content */}
+              <div className="px-6 pb-4">
+                <p className="text-light-100 whitespace-pre-line leading-relaxed">
+                  {post.content}
+                </p>
 
-                      <button
-                        onClick={() => handleOpenComments(post.id!)}
-                        className="flex items-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors"
-                      >
-                        <MessageCircle className="w-5 h-5" />
-                        <span className="text-sm">{post.commentsCount}</span>
-                      </button>
-
-                      <button
-                        onClick={() => handleShare(post.id!)}
-                        className={`flex items-center space-x-2 transition-colors ${post.isSharedByUser
-                            ? "text-green-400"
-                            : "text-gray-400 hover:text-green-400"
-                          }`}
-                      >
-                        <Share className="w-5 h-5" />
-                        <span className="text-sm">{post.sharesCount}</span>
-                      </button>
-                    </div>
+                {/* Post Image */}
+                {post.imageUrl && (
+                  <div className="mt-4">
+                    <img
+                      src={post.imageUrl}
+                      alt="Post image"
+                      className="w-full max-h-96 object-cover rounded-lg border border-dark-300"
+                    />
                   </div>
+                )}
+              </div>
+
+              {/* Post Actions */}
+              <div className="px-6 py-4 border-t border-dark-300">
+                <div className="flex items-center gap-6">
+                  <button
+                    onClick={() => handleLike(post.id!)}
+                    className={`flex items-center gap-2 transition-colors ${post.isLikedByUser
+                      ? "text-destructive-100"
+                      : "text-light-400 hover:text-destructive-100"
+                      }`}
+                  >
+                    <Heart
+                      className={`w-5 h-5 ${post.isLikedByUser ? "fill-current" : ""
+                        }`}
+                    />
+                    <span className="text-sm font-medium">{post.likesCount}</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleOpenComments(post.id!)}
+                    className="flex items-center gap-2 text-light-400 hover:text-primary-200 transition-colors"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    <span className="text-sm font-medium">{post.commentsCount}</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleShare(post.id!)}
+                    className={`flex items-center gap-2 transition-colors ${post.isSharedByUser
+                      ? "text-success-100"
+                      : "text-light-400 hover:text-success-100"
+                      }`}
+                  >
+                    <Share className="w-5 h-5" />
+                    <span className="text-sm font-medium">{post.sharesCount}</span>
+                  </button>
                 </div>
               </div>
-            ))
-          )}
-        </div>
-
-        {/* Load More */}
-        {hasMore && (
-          <div className="mt-8 text-center">
-            <button
-              onClick={loadMorePosts}
-              disabled={loadingMore}
-              className="bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed px-6 py-3 rounded-lg text-gray-300 hover:text-white transition-colors flex items-center justify-center mx-auto"
-            >
-              {loadingMore ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  Loading...
-                </>
-              ) : (
-                "Load More Posts"
-              )}
-            </button>
-          </div>
+            </div>
+          ))
         )}
       </div>
+
+      {/* Load More */}
+      {hasMore && !loading && (
+        <div className="text-center">
+          <Button
+            onClick={loadMorePosts}
+            disabled={loadingMore}
+            variant="outline"
+            className="min-w-[200px]"
+          >
+            {loadingMore ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                Loading...
+              </>
+            ) : (
+              "Load More Posts"
+            )}
+          </Button>
+        </div>
+      )}
 
       {/* Comments Modal */}
       {selectedPostId && (
@@ -712,28 +605,28 @@ const SocialTab = () => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
-            <div className="mb-4">
-              <h3 className="text-lg font-bold text-white mb-2">Delete Post</h3>
-              <p className="text-gray-300">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-dark-200 border border-dark-300 rounded-2xl p-6 w-full max-w-md">
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-primary-100 mb-2">Delete Post</h3>
+              <p className="text-light-400">
                 Are you sure you want to delete this post? This action cannot be
                 undone.
               </p>
             </div>
 
-            <div className="flex items-center justify-end space-x-3">
-              <button
+            <div className="flex items-center justify-end gap-3">
+              <Button
                 onClick={cancelDeletePost}
                 disabled={deletingPost}
-                className="px-4 py-2 text-gray-300 hover:text-white transition-colors disabled:opacity-50"
+                variant="outline"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={confirmDeletePost}
                 disabled={deletingPost}
-                className="bg-red-600 hover:bg-red-700 disabled:bg-red-800 disabled:cursor-not-allowed px-4 py-2 rounded-lg text-white font-medium transition-colors flex items-center"
+                className="bg-destructive-100 hover:bg-destructive-200 text-white"
               >
                 {deletingPost ? (
                   <>
@@ -743,7 +636,7 @@ const SocialTab = () => {
                 ) : (
                   "Delete"
                 )}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -751,28 +644,28 @@ const SocialTab = () => {
 
       {/* Share Post Modal */}
       {showShareModal && postToShare && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Share Post</h3>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-dark-200 border border-dark-300 rounded-2xl p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-primary-100">Share Post</h3>
               <button
                 onClick={handleCancelShare}
-                className="text-gray-400 hover:text-white"
+                className="text-light-400 hover:text-primary-100 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="mb-4 p-3 bg-gray-700 rounded-lg">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
+            <div className="mb-4 p-4 bg-dark-300 rounded-lg border border-dark-300">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 bg-primary-200 rounded-full flex items-center justify-center text-xs font-bold text-dark-100">
                   {postToShare.authorName.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-sm font-medium text-white">
+                <span className="text-sm font-medium text-light-100">
                   {postToShare.authorName}
                 </span>
               </div>
-              <p className="text-gray-300 text-sm">
+              <p className="text-light-400 text-sm">
                 {postToShare.content.length > 150
                   ? `${postToShare.content.substring(0, 150)}...`
                   : postToShare.content}
@@ -782,21 +675,21 @@ const SocialTab = () => {
                   <img
                     src={postToShare.imageUrl}
                     alt="Post content"
-                    className="w-full h-32 object-cover rounded-lg"
+                    className="w-full h-32 object-cover rounded-lg border border-dark-300"
                   />
                 </div>
               )}
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-light-100 mb-2">
                 Share with users (comma-separated):
               </label>
               <textarea
                 value={shareUsernames}
                 onChange={(e) => setShareUsernames(e.target.value)}
-                placeholder="Enter names or emails separated by commas (e.g., John Doe, jane@example.com, Alex Wilson)"
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 resize-none"
+                placeholder="Enter names or emails separated by commas (e.g., John Doe, jane@example.com)"
+                className="w-full bg-dark-300 border border-input rounded-lg px-4 py-3 text-light-100 placeholder-light-400 focus:outline-none focus:ring-2 focus:ring-primary-200 resize-none"
                 rows={3}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && e.ctrlKey) {
@@ -804,44 +697,152 @@ const SocialTab = () => {
                   }
                 }}
               />
-              <p className="text-xs text-gray-400 mt-1">
-                You can enter user names or email addresses. We'll find matching
-                users and send them notifications.
-              </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-light-600 mt-2">
                 Tip: Press Ctrl+Enter to share quickly
               </p>
             </div>
 
-            <div className="flex space-x-3">
-              <button
+            <div className="flex gap-3">
+              <Button
                 onClick={handleCancelShare}
-                className="flex-1 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-white"
+                variant="outline"
+                className="flex-1"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleConfirmShare}
                 disabled={!shareUsernames.trim() || sharingPost}
-                className="flex-1 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 px-4 py-2 rounded-lg text-white flex items-center justify-center"
+                className="flex-1 bg-primary-200 hover:bg-primary-200/80 text-dark-100"
               >
                 {sharingPost ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   "Share"
                 )}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Notifications Panel */}
-      <NotificationsPanel
-        isOpen={showNotifications}
-        onClose={() => setShowNotifications(false)}
-        onUnreadCountChange={setUnreadNotificationsCount}
-      />
+      {/* Floating Input Container - Similar to Ideas Page */}
+      {currentUser && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-2xl px-4">
+          <div className="bg-dark-200/95 backdrop-blur-lg rounded-2xl border border-dark-300/50 shadow-2xl">
+            {/* Expanded Content - Appears above the main input */}
+            {floatingInputExpanded && (
+              <div className="border-b border-dark-300/50 p-4">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-10 h-10 bg-primary-200 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm font-bold text-dark-100">
+                      {currentUser?.name?.[0] || "U"}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-light-100">{currentUser?.name || "User"}</p>
+                    <p className="text-xs text-light-400">{currentUser?.role || "Member"}</p>
+                  </div>
+                </div>
+
+                <textarea
+                  value={newPost}
+                  onChange={(e) => setNewPost(e.target.value)}
+                  placeholder="Share your interview experience, tips, or achievements..."
+                  className="w-full px-4 py-3 bg-dark-300/50 border border-input/50 rounded-lg text-light-100 placeholder-light-400 focus:outline-none focus:ring-2 focus:ring-primary-200/50 resize-none"
+                  rows={4}
+                />
+
+                {/* Image Preview */}
+                {imagePreview && (
+                  <div className="mt-3 relative">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-full max-h-48 object-cover rounded-lg border border-dark-300"
+                    />
+                    <button
+                      onClick={handleRemoveImage}
+                      className="absolute top-2 right-2 bg-dark-100/80 text-light-100 rounded-full w-7 h-7 flex items-center justify-center hover:bg-dark-100 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Main Input Container */}
+            <div className="relative">
+              <div className="flex items-center p-4">
+                {/* Main Input */}
+                <input
+                  type="text"
+                  value={floatingInputExpanded ? "" : "Create a post..."}
+                  onClick={() => !floatingInputExpanded && setFloatingInputExpanded(true)}
+                  readOnly={!floatingInputExpanded}
+                  className="flex-1 bg-transparent text-light-100 placeholder-light-400 text-base focus:outline-none cursor-pointer"
+                  placeholder="Create a post..."
+                />
+
+                {/* Action Icons */}
+                <div className="flex items-center gap-2 ml-3">
+                  {floatingInputExpanded && (
+                    <>
+                      <label className="p-2 rounded-lg transition-all duration-200 text-light-400 hover:text-light-200 hover:bg-dark-300/50 cursor-pointer" title="Add Image">
+                        <Image className="w-5 h-5" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageSelect}
+                          className="hidden"
+                        />
+                      </label>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFloatingInputExpanded(false);
+                          setNewPost("");
+                          setSelectedImage(null);
+                          setImagePreview(null);
+                        }}
+                        className="p-2 rounded-lg transition-all duration-200 text-light-400 hover:text-light-200 hover:bg-dark-300/50"
+                        title="Cancel"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      if (floatingInputExpanded) {
+                        handleCreatePost();
+                      } else {
+                        setFloatingInputExpanded(true);
+                      }
+                    }}
+                    disabled={floatingInputExpanded && ((!newPost.trim() && !selectedImage) || creatingPost)}
+                    className="p-2 rounded-lg bg-success-100 text-white hover:bg-success-100/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    title={floatingInputExpanded ? "Post" : "Create Post"}
+                  >
+                    {creatingPost ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : floatingInputExpanded ? (
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
+                      </svg>
+                    ) : (
+                      <Plus className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

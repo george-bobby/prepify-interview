@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { InterviewCard } from "@/components/InterviewCard";
 import { getCurrentUser } from "@/lib/actions/auth.action";
-import { getInterviewsByUserId, getLatestInterviews } from "@/lib/actions/general.action";
+import { getInterviewsByUserId, getLatestInterviews, getFeedbackByInterviewId } from "@/lib/actions/general.action";
 
 import { InterviewsPageClient } from "@/components/InterviewsPageClient";
 import { redirect } from 'next/navigation';
@@ -20,10 +20,20 @@ const InterviewsPage = async () => {
     const userInterviews: any = user?.id ? await getInterviewsByUserId(user.id) : [];
     const latestInterviews: any = user?.id ? await getLatestInterviews({ userId: user.id }) : [];
 
-    const hasPastInterviews = userInterviews.length > 0;
+    // Fetch feedback for each interview
+    const interviewsWithFeedback = await Promise.all(
+        userInterviews.map(async (interview: any) => {
+            const feedback = interview.userId && interview.id
+                ? await getFeedbackByInterviewId({ interviewId: interview.id, userId: interview.userId })
+                : null;
+            return { ...interview, feedback };
+        })
+    );
+
+    const hasPastInterviews = interviewsWithFeedback.length > 0;
 
     // Sort user interviews by status and date
-    const sortedUserInterviews = userInterviews?.sort((a: any, b: any) => {
+    const sortedUserInterviews = interviewsWithFeedback?.sort((a: any, b: any) => {
         // Prioritize in-progress interviews
         if (a.status === 'in_progress' && b.status !== 'in_progress') return -1;
         if (b.status === 'in_progress' && a.status !== 'in_progress') return 1;
@@ -42,7 +52,7 @@ const InterviewsPage = async () => {
     return (
         <main className="flex flex-col gap-10 relative">
             {/* Hero Section */}
-            <section className="card-cta flex flex-col sm:flex-row items-center justify-between gap-6">
+            {/* <section className="card-cta flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div className="flex flex-col gap-6 max-w-lg">
                     <h2>Get Interview-Ready with AI-Powered Practice & Feedback</h2>
                     <p className="text-lg">
@@ -57,7 +67,7 @@ const InterviewsPage = async () => {
                     height={400}
                     className="max-sm:hidden"
                 />
-            </section>
+            </section> */}
 
             {/* Tips Section */}
             <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
