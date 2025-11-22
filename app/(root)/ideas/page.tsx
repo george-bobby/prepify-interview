@@ -116,7 +116,6 @@ const ProjectsPage = () => {
         const userData = await getCurrentUser();
         if (userData) {
           setCurrentUser(userData);
-          console.log("Current user loaded:", userData);
 
           // Fetch all projects and research from API (shared data)
           const [allProjects, allResearch] = await Promise.all([
@@ -143,7 +142,6 @@ const ProjectsPage = () => {
     // Set up periodic refresh to catch status updates from other users
     const intervalId = setInterval(() => {
       if (!isLoading) {
-        console.log("Periodic refresh to check for updates...");
         fetchUserAndData();
       }
     }, 30000); // Refresh every 30 seconds
@@ -337,9 +335,6 @@ const ProjectsPage = () => {
         requests: [],
       };
 
-      console.log('Submitting data:', newItemData);
-      console.log('Skills being sent:', formData.skillsRequired);
-
       const endpoint =
         createType === "project" ? "/api/projects" : "/api/research";
       const response = await fetch(endpoint, {
@@ -393,29 +388,6 @@ const ProjectsPage = () => {
       return;
     }
 
-    // First, refresh the item to get the latest status
-    try {
-      const endpoint = item.type === "project" ? "/api/projects" : "/api/research";
-      const response = await fetch(`${endpoint}/${item.id}`);
-      if (response.ok) {
-        const latestItem = await response.json();
-        const latestRequest = latestItem.requests.find((req: any) => req.userId === currentUser.id);
-
-        if (latestRequest) {
-          if (latestRequest.status === "pending") {
-            toast.error("You have already requested to join this " + (item.type === "project" ? "project" : "research paper"));
-          } else if (latestRequest.status === "accepted") {
-            toast.success("Your request has been accepted!");
-          } else if (latestRequest.status === "rejected") {
-            toast.error("Your previous request was rejected");
-          }
-          return;
-        }
-      }
-    } catch (error) {
-      console.warn("Could not check latest status, proceeding with request");
-    }
-
     try {
       const newRequest: ProjectRequest = {
         id: `req-${Date.now()}-${currentUser.id}`,
@@ -426,12 +398,6 @@ const ProjectsPage = () => {
         status: "pending",
         createdAt: new Date().toISOString(),
       };
-
-      console.log("Sending join request:", {
-        item: item.type,
-        id: item.id,
-        request: newRequest,
-      });
 
       // Make API call to send join request
       const endpoint =
@@ -445,20 +411,12 @@ const ProjectsPage = () => {
         body: JSON.stringify(newRequest),
       });
 
-      console.log(
-        "Join request response:",
-        response.status,
-        response.statusText
-      );
-
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Join request failed:", errorData);
         throw new Error(errorData.error || "Failed to send join request");
       }
 
       const updatedItem = await response.json();
-      console.log("Join request successful:", updatedItem);
 
       // Update local state
       if (item.type === "project") {
@@ -478,11 +436,6 @@ const ProjectsPage = () => {
       }
 
       toast.success("Join request sent successfully!");
-
-      // Refresh data to ensure consistency
-      setTimeout(() => {
-        handleRefresh();
-      }, 500);
     } catch (error) {
       console.error("Error sending join request:", error);
       toast.error("Failed to send join request. Please try again.");
@@ -498,13 +451,6 @@ const ProjectsPage = () => {
       const item = selectedProjectForRequests;
       if (!item) return;
 
-      console.log("Handling request action:", {
-        projectId,
-        requestId,
-        action,
-        itemType: item.type,
-      });
-
       const endpoint =
         item.type === "project" ? "/api/projects" : "/api/research";
       const response = await fetch(
@@ -518,20 +464,12 @@ const ProjectsPage = () => {
         }
       );
 
-      console.log(
-        "Request action response:",
-        response.status,
-        response.statusText
-      );
-
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Request action failed:", errorData);
         throw new Error(errorData.error || `Failed to ${action} request`);
       }
 
       const updatedItem = await response.json();
-      console.log("Request action successful:", updatedItem);
 
       // Immediately update all related state
       if (item.type === "project") {
@@ -564,7 +502,6 @@ const ProjectsPage = () => {
           ]);
           setProjects(allProjects);
           setResearchPapers(allResearch);
-          console.log("Global data refreshed after request action");
         } catch (error) {
           console.error("Error during global refresh:", error);
         }
@@ -590,10 +527,6 @@ const ProjectsPage = () => {
 
       setProjects(allProjects);
       setResearchPapers(allResearch);
-      console.log("Data refreshed:", {
-        projects: allProjects,
-        research: allResearch,
-      });
       toast.success("Data refreshed!");
     } catch (error) {
       console.error("Error refreshing data:", error);
@@ -669,7 +602,6 @@ const ProjectsPage = () => {
 
     const getRequestButtonText = () => {
       if (!userRequest) return "Request to Join";
-      console.log("User request status:", userRequest.status, "for item:", item.id, "user:", currentUser?.id);
       switch (userRequest.status) {
         case "pending":
           return "Request Pending ⏳";
