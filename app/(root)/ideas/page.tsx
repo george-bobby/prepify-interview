@@ -4,6 +4,8 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { getCurrentUser } from "@/lib/actions/auth.action";
 import AutocompleteInput from "@/components/AutocompleteInput";
+import { db } from "@/firebase/client";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 
 // Define types for projects and research papers
 interface Project {
@@ -40,6 +42,7 @@ interface ProjectRequest {
   userName: string;
   userEmail: string;
   userSkills: string[];
+  desiredRole?: string; // optional role intent provided by requester
   message?: string;
   status: "pending" | "accepted" | "rejected";
   createdAt: string;
@@ -80,6 +83,11 @@ const fetchAllResearch = async (): Promise<ResearchPaper[]> => {
 const ProjectsPage = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  // Filter state
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [filterSkill, setFilterSkill] = useState<string>("");
+  const [filterTeamMin, setFilterTeamMin] = useState<number>(1);
+  const [filterTeamMax, setFilterTeamMax] = useState<number>(50);
   const [projects, setProjects] = useState<Project[]>([]);
   const [researchPapers, setResearchPapers] = useState<ResearchPaper[]>([]);
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
@@ -90,6 +98,9 @@ const ProjectsPage = () => {
   const [floatingInputExpanded, setFloatingInputExpanded] = useState<false | "description" | "team" | "skills">(false);
   const [showRequestsModal, setShowRequestsModal] = useState(false);
   const [selectedProjectForRequests, setSelectedProjectForRequests] =
+    useState<ProjectOrResearch | null>(null);
+  const [showAcceptedModal, setShowAcceptedModal] = useState(false);
+  const [selectedProjectForAccepted, setSelectedProjectForAccepted] =
     useState<ProjectOrResearch | null>(null);
   const [createType, setCreateType] = useState<"project" | "research">(
     "project"
@@ -111,42 +122,46 @@ const ProjectsPage = () => {
 
   // Load current user and data from API
   useEffect(() => {
-    const fetchUserAndData = async () => {
+    let initialLoaded = false;
+    const initialFetch = async () => {
       try {
         const userData = await getCurrentUser();
-        if (userData) {
-          setCurrentUser(userData);
-
-          // Fetch all projects and research from API (shared data)
-          const [allProjects, allResearch] = await Promise.all([
-            fetchAllProjects(),
-            fetchAllResearch(),
-          ]);
-
-          setProjects(allProjects);
-          setResearchPapers(allResearch);
-        } else {
-          setProjects([]);
-          setResearchPapers([]);
-        }
-      } catch (error) {
-        console.error("Error loading data:", error);
-        toast.error("Failed to load data");
+        if (userData) setCurrentUser(userData);
+        const [allProjects, allResearch] = await Promise.all([
+          fetchAllProjects(),
+          fetchAllResearch(),
+        ]);
+        setProjects(allProjects);
+        setResearchPapers(allResearch);
+      } catch (e) {
+        console.error("Initial load failed", e);
       } finally {
+        initialLoaded = true;
         setIsLoading(false);
       }
     };
-
-    fetchUserAndData();
-
-    // Set up periodic refresh to catch status updates from other users
-    const intervalId = setInterval(() => {
-      if (!isLoading) {
-        fetchUserAndData();
+    initialFetch();
+    // Real-time listener for project & research updates (single collection filtered by type)
+    const projectsRef = collection(db, "projects");
+    const q = query(projectsRef);
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const all = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+        const proj = all.filter((d) => d.type === "project");
+        const research = all.filter((d) => d.type === "research");
+        // If initial fetch not yet finished, skip overriding to prevent flicker
+        setProjects(proj as Project[]);
+        setResearchPapers(research as ResearchPaper[]);
+      },
+      (error) => {
+        console.error("Realtime subscription error", error);
       }
-    }, 30000); // Refresh every 30 seconds
+    );
 
-    return () => clearInterval(intervalId);
+    return () => {
+      unsubscribe();
+    };
   }, [isLoading]);
 
   // Calculate skill match score - exact matching for better accuracy
@@ -230,6 +245,26 @@ const ProjectsPage = () => {
         );
       }
 
+      // Status filter
+      if (filterStatus !== "all") {
+        filtered = filtered.filter((item) => item.status === filterStatus);
+      }
+
+      // Skill filter
+      if (filterSkill.trim()) {
+        const skillTerm = filterSkill.toLowerCase().trim();
+        filtered = filtered.filter((item) =>
+          item.skillsRequired.some(
+            (skill) => skill.toLowerCase().trim() === skillTerm
+          )
+        );
+      }
+
+      // Team size filter
+      filtered = filtered.filter(
+        (item) => item.teamMembers >= filterTeamMin && item.teamMembers <= filterTeamMax
+      );
+
       return sortBySkillMatch(filtered);
     };
 
@@ -237,7 +272,7 @@ const ProjectsPage = () => {
     setFilteredResearch(
       filterItems(researchPapers, searchQuery) as ResearchPaper[]
     );
-  }, [searchQuery, projects, researchPapers, currentUser?.skills]);
+  }, [searchQuery, projects, researchPapers, currentUser?.skills, filterStatus, filterSkill, filterTeamMin, filterTeamMax]);
 
   // Combine all items for unified display
   const allFilteredItems = [...filteredProjects, ...filteredResearch];
@@ -389,12 +424,20 @@ const ProjectsPage = () => {
     }
 
     try {
+      // Capture desired role intent (simple prompt for initial implementation)
+      const desiredRoleRaw = window.prompt(
+        `Optional: What role or contribution focus do you intend for this ${item.type === "project" ? "project" : "research paper"
+        }? (e.g., Frontend, Data, Writing)`
+      );
+      const desiredRole = desiredRoleRaw?.trim() || undefined;
+
       const newRequest: ProjectRequest = {
         id: `req-${Date.now()}-${currentUser.id}`,
         userId: currentUser.id,
         userName: currentUser.name,
         userEmail: currentUser.email || "",
         userSkills: currentUser.skills || [],
+        desiredRole,
         status: "pending",
         createdAt: new Date().toISOString(),
       };
@@ -517,6 +560,11 @@ const ProjectsPage = () => {
     setShowRequestsModal(true);
   };
 
+  const openAcceptedModal = (item: ProjectOrResearch) => {
+    setSelectedProjectForAccepted(item);
+    setShowAcceptedModal(true);
+  };
+
   const handleRefresh = async () => {
     try {
       setIsLoading(true);
@@ -599,6 +647,10 @@ const ProjectsPage = () => {
       (req) => req.status === "pending"
     ).length;
     const totalRequestsCount = item.requests.length;
+    const acceptedCount = item.requests.filter(
+      (req) => req.status === "accepted"
+    ).length;
+    const remainingSlots = Math.max(item.teamMembers - acceptedCount, 0);
 
     const getRequestButtonText = () => {
       if (!userRequest) return "Request to Join";
@@ -649,6 +701,27 @@ const ProjectsPage = () => {
               <span className="text-light-400 text-xs">
                 {getTimeAgo(item.createdAt)}
               </span>
+              {currentUser?.skills && (
+                <span className="ml-2 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-dark-300 text-xs text-light-300 border border-dark-400">
+                  Match:
+                  <span className="text-primary-200 font-semibold">
+                    {calculateSkillMatchScore(
+                      currentUser.skills,
+                      item.skillsRequired
+                    )}
+                    /{item.skillsRequired.length}
+                  </span>
+                  <span className="text-light-500">
+                    ({Math.round(
+                      (calculateSkillMatchScore(
+                        currentUser.skills,
+                        item.skillsRequired
+                      ) /
+                        item.skillsRequired.length) * 100
+                    )}% )
+                  </span>
+                </span>
+              )}
             </div>
             <div className="text-light-300 text-sm mb-3">
               By {item.createdBy}
@@ -671,8 +744,15 @@ const ProjectsPage = () => {
           <div className="flex items-center gap-2 mb-2">
             <span className="text-light-400 text-sm">Team Members:</span>
             <span className="text-primary-200 font-medium">
-              {item.teamMembers}
+              {acceptedCount}/{item.teamMembers}
             </span>
+            {remainingSlots > 0 ? (
+              <span className="text-xs text-light-500 ml-2">
+                {remainingSlots} slot{remainingSlots === 1 ? "" : "s"} open
+              </span>
+            ) : (
+              <span className="text-xs text-success-100 ml-2">Full</span>
+            )}
           </div>
           <div className="flex flex-wrap gap-1">
             {item.skillsRequired.map((skill, index) => {
@@ -723,6 +803,14 @@ const ProjectsPage = () => {
                     </span>
                   )}
                 </button>
+                {acceptedCount > 0 && (
+                  <button
+                    onClick={() => openAcceptedModal(item)}
+                    className="bg-dark-300 text-light-100 px-4 py-2 rounded-lg font-medium hover:bg-dark-200 transition-colors duration-200"
+                  >
+                    View Team ({acceptedCount})
+                  </button>
+                )}
               </>
             ) : (
               <button
@@ -995,6 +1083,155 @@ const ProjectsPage = () => {
       </div>
     );
 
+  const AcceptedModal = () =>
+    showAcceptedModal &&
+    selectedProjectForAccepted && (
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-dark-200 border border-dark-300 rounded-2xl p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="text-light-100 font-semibold text-xl mb-2">
+                Team Members for "{selectedProjectForAccepted.name}"
+              </h3>
+              <p className="text-light-300 text-sm">
+                Accepted: {
+                  selectedProjectForAccepted.requests.filter(
+                    (r) => r.status === "accepted"
+                  ).length
+                }
+                /{selectedProjectForAccepted.teamMembers} &middot; Open Slots: {Math.max(
+                  selectedProjectForAccepted.teamMembers -
+                  selectedProjectForAccepted.requests.filter(
+                    (r) => r.status === "accepted"
+                  ).length,
+                  0
+                )}
+              </p>
+            </div>
+            <button
+              onClick={() => setShowAcceptedModal(false)}
+              className="text-light-400 hover:text-light-100 text-xl"
+            >
+              ✕
+            </button>
+          </div>
+
+          {selectedProjectForAccepted.requests.filter(
+            (r) => r.status === "accepted"
+          ).length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">👥</div>
+              <p className="text-light-300 text-lg">No team members yet</p>
+              <p className="text-light-400 text-sm mt-2">
+                Accept requests from contributors to build your team.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {selectedProjectForAccepted.requests
+                .filter((r) => r.status === "accepted")
+                .sort(
+                  (a, b) =>
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+                )
+                .map((member) => (
+                  <div
+                    key={member.id}
+                    className="bg-dark-300 rounded-2xl p-6 border border-success-100/30"
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h4 className="text-light-100 font-semibold text-lg">
+                            {member.userName}
+                          </h4>
+                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-success-100/20 text-success-100">
+                            ACCEPTED
+                          </span>
+                        </div>
+                        <p className="text-light-300 text-sm mb-1">
+                          📧 {member.userEmail}
+                        </p>
+                        {member.desiredRole && (
+                          <p className="text-primary-200 text-xs mb-1">
+                            Role Intent: {member.desiredRole}
+                          </p>
+                        )}
+                        <p className="text-light-400 text-sm">
+                          Joined {getTimeAgo(member.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mb-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-light-300 text-sm font-medium">
+                          Skills:
+                        </span>
+                        <span className="text-light-400 text-xs">
+                          ({member.userSkills.length} total)
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {member.userSkills.map((skill, idx) => {
+                          const matchesRequired =
+                            selectedProjectForAccepted.skillsRequired.some(
+                              (reqSkill) =>
+                                reqSkill.toLowerCase().trim() ===
+                                skill.toLowerCase().trim()
+                            );
+                          return (
+                            <span
+                              key={idx}
+                              className={`inline-block px-3 py-1 rounded-full text-sm ${matchesRequired
+                                  ? "bg-success-100/20 text-success-100 border border-success-100/30"
+                                  : "bg-primary-200/20 text-primary-200"
+                                }`}
+                            >
+                              {skill}
+                              {matchesRequired && " ✓"}
+                            </span>
+                          );
+                        })}
+                      </div>
+                      <div className="mt-3 p-3 bg-dark-400/40 rounded-lg text-xs text-light-400">
+                        Match: {calculateSkillMatchScore(
+                          member.userSkills,
+                          selectedProjectForAccepted.skillsRequired
+                        )}/{selectedProjectForAccepted.skillsRequired.length}
+                        ({
+                          Math.round(
+                            (calculateSkillMatchScore(
+                              member.userSkills,
+                              selectedProjectForAccepted.skillsRequired
+                            ) /
+                              selectedProjectForAccepted.skillsRequired
+                                .length) * 100
+                          )
+                        }%)
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
+          <div className="mt-6 pt-4 border-t border-dark-400">
+            <div className="flex justify-between items-center">
+              <div className="text-light-400 text-sm">
+                ✅ Tip: Cover remaining required skills to speed progress.
+              </div>
+              <button
+                onClick={() => setShowAcceptedModal(false)}
+                className="bg-dark-300 text-light-100 px-6 py-2 rounded-lg hover:bg-dark-200 transition-colors duration-200"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
   const CreateModal = () =>
     showCreateModal && (
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -1197,6 +1434,55 @@ const ProjectsPage = () => {
               placeholder="Search projects and research papers"
               label=""
               apiEndpoint="/api/projects/search"
+            />
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="bg-dark-200 border border-dark-300 rounded-2xl p-4 mb-8 grid gap-4 md:grid-cols-4">
+          <div className="flex flex-col gap-2">
+            <label className="text-xs text-light-400">Status</label>
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="bg-dark-300 border border-dark-400 rounded-lg px-3 py-2 text-sm text-light-100"
+            >
+              <option value="all">All</option>
+              <option value="open">Open</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-xs text-light-400">Exact Skill</label>
+            <input
+              type="text"
+              value={filterSkill}
+              onChange={(e) => setFilterSkill(e.target.value)}
+              placeholder="e.g. react"
+              className="bg-dark-300 border border-dark-400 rounded-lg px-3 py-2 text-sm text-light-100 placeholder:text-light-500"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-xs text-light-400">Min Team Size</label>
+            <input
+              type="number"
+              min={1}
+              max={50}
+              value={filterTeamMin}
+              onChange={(e) => setFilterTeamMin(parseInt(e.target.value) || 1)}
+              className="bg-dark-300 border border-dark-400 rounded-lg px-3 py-2 text-sm text-light-100"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-xs text-light-400">Max Team Size</label>
+            <input
+              type="number"
+              min={filterTeamMin}
+              max={200}
+              value={filterTeamMax}
+              onChange={(e) => setFilterTeamMax(parseInt(e.target.value) || filterTeamMin)}
+              className="bg-dark-300 border border-dark-400 rounded-lg px-3 py-2 text-sm text-light-100"
             />
           </div>
         </div>
