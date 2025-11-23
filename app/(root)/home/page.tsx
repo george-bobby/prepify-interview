@@ -100,21 +100,15 @@ export default async function Home() {
             <div className="relative z-10">
 
                 {/* Hero Section */}
-                <section className="py-24">
+                <section className="pt-16 pb-12 md:pt-20 md:pb-16">
                     <div className="max-w-6xl mx-auto relative">
-                        {/* Animated background elements */}
-                        <div className="absolute inset-0 overflow-hidden rounded-3xl">
-                            <div className="absolute top-20 left-20 w-40 h-40 bg-primary-400 rounded-full filter blur-3xl opacity-20 animate-pulse"></div>
-                            <div className="absolute bottom-20 right-20 w-60 h-60 bg-success-100 rounded-full filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
-                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-purple-400 rounded-full filter blur-3xl opacity-10 animate-pulse delay-2000"></div>
-                        </div>
 
                         {/* Main CTA container */}
                         <div className="relative">
                             {/* Glowing border effect */}
-                            <div className="absolute -inset-1 bg-gradient-to-r from-primary-400 via-success-100 to-purple-400 rounded-3xl blur opacity-30"></div>
+                            {/* <div className="absolute -inset-1 bg-gradient-to-r from-primary-400 via-success-100 to-purple-400 rounded-3xl blur opacity-30"></div> */}
 
-                            <div className="relative bg-gradient-to-br from-dark-200/90 to-dark-300/90 backdrop-blur-xl rounded-3xl border border-primary-400/20 p-16 text-center overflow-hidden">
+                            <div className="relative bg-gradient-to-br from-dark-200/90 to-dark-300/90 backdrop-blur-xl rounded-3xl border border-primary-400/20 p-10 md:p-14 text-center overflow-hidden">
                                 {/* Background pattern */}
                                 <div className="absolute inset-0 opacity-5">
                                     <div className="absolute inset-0" style={{
@@ -135,7 +129,7 @@ export default async function Home() {
                                     <div>
                                         <h2 className="text-5xl md:text-7xl font-bold leading-tight mb-6">
                                             <span className="text-white">Ace Your Next</span><br />
-                                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-success-100 to-purple-400 animate-glow">
+                                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-300 animate-glow">
                                                 Interview
                                             </span>
                                         </h2>
@@ -146,24 +140,21 @@ export default async function Home() {
                                     </div>
 
                                     {/* Action buttons */}
-                                    <div className="flex flex-col lg:flex-row gap-6 justify-center items-center pt-4">
-                                        <Button asChild size="lg" className="group relative text-xl px-16 py-8 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white transform hover:scale-110 transition-all duration-300 shadow-2xl hover:shadow-emerald-500/50 rounded-2xl font-bold min-w-[280px] border-2 border-emerald-400/30 hover:border-emerald-300 animate-pulse-glow">
+                                    <div className="flex flex-col lg:flex-row gap-5 justify-center items-center pt-2">
+                                        <Button asChild size="lg" className="group relative text-xl px-12 py-6 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:brightness-110 text-white transition-colors duration-200 rounded-xl font-semibold min-w-[240px] border border-emerald-500/40">
                                             <Link href={user ? "/dashboard" : "/signup"}>
                                                 <span className="relative z-10 flex items-center gap-3">
-                                                    <svg className="w-6 h-6 animate-bounce" fill="currentColor" viewBox="0 0 20 20">
+                                                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                                                         <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
                                                     </svg>
                                                     {user ? "Go to Dashboard" : "Start Free Trial"}
-                                                    <svg className="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                                                    <svg className="w-6 h-6 group-hover:translate-x-0.5 transition-transform" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
                                                     </svg>
                                                 </span>
-                                                <div className="absolute inset-0 bg-gradient-to-r from-white/30 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-2xl blur opacity-0 group-hover:opacity-75 transition-opacity duration-300 -z-10"></div>
                                             </Link>
                                         </Button>
-
-                                        <Button variant="outline" size="lg" className="text-xl px-16 py-8 border-2 border-primary-400/50 text-primary-200 hover:bg-primary-400/10 hover:border-primary-400 transition-all duration-300 backdrop-blur-sm rounded-2xl font-bold min-w-[280px]" asChild>
+                                        <Button variant="outline" size="lg" className="group text-xl px-12 py-6 border border-primary-400/50 text-primary-200 hover:bg-primary-400/10 transition-colors duration-200 rounded-xl font-semibold min-w-[240px]" asChild>
                                             <Link href="/interviews">
                                                 <span className="flex items-center gap-3">
                                                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -176,7 +167,7 @@ export default async function Home() {
                                     </div>
 
                                     {/* Trust indicators */}
-                                    <div className="pt-8">
+                                    <div className="pt-6">
                                         <div className="flex flex-wrap justify-center gap-8 text-sm">
                                             <div className="flex items-center gap-3 px-6 py-3 bg-dark-100/30 backdrop-blur-sm rounded-full border border-success-100/20">
                                                 <div className="w-3 h-3 bg-success-100 rounded-full animate-pulse"></div>
@@ -200,44 +191,14 @@ export default async function Home() {
                     </div>
                 </section>
 
-                {/* Demo Section */}
-                {/* <section className="container mx-auto px-6 py-16">
-                    <div className="max-w-4xl mx-auto">
-                        <div id="demo" className="relative group">
-                            <div className="relative bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-8 hover:border-white/20 transition-all duration-500">
-                                <div className="aspect-video bg-slate-800/50 rounded-xl flex items-center justify-center relative overflow-hidden">
-                                    <div className="text-center">
-                                        <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                                            <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                                            </svg>
-                                        </div>
-                                        <h3 className="text-2xl font-bold text-white mb-3">See Prepify in Action</h3>
-                                        <p className="text-slate-400 text-lg">Watch how AI transforms your interview preparation journey</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section> */}
-
                 {/* Features Section */}
-                <section className="container mx-auto px-6 py-20">
+                <section className="container mx-auto px-6 py-12 md:py-16">
                     <div className="text-center mb-16">
                         <div className="inline-block mb-6">
                             <span className="px-4 py-2 bg-blue-500/10 text-blue-300 rounded-full text-sm font-semibold border border-blue-500/20 backdrop-blur-sm">
                                 ✨ Complete Platform
                             </span>
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
-                            <span className="text-white">One Place For</span><br />
-                            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent">
-                                Interview Excellence
-                            </span>
-                        </h2>
-                        <p className="text-xl text-slate-400 max-w-4xl mx-auto leading-relaxed">
-                            Everything you need to prepare, practice, analyze and accelerate your career — unified by intelligent feedback & clear progress tracking.
-                        </p>
                     </div>
 
                     <div className="grid gap-8 mb-20 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
@@ -296,7 +257,7 @@ export default async function Home() {
                 </section>
 
                 {/* Pricing Section */}
-                <section id="pricing" className="mb-20">
+                <section id="pricing" className="mb-12">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl md:text-5xl font-bold text-primary-100 mb-4">
                             Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-200 to-success-100">Plan</span>
@@ -334,7 +295,7 @@ export default async function Home() {
                                 </li>
                             </ul>
 
-                            <Button asChild className="w-full bg-dark-100 border border-primary-200 text-primary-200 hover:bg-primary-200 hover:text-white transition-all">
+                            <Button asChild className="w-full bg-dark-100 border border-green-200 text-green-200 hover:bg-green-200 hover:text-white transition-all">
                                 <Link href={user ? "/dashboard" : "/signup"}>
                                     {user ? "Go to Dashboard" : "Get Started"}
                                 </Link>
@@ -344,7 +305,7 @@ export default async function Home() {
                         {/* Pro Plan - Most Popular */}
                         <div className="bg-gradient-to-br from-primary-200/10 to-primary-300/10 border-2 border-primary-200 rounded-2xl p-8 relative group transform scale-105 shadow-2xl">
                             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                                <span className="bg-gradient-to-r from-primary-200 to-primary-300 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                                <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
                                     Most Popular
                                 </span>
                             </div>
@@ -378,7 +339,7 @@ export default async function Home() {
                                 </li>
                             </ul>
 
-                            <Button asChild className="w-full bg-gradient-to-r from-primary-200 to-primary-300 text-white hover:from-primary-300 hover:to-primary-400 transform hover:scale-105 transition-all">
+                            <Button asChild className="w-full bg-gradient-to-r from-green-400 to-green-500 text-white hover:from-green-300 hover:to-green-400 transform hover:scale-105 transition-all">
                                 <Link href={user ? "/dashboard" : "/signup"}>
                                     {user ? "Go to Dashboard" : "Upgrade to Pro"}
                                 </Link>
@@ -416,7 +377,7 @@ export default async function Home() {
                                 </li>
                             </ul>
 
-                            <Button asChild className="w-full bg-dark-100 border border-primary-200 text-primary-200 hover:bg-primary-200 hover:text-white transition-all">
+                            <Button asChild className="w-full bg-dark-100 border border-green-200 text-green-200 hover:bg-green-200 hover:text-white transition-all">
                                 <Link href="/contact">Contact Sales</Link>
                             </Button>
                         </div>
@@ -436,7 +397,7 @@ export default async function Home() {
                 </section>
 
                 {/* How It Works Section */}
-                <section className="container mx-auto px-6 py-20">
+                <section className="container mx-auto px-6 py-12 md:py-16">
                     <div className="text-center mb-16">
                         <div className="inline-block mb-6">
                             <span className="px-4 py-2 bg-emerald-500/10 text-emerald-300 rounded-full text-sm font-semibold border border-emerald-500/20 backdrop-blur-sm">
@@ -526,7 +487,7 @@ export default async function Home() {
 
                     {/* Bottom CTA */}
                     <div className="text-center">
-                        <Button asChild size="lg" className="px-8 py-4 text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                        <Button asChild size="lg" className="px-8 py-4 text-lg font-semibold bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                             <Link href={user ? "/dashboard" : "/signup"} className="flex items-center gap-2">
                                 Start Your Journey
                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
