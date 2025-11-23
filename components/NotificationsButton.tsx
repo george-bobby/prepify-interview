@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Bell } from "lucide-react";
 import { socialAPI } from "@/lib/services/social-api";
 import { NotificationsPanel } from "./NotificationsPanel";
@@ -8,6 +8,7 @@ import { NotificationsPanel } from "./NotificationsPanel";
 const NotificationsButton: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         let mounted = true;
@@ -29,8 +30,9 @@ const NotificationsButton: React.FC = () => {
     }, []);
 
     return (
-        <>
+        <div className="relative">
             <button
+                ref={buttonRef}
                 onClick={() => setIsOpen(true)}
                 className="relative p-2 text-light-400 hover:text-primary-100 transition-colors rounded-lg hover:bg-dark-200"
                 title="Notifications"
@@ -48,8 +50,9 @@ const NotificationsButton: React.FC = () => {
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
                 onUnreadCountChange={(c) => setUnreadCount(c)}
+                buttonRef={buttonRef}
             />
-        </>
+        </div>
     );
 };
 

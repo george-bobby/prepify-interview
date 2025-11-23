@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Bell, X, Check, Trash2, CheckCheck } from "lucide-react";
 import { socialAPI } from "@/lib/services/social-api";
 import { Notification } from "@/lib/schemas/social";
@@ -10,16 +11,30 @@ interface NotificationsPanelProps {
   isOpen: boolean;
   onClose: () => void;
   onUnreadCountChange?: (count: number) => void;
+  buttonRef?: React.RefObject<HTMLButtonElement>;
 }
 
 export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
   isOpen,
   onClose,
   onUnreadCountChange,
+  buttonRef,
 }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [position, setPosition] = useState({ top: 0, right: 0 });
+
+  // Calculate position based on button location
+  useEffect(() => {
+    if (isOpen && buttonRef?.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.bottom + 8,
+        right: window.innerWidth - rect.right,
+      });
+    }
+  }, [isOpen, buttonRef]);
 
   const loadNotifications = async () => {
     try {
@@ -122,16 +137,30 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-800 rounded-lg w-full max-w-md mx-4 max-h-[80vh] flex flex-col">
+  const panelContent = (
+    <>
+      {/* Backdrop overlay */}
+      <div
+        className="fixed inset-0 z-40"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      {/* Dropdown panel */}
+      <div
+        className="fixed bg-dark-200 border border-dark-300 rounded-lg w-96 max-h-[80vh] flex flex-col shadow-2xl z-50"
+        style={{
+          top: `${position.top}px`,
+          right: `${position.right}px`,
+        }}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+        <div className="flex items-center justify-between p-4 border-b border-dark-300">
           <div className="flex items-center space-x-2">
-            <Bell className="w-5 h-5 text-blue-400" />
-            <h3 className="text-lg font-semibold text-white">Notifications</h3>
+            <Bell className="w-5 h-5 text-primary-200" />
+            <h3 className="text-lg font-semibold text-light-100">Notifications</h3>
             {unreadCount > 0 && (
-              <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+              <span className="bg-destructive-100 text-white text-xs px-2 py-1 rounded-full">
                 {unreadCount}
               </span>
             )}
@@ -140,7 +169,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllAsRead}
-                className="text-gray-400 hover:text-white p-1"
+                className="text-light-400 hover:text-light-100 p-2 rounded-lg hover:bg-dark-300 transition-colors"
                 title="Mark all as read"
               >
                 <CheckCheck className="w-4 h-4" />
@@ -148,7 +177,8 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
             )}
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white p-1"
+              className="text-light-400 hover:text-light-100 p-2 rounded-lg hover:bg-dark-300 transition-colors"
+              title="Close"
             >
               <X className="w-5 h-5" />
             </button>
@@ -159,38 +189,37 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="flex items-center justify-center p-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-200"></div>
             </div>
           ) : notifications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-8 text-gray-400">
+            <div className="flex flex-col items-center justify-center p-8 text-light-400">
               <Bell className="w-12 h-12 mb-4 opacity-50" />
               <p>No notifications yet</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-700">
+            <div className="divide-y divide-dark-300">
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 hover:bg-gray-700 transition-colors ${
-                    !notification.isRead
-                      ? "bg-gray-750 border-l-4 border-blue-400"
+                  className={`p-4 hover:bg-dark-300 transition-colors ${!notification.isRead
+                      ? "bg-dark-300/50 border-l-4 border-primary-200"
                       : ""
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-1">
-                        <h4 className="text-sm font-medium text-white truncate">
+                        <h4 className="text-sm font-medium text-light-100 truncate">
                           {notification.title}
                         </h4>
                         {!notification.isRead && (
-                          <div className="w-2 h-2 bg-blue-400 rounded-full flex-shrink-0"></div>
+                          <div className="w-2 h-2 bg-primary-200 rounded-full flex-shrink-0"></div>
                         )}
                       </div>
-                      <p className="text-sm text-gray-300 mb-2 line-clamp-2">
+                      <p className="text-sm text-light-300 mb-2 line-clamp-2">
                         {notification.message}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-light-500">
                         {formatTimeAgo(notification.createdAt)}
                       </p>
                     </div>
@@ -198,7 +227,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
                       {!notification.isRead && (
                         <button
                           onClick={() => handleMarkAsRead(notification.id!)}
-                          className="text-gray-400 hover:text-green-400 p-1"
+                          className="text-light-400 hover:text-success-100 p-1 rounded transition-colors"
                           title="Mark as read"
                         >
                           <Check className="w-4 h-4" />
@@ -208,7 +237,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
                         onClick={() =>
                           handleDeleteNotification(notification.id!)
                         }
-                        className="text-gray-400 hover:text-red-400 p-1"
+                        className="text-light-400 hover:text-destructive-100 p-1 rounded transition-colors"
                         title="Delete notification"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -221,6 +250,8 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
           )}
         </div>
       </div>
-    </div>
+    </>
   );
+
+  return typeof window !== 'undefined' ? createPortal(panelContent, document.body) : null;
 };
