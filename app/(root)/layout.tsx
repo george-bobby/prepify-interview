@@ -1,15 +1,16 @@
 import React from "react";
-import { isAuthenticated } from "@/lib/actions/auth.action";
+import { isAuthenticated, getCurrentUser } from "@/lib/actions/auth.action";
 import { redirect } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import MobileBottomNav from "@/components/MobileBottomNav";
 
 const RootLayout = async ({
   children
 }: {
   children: React.ReactNode;
 }) => {
-  const isUserAuthenticated = await isAuthenticated();
+  const user = await getCurrentUser();
 
   // Get the current pathname to determine if authentication is required
   // Note: We'll handle authentication check in individual pages that need it
@@ -18,10 +19,11 @@ const RootLayout = async ({
   return (
     <div className="min-h-screen bg-dark-100 flex flex-col">
       <Header />
-      <main className="max-w-7xl mx-auto px-6 py-8 flex-1 w-full">
+      <main className="max-w-7xl mx-auto px-6 py-8 pb-24 md:pb-8 flex-1 w-full">
         {children}
       </main>
       <Footer />
+      <MobileBottomNav user={user} />
     </div>
   );
 }

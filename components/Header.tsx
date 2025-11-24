@@ -10,18 +10,24 @@ import NotificationsButton from "@/components/NotificationsButton";
 const Header = async () => {
   const user = await getCurrentUser();
 
-  const navLinks = [
-    { href: "/interviews", label: "Interviews" },
-    { href: "/dashboard", label: "Dashboard" },
+  // Pages that are NOT in the bottom navigation bar
+  const sidebarNavLinks = [
     { href: "/ideas", label: "Ideas" },
     { href: "/courses", label: "Courses" },
     { href: "/feed", label: "Feed" },
     { href: "/coding", label: "Coding" },
     { href: "/roadmaps", label: "Roadmaps" },
-    { href: "/resume", label: "Resume" },
     { href: "/jobs", label: "Jobs" },
     { href: "/insights", label: "Insights" },
     { href: "/companies", label: "Companies" },
+  ];
+
+  // All nav links for desktop
+  const allNavLinks = [
+    { href: "/interviews", label: "Interviews" },
+    { href: "/dashboard", label: "Dashboard" },
+    ...sidebarNavLinks,
+    { href: "/resume", label: "Resume" },
   ];
 
   return (
@@ -35,20 +41,20 @@ const Header = async () => {
           </Link>
 
           {/* Desktop Navigation Links - only show for authenticated users */}
-          {user && <NavLinks navLinks={navLinks} />}
+          {user && <NavLinks navLinks={allNavLinks} />}
 
-          {/* Desktop User Info and Mobile Menu */}
+          {/* Desktop User Info and Mobile Sidebar */}
           <div className="flex items-center gap-4">
             {user ? (
               <>
-                <div className="hidden sm:flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   <NotificationsButton />
-                  <div className="hidden sm:block">
+                  <div className="hidden md:block">
                     <UserDropdown user={user} />
                   </div>
                 </div>
-                {/* Mobile Menu */}
-                <MobileMenu navLinks={navLinks} user={user} />
+                {/* Mobile Sidebar for additional pages */}
+                <MobileMenu navLinks={sidebarNavLinks} user={user} />
               </>
             ) : (
               /* Show navigation for landing page */
