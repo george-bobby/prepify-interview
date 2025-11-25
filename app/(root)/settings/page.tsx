@@ -106,31 +106,31 @@ const AccountSettingsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-dark-100 py-8">
-      <div className="max-w-4xl mx-auto px-6">
-        <div className="bg-dark-200 rounded-lg border border-dark-300 p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-light-100">
+    <div className="min-h-screen bg-dark-100 py-6 md:py-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-dark-200 rounded-lg border border-dark-300 p-4 md:p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <h1 className="text-xl md:text-2xl font-bold text-light-100">
               Account Settings
             </h1>
             {!isEditingProfile ? (
               <button
                 onClick={handleEditProfile}
-                className="bg-primary-200 hover:bg-primary-300 text-dark-100 font-medium py-2 px-4 rounded-md transition-colors"
+                className="bg-primary-200 hover:bg-primary-300 text-dark-100 font-medium py-2 px-4 rounded-md transition-colors w-full sm:w-auto text-sm md:text-base"
               >
                 Edit Profile
               </button>
             ) : (
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <button
                   onClick={handleSaveProfile}
-                  className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+                  className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition-colors text-sm md:text-base"
                 >
                   Save Changes
                 </button>
                 <button
                   onClick={handleCancelEdit}
-                  className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+                  className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md transition-colors text-sm md:text-base"
                 >
                   Cancel
                 </button>
@@ -139,8 +139,8 @@ const AccountSettingsPage = () => {
           </div>
 
           {/* Profile Information */}
-          <div className="mb-8">
-            <h2 className="text-lg font-semibold text-light-100 mb-4">
+          <div className="mb-6 md:mb-8">
+            <h2 className="text-base md:text-lg font-semibold text-light-100 mb-4">
               Profile Information
             </h2>
             <div className="space-y-4">
@@ -194,8 +194,8 @@ const AccountSettingsPage = () => {
           </div>
 
           {/* Skills Section */}
-          <div className="mb-8">
-            <h2 className="text-lg font-semibold text-light-100 mb-4">
+          <div className="mb-6 md:mb-8">
+            <h2 className="text-base md:text-lg font-semibold text-light-100 mb-4">
               Skills
             </h2>
             <div className="space-y-4">
@@ -252,7 +252,7 @@ const AccountSettingsPage = () => {
                   <button
                     type="button"
                     onClick={handleAddSkill}
-                    className="bg-primary-200 hover:bg-primary-300 text-dark-100 font-medium py-2 px-4 rounded-md transition-colors whitespace-nowrap"
+                    className="bg-primary-200 hover:bg-primary-300 text-dark-100 font-medium py-2 px-4 rounded-md transition-colors whitespace-nowrap text-sm md:text-base w-full sm:w-auto"
                   >
                     Add Skill
                   </button>
@@ -311,13 +311,13 @@ const AccountSettingsPage = () => {
           <SubscriptionSection />
 
           {/* Account Statistics */}
-          <div className="mb-8">
-            <h2 className="text-lg font-semibold text-light-100 mb-4">
+          <div className="mb-6 md:mb-8">
+            <h2 className="text-base md:text-lg font-semibold text-light-100 mb-4">
               Account Statistics
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-dark-300 rounded-lg p-4">
-                <div className="text-2xl font-bold text-primary-200">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
+              <div className="bg-dark-300 rounded-lg p-3 md:p-4">
+                <div className="text-xl md:text-2xl font-bold text-primary-200">
                   {user.isProSubscriber ? "∞" : user.credits || 0}
                 </div>
                 <div className="text-sm text-light-200">
@@ -327,8 +327,8 @@ const AccountSettingsPage = () => {
                 </div>
               </div>
 
-              <div className="bg-dark-300 rounded-lg p-4">
-                <div className="text-2xl font-bold text-green-400">
+              <div className="bg-dark-300 rounded-lg p-3 md:p-4">
+                <div className="text-xl md:text-2xl font-bold text-green-400">
                   {user.completedInterviews || 0}
                 </div>
                 <div className="text-sm text-light-200">
@@ -336,8 +336,8 @@ const AccountSettingsPage = () => {
                 </div>
               </div>
 
-              <div className="bg-dark-300 rounded-lg p-4">
-                <div className="text-2xl font-bold text-blue-400">
+              <div className="bg-dark-300 rounded-lg p-3 md:p-4">
+                <div className="text-xl md:text-2xl font-bold text-blue-400">
                   {user.coursesEnrolled || 0}
                 </div>
                 <div className="text-sm text-light-200">Courses Enrolled</div>

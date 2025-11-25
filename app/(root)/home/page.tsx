@@ -100,7 +100,7 @@ export default async function Home() {
             <div className="relative z-10">
 
                 {/* Hero Section */}
-                <section className="pt-16 pb-12 md:pt-20 md:pb-16">
+                <section className="pt-8 pb-8 md:pt-20 md:pb-16 px-4 md:px-6">
                     <div className="max-w-6xl mx-auto relative">
 
                         {/* Main CTA container */}
@@ -108,7 +108,7 @@ export default async function Home() {
                             {/* Glowing border effect */}
                             {/* <div className="absolute -inset-1 bg-gradient-to-r from-primary-400 via-success-100 to-purple-400 rounded-3xl blur opacity-30"></div> */}
 
-                            <div className="relative bg-gradient-to-br from-dark-200/90 to-dark-300/90 backdrop-blur-xl rounded-3xl border border-primary-400/20 p-10 md:p-14 text-center overflow-hidden">
+                            <div className="relative bg-gradient-to-br from-dark-200/90 to-dark-300/90 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-primary-400/20 p-6 md:p-14 text-center overflow-hidden">
                                 {/* Background pattern */}
                                 <div className="absolute inset-0 opacity-5">
                                     <div className="absolute inset-0" style={{
@@ -117,47 +117,47 @@ export default async function Home() {
                                     }}></div>
                                 </div>
 
-                                <div className="relative z-10 space-y-8">
+                                <div className="relative z-10 space-y-6 md:space-y-8">
                                     {/* Badge */}
                                     <div className="inline-block">
-                                        <span className="px-6 py-3 bg-gradient-to-r from-primary-400/20 to-success-100/20 text-primary-200 rounded-full text-sm font-semibold border border-primary-400/30 backdrop-blur-sm">
+                                        <span className="px-4 py-2 md:px-6 md:py-3 bg-gradient-to-r from-primary-400/20 to-success-100/20 text-primary-200 rounded-full text-xs md:text-sm font-semibold border border-primary-400/30 backdrop-blur-sm">
                                             🚀 Ready to Transform Your Career?
                                         </span>
                                     </div>
 
                                     {/* Main headline */}
                                     <div>
-                                        <h2 className="text-5xl md:text-7xl font-bold leading-tight mb-6">
+                                        <h2 className="text-3xl sm:text-4xl md:text-7xl font-bold leading-tight mb-4 md:mb-6">
                                             <span className="text-white">Ace Your Next</span><br />
                                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-300 animate-glow">
                                                 Interview
                                             </span>
                                         </h2>
 
-                                        <p className="text-xl md:text-2xl text-light-200 max-w-4xl mx-auto leading-relaxed font-light">
+                                        <p className="text-base sm:text-lg md:text-2xl text-light-200 max-w-4xl mx-auto leading-relaxed font-light px-2">
                                             Master interview skills with AI-powered practice, personalized feedback, and expert guidance – <span className="text-success-100 font-semibold"> completely free</span>.
                                         </p>
                                     </div>
 
                                     {/* Action buttons */}
-                                    <div className="flex flex-col lg:flex-row gap-5 justify-center items-center pt-2">
-                                        <Button asChild size="lg" className="group relative text-xl px-12 py-6 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:brightness-110 text-white transition-colors duration-200 rounded-xl font-semibold min-w-[240px] border border-emerald-500/40">
+                                    <div className="flex flex-col sm:flex-row gap-3 md:gap-5 justify-center items-stretch sm:items-center pt-2 w-full sm:w-auto">
+                                        <Button asChild size="lg" className="group relative text-base sm:text-lg md:text-xl px-6 sm:px-8 md:px-12 py-4 md:py-6 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:brightness-110 text-white transition-colors duration-200 rounded-xl font-semibold w-full sm:w-auto sm:min-w-[200px] md:min-w-[240px] border border-emerald-500/40">
                                             <Link href={user ? "/dashboard" : "/signup"}>
-                                                <span className="relative z-10 flex items-center gap-3">
-                                                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                                <span className="relative z-10 flex items-center justify-center gap-2 md:gap-3">
+                                                    <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20">
                                                         <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
                                                     </svg>
                                                     {user ? "Go to Dashboard" : "Start Free Trial"}
-                                                    <svg className="w-6 h-6 group-hover:translate-x-0.5 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                                                    <svg className="w-5 h-5 md:w-6 md:h-6 group-hover:translate-x-0.5 transition-transform" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
                                                     </svg>
                                                 </span>
                                             </Link>
                                         </Button>
-                                        <Button variant="outline" size="lg" className="group text-xl px-12 py-6 border border-primary-400/50 text-primary-200 hover:bg-primary-400/10 transition-colors duration-200 rounded-xl font-semibold min-w-[240px]" asChild>
+                                        <Button variant="outline" size="lg" className="group text-base sm:text-lg md:text-xl px-6 sm:px-8 md:px-12 py-4 md:py-6 border border-primary-400/50 text-primary-200 hover:bg-primary-400/10 transition-colors duration-200 rounded-xl font-semibold w-full sm:w-auto sm:min-w-[200px] md:min-w-[240px]" asChild>
                                             <Link href="/interviews">
-                                                <span className="flex items-center gap-3">
-                                                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                                <span className="flex items-center justify-center gap-2 md:gap-3">
+                                                    <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20">
                                                         <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
                                                     </svg>
                                                     Browse Interview Types
@@ -167,19 +167,19 @@ export default async function Home() {
                                     </div>
 
                                     {/* Trust indicators */}
-                                    <div className="pt-6">
-                                        <div className="flex flex-wrap justify-center gap-8 text-sm">
-                                            <div className="flex items-center gap-3 px-6 py-3 bg-dark-100/30 backdrop-blur-sm rounded-full border border-success-100/20">
-                                                <div className="w-3 h-3 bg-success-100 rounded-full animate-pulse"></div>
-                                                <span className="text-light-200 font-medium">Free forever plan</span>
+                                    <div className="pt-4 md:pt-6">
+                                        <div className="flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-8 text-xs sm:text-sm">
+                                            <div className="flex items-center gap-2 md:gap-3 px-3 sm:px-4 md:px-6 py-2 md:py-3 bg-dark-100/30 backdrop-blur-sm rounded-full border border-success-100/20">
+                                                <div className="w-2 h-2 md:w-3 md:h-3 bg-success-100 rounded-full animate-pulse flex-shrink-0"></div>
+                                                <span className="text-light-200 font-medium whitespace-nowrap">Free forever plan</span>
                                             </div>
-                                            <div className="flex items-center gap-3 px-6 py-3 bg-dark-100/30 backdrop-blur-sm rounded-full border border-primary-400/20">
-                                                <div className="w-3 h-3 bg-primary-400 rounded-full animate-pulse"></div>
-                                                <span className="text-light-200 font-medium">No credit card required</span>
+                                            <div className="flex items-center gap-2 md:gap-3 px-3 sm:px-4 md:px-6 py-2 md:py-3 bg-dark-100/30 backdrop-blur-sm rounded-full border border-primary-400/20">
+                                                <div className="w-2 h-2 md:w-3 md:h-3 bg-primary-400 rounded-full animate-pulse flex-shrink-0"></div>
+                                                <span className="text-light-200 font-medium whitespace-nowrap">No credit card required</span>
                                             </div>
-                                            <div className="flex items-center gap-3 px-6 py-3 bg-dark-100/30 backdrop-blur-sm rounded-full border border-yellow-400/20">
-                                                <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></div>
-                                                <span className="text-light-200 font-medium">Cancel anytime</span>
+                                            <div className="flex items-center gap-2 md:gap-3 px-3 sm:px-4 md:px-6 py-2 md:py-3 bg-dark-100/30 backdrop-blur-sm rounded-full border border-yellow-400/20">
+                                                <div className="w-2 h-2 md:w-3 md:h-3 bg-yellow-400 rounded-full animate-pulse flex-shrink-0"></div>
+                                                <span className="text-light-200 font-medium whitespace-nowrap">Cancel anytime</span>
                                             </div>
                                         </div>
                                     </div>
@@ -192,8 +192,8 @@ export default async function Home() {
                 </section>
 
                 {/* Features Section */}
-                <section className="container mx-auto px-6 py-12 md:py-16">
-                    <div className="text-center mb-16">
+                <section className="container mx-auto px-4 md:px-6 py-8 md:py-16">
+                    <div className="text-center mb-8 md:mb-16">
                         <div className="inline-block mb-6">
                             <span className="px-4 py-2 bg-blue-500/10 text-blue-300 rounded-full text-sm font-semibold border border-blue-500/20 backdrop-blur-sm">
                                 ✨ Complete Platform
@@ -234,42 +234,42 @@ export default async function Home() {
                     </div>
 
                     {/* Stats Section */}
-                    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-12">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                            <div className="space-y-2">
-                                <div className="text-3xl font-bold text-blue-400">10K+</div>
-                                <div className="text-slate-400 text-sm font-medium">Interviews Completed</div>
+                    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-12">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-center">
+                            <div className="space-y-1 md:space-y-2">
+                                <div className="text-2xl md:text-3xl font-bold text-blue-400">10K+</div>
+                                <div className="text-slate-400 text-xs md:text-sm font-medium">Interviews Completed</div>
                             </div>
-                            <div className="space-y-2">
-                                <div className="text-3xl font-bold text-emerald-400">95%</div>
-                                <div className="text-slate-400 text-sm font-medium">Success Rate</div>
+                            <div className="space-y-1 md:space-y-2">
+                                <div className="text-2xl md:text-3xl font-bold text-emerald-400">95%</div>
+                                <div className="text-slate-400 text-xs md:text-sm font-medium">Success Rate</div>
                             </div>
-                            <div className="space-y-2">
-                                <div className="text-3xl font-bold text-purple-400">500+</div>
-                                <div className="text-slate-400 text-sm font-medium">Companies</div>
+                            <div className="space-y-1 md:space-y-2">
+                                <div className="text-2xl md:text-3xl font-bold text-purple-400">500+</div>
+                                <div className="text-slate-400 text-xs md:text-sm font-medium">Companies</div>
                             </div>
-                            <div className="space-y-2">
-                                <div className="text-3xl font-bold text-orange-400">24/7</div>
-                                <div className="text-slate-400 text-sm font-medium">AI Support</div>
+                            <div className="space-y-1 md:space-y-2">
+                                <div className="text-2xl md:text-3xl font-bold text-orange-400">24/7</div>
+                                <div className="text-slate-400 text-xs md:text-sm font-medium">AI Support</div>
                             </div>
                         </div>
                     </div>
                 </section>
 
                 {/* Pricing Section */}
-                <section id="pricing" className="mb-12">
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl md:text-5xl font-bold text-primary-100 mb-4">
+                <section id="pricing" className="mb-8 md:mb-12 px-4 md:px-6">
+                    <div className="text-center mb-8 md:mb-16">
+                        <h2 className="text-3xl md:text-5xl font-bold text-primary-100 mb-4">
                             Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-200 to-success-100">Plan</span>
                         </h2>
-                        <p className="text-xl text-light-400 max-w-3xl mx-auto">
+                        <p className="text-base md:text-xl text-light-400 max-w-3xl mx-auto px-4">
                             Start free and upgrade when you're ready. No hidden fees, cancel anytime.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
                         {/* Free Plan */}
-                        <div className="bg-gradient-to-br from-dark-200 to-dark-300 border border-dark-300 rounded-2xl p-8 relative group hover:border-primary-200/50 transition-all">
+                        <div className="bg-gradient-to-br from-dark-200 to-dark-300 border border-dark-300 rounded-2xl p-6 md:p-8 relative group hover:border-primary-200/50 transition-all">
                             <h3 className="text-2xl font-bold text-primary-100 mb-2">Free</h3>
                             <div className="mb-6">
                                 <span className="text-4xl font-bold text-primary-100">$0</span>
@@ -303,7 +303,7 @@ export default async function Home() {
                         </div>
 
                         {/* Pro Plan - Most Popular */}
-                        <div className="bg-gradient-to-br from-primary-200/10 to-primary-300/10 border-2 border-primary-200 rounded-2xl p-8 relative group transform scale-105 shadow-2xl">
+                        <div className="bg-gradient-to-br from-primary-200/10 to-primary-300/10 border-2 border-primary-200 rounded-2xl p-6 md:p-8 relative group md:transform md:scale-105 shadow-2xl">
                             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                                 <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
                                     Most Popular
@@ -347,7 +347,7 @@ export default async function Home() {
                         </div>
 
                         {/* Enterprise Plan */}
-                        <div className="bg-gradient-to-br from-dark-200 to-dark-300 border border-dark-300 rounded-2xl p-8 relative group hover:border-primary-200/50 transition-all">
+                        <div className="bg-gradient-to-br from-dark-200 to-dark-300 border border-dark-300 rounded-2xl p-6 md:p-8 relative group hover:border-primary-200/50 transition-all">
                             <h3 className="text-2xl font-bold text-primary-100 mb-2">Enterprise</h3>
                             <div className="mb-6">
                                 <span className="text-4xl font-bold text-primary-100">Custom</span>
@@ -397,24 +397,24 @@ export default async function Home() {
                 </section>
 
                 {/* How It Works Section */}
-                <section className="container mx-auto px-6 py-12 md:py-16">
-                    <div className="text-center mb-16">
+                <section className="container mx-auto px-4 md:px-6 py-8 md:py-16">
+                    <div className="text-center mb-8 md:mb-16">
                         <div className="inline-block mb-6">
                             <span className="px-4 py-2 bg-emerald-500/10 text-emerald-300 rounded-full text-sm font-semibold border border-emerald-500/20 backdrop-blur-sm">
                                 🚀 Simple Process
                             </span>
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
+                        <h2 className="text-3xl md:text-5xl font-bold leading-tight mb-4 md:mb-6">
                             <span className="text-white">How</span>
                             <span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent"> Prepify </span>
                             <span className="text-white">Works</span>
                         </h2>
-                        <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+                        <p className="text-base md:text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed px-4">
                             Get interview-ready in just 3 simple steps. Our streamlined process makes preparation effortless and effective.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-8 md:mb-16">
                         {/* Step 1 */}
                         <div className="text-center group">
                             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">

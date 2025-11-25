@@ -24,17 +24,28 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [position, setPosition] = useState({ top: 0, right: 0 });
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Calculate position based on button location
   useEffect(() => {
-    if (isOpen && buttonRef?.current) {
+    if (isOpen && buttonRef?.current && !isMobile) {
       const rect = buttonRef.current.getBoundingClientRect();
       setPosition({
         top: rect.bottom + 8,
         right: window.innerWidth - rect.right,
       });
     }
-  }, [isOpen, buttonRef]);
+  }, [isOpen, buttonRef, isMobile]);
 
   const loadNotifications = async () => {
     try {
@@ -141,24 +152,28 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
     <>
       {/* Backdrop overlay */}
       <div
-        className="fixed inset-0 z-40"
+        className="fixed inset-0 z-40 bg-black/50 md:bg-transparent"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Dropdown panel */}
       <div
-        className="fixed bg-dark-200 border border-dark-300 rounded-lg w-96 max-h-[80vh] flex flex-col shadow-2xl z-50"
-        style={{
+        className={`fixed bg-dark-200 border border-dark-300 flex flex-col shadow-2xl z-50 ${
+          isMobile
+            ? 'left-4 right-4 top-16 max-h-[calc(100vh-8rem)] rounded-lg'
+            : 'w-96 max-h-[80vh] rounded-lg'
+        }`}
+        style={!isMobile ? {
           top: `${position.top}px`,
           right: `${position.right}px`,
-        }}
+        } : undefined}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-dark-300">
+        <div className="flex items-center justify-between p-3 md:p-4 border-b border-dark-300">
           <div className="flex items-center space-x-2">
-            <Bell className="w-5 h-5 text-primary-200" />
-            <h3 className="text-lg font-semibold text-light-100">Notifications</h3>
+            <Bell className="w-4 h-4 md:w-5 md:h-5 text-primary-200" />
+            <h3 className="text-base md:text-lg font-semibold text-light-100">Notifications</h3>
             {unreadCount > 0 && (
               <span className="bg-destructive-100 text-white text-xs px-2 py-1 rounded-full">
                 {unreadCount}
@@ -201,29 +216,29 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 hover:bg-dark-300 transition-colors ${!notification.isRead
+                  className={`p-3 md:p-4 hover:bg-dark-300 transition-colors ${!notification.isRead
                       ? "bg-dark-300/50 border-l-4 border-primary-200"
                       : ""
                     }`}
                 >
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-1">
-                        <h4 className="text-sm font-medium text-light-100 truncate">
+                        <h4 className="text-xs md:text-sm font-medium text-light-100 truncate">
                           {notification.title}
                         </h4>
                         {!notification.isRead && (
                           <div className="w-2 h-2 bg-primary-200 rounded-full flex-shrink-0"></div>
                         )}
                       </div>
-                      <p className="text-sm text-light-300 mb-2 line-clamp-2">
+                      <p className="text-xs md:text-sm text-light-300 mb-2 line-clamp-2">
                         {notification.message}
                       </p>
-                      <p className="text-xs text-light-500">
+                      <p className="text-[10px] md:text-xs text-light-500">
                         {formatTimeAgo(notification.createdAt)}
                       </p>
                     </div>
-                    <div className="flex items-center space-x-1 ml-2">
+                    <div className="flex items-center space-x-0.5 md:space-x-1 ml-1 md:ml-2 flex-shrink-0">
                       {!notification.isRead && (
                         <button
                           onClick={() => handleMarkAsRead(notification.id!)}

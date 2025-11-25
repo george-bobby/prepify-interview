@@ -50,7 +50,7 @@ const InterviewsPage = async () => {
     ];
 
     return (
-        <main className="flex flex-col gap-10 relative">
+        <main className="flex flex-col gap-6 md:gap-10 relative">
             {/* Hero Section */}
             {/* <section className="card-cta flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div className="flex flex-col gap-6 max-w-lg">
@@ -70,9 +70,9 @@ const InterviewsPage = async () => {
             </section> */}
 
             {/* Tips Section */}
-            <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
-                <h3 className="text-primary-100 font-semibold mb-4">💡 Interview Tips</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6">
+                <h3 className="text-primary-100 font-semibold mb-3 md:mb-4 text-base md:text-lg">💡 Interview Tips</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 text-sm">
                     <div>
                         <h4 className="text-primary-200 font-medium mb-2">Before You Start</h4>
                         <ul className="text-light-400 space-y-1">
@@ -100,9 +100,9 @@ const InterviewsPage = async () => {
             />
 
             {/* User Interviews Section */}
-            <section className="flex flex-col gap-6">
+            <section className="flex flex-col gap-4 md:gap-6">
                 <div className="flex justify-between items-center">
-                    <h2>Your Interviews</h2>
+                    <h2 className="text-xl md:text-2xl">Your Interviews</h2>
                     {hasPastInterviews && (
                         <p className="text-light-400">
                             {sortedUserInterviews.length} interview{sortedUserInterviews.length !== 1 ? 's' : ''}
@@ -124,10 +124,10 @@ const InterviewsPage = async () => {
                             />
                         ))
                     ) : (
-                        <div className="bg-dark-200 border border-dark-300 rounded-lg p-8 text-center">
-                            <div className="text-4xl mb-4">🎤</div>
-                            <h3 className="text-primary-100 font-semibold mb-2">No interviews yet</h3>
-                            <p className="text-light-400 mb-4">Create your first AI interview to start practicing</p>
+                        <div className="bg-dark-200 border border-dark-300 rounded-lg p-6 md:p-8 text-center">
+                            <div className="text-3xl md:text-4xl mb-4">🎤</div>
+                            <h3 className="text-primary-100 font-semibold mb-2 text-base md:text-lg">No interviews yet</h3>
+                            <p className="text-light-400 mb-4 text-sm md:text-base">Create your first AI interview to start practicing</p>
                         </div>
                     )}
                 </div>

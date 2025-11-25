@@ -37,26 +37,26 @@ const DashboardPage = async () => {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 md:space-y-8">
             {/* Welcome Section */}
-            <div className="bg-gradient-to-r from-dark-200 to-dark-300 rounded-lg p-8 border border-dark-300">
-                <h1 className="text-3xl font-bold text-primary-100 mb-2">
+            <div className="bg-gradient-to-r from-dark-200 to-dark-300 rounded-lg p-6 md:p-8 border border-dark-300">
+                <h1 className="text-2xl md:text-3xl font-bold text-primary-100 mb-2">
                     Welcome back, {user.name}!
                 </h1>
-                <p className="text-light-400 text-lg">
+                <p className="text-light-400 text-base md:text-lg">
                     Ready to ace your next interview? Let's get you prepared.
                 </p>
                 {interviewStats.averageScore > 0 && (
-                    <div className="mt-4 flex items-center gap-4">
+                    <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
                         <div className="flex items-center gap-2">
-                            <span className="text-light-400">Overall Score:</span>
-                            <span className={`text-xl font-bold ${getScoreColor(interviewStats.averageScore)}`}>
+                            <span className="text-light-400 text-sm md:text-base">Overall Score:</span>
+                            <span className={`text-lg md:text-xl font-bold ${getScoreColor(interviewStats.averageScore)}`}>
                                 {interviewStats.averageScore}/100
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="text-light-400">Interviews:</span>
-                            <span className="text-lg font-semibold text-primary-200">
+                            <span className="text-light-400 text-sm md:text-base">Interviews:</span>
+                            <span className="text-base md:text-lg font-semibold text-primary-200">
                                 {interviewStats.completed} completed
                             </span>
                         </div>
@@ -65,88 +65,88 @@ const DashboardPage = async () => {
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
-                    <h3 className="text-primary-100 font-semibold mb-2">Credits</h3>
-                    <p className="text-2xl font-bold text-success-100">{user.credits || 0}</p>
-                    <p className="text-light-400 text-sm">Available interview credits</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+                <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6">
+                    <h3 className="text-primary-100 font-semibold mb-2 text-sm md:text-base">Credits</h3>
+                    <p className="text-xl md:text-2xl font-bold text-success-100">{user.credits || 0}</p>
+                    <p className="text-light-400 text-xs md:text-sm">Available interview credits</p>
                 </div>
-                <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
-                    <h3 className="text-primary-100 font-semibold mb-2">Total Interviews</h3>
-                    <p className="text-2xl font-bold text-primary-200">{interviewStats.total}</p>
-                    <p className="text-light-400 text-sm">{interviewStats.completed} completed, {interviewStats.inProgress} in progress</p>
+                <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6">
+                    <h3 className="text-primary-100 font-semibold mb-2 text-sm md:text-base">Total Interviews</h3>
+                    <p className="text-xl md:text-2xl font-bold text-primary-200">{interviewStats.total}</p>
+                    <p className="text-light-400 text-xs md:text-sm">{interviewStats.completed} completed, {interviewStats.inProgress} in progress</p>
                 </div>
-                <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
-                    <h3 className="text-primary-100 font-semibold mb-2">This Month</h3>
-                    <p className="text-2xl font-bold text-primary-200">{dashboardStats.thisMonthInterviews}</p>
-                    <p className="text-light-400 text-sm">Interviews completed</p>
+                <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6">
+                    <h3 className="text-primary-100 font-semibold mb-2 text-sm md:text-base">This Month</h3>
+                    <p className="text-xl md:text-2xl font-bold text-primary-200">{dashboardStats.thisMonthInterviews}</p>
+                    <p className="text-light-400 text-xs md:text-sm">Interviews completed</p>
                 </div>
-                <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
-                    <h3 className="text-primary-100 font-semibold mb-2">Average Score</h3>
-                    <p className={`text-2xl font-bold ${getScoreColor(interviewStats.averageScore)}`}>
+                <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6">
+                    <h3 className="text-primary-100 font-semibold mb-2 text-sm md:text-base">Average Score</h3>
+                    <p className={`text-xl md:text-2xl font-bold ${getScoreColor(interviewStats.averageScore)}`}>eScore)}`}>
                         {interviewStats.averageScore > 0 ? `${interviewStats.averageScore}/100` : '-'}
                     </p>
-                    <p className="text-light-400 text-sm">Overall performance</p>
+                    <p className="text-light-400 text-xs md:text-sm">Overall performance</p>
                 </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
                 <Link href="/interviews" className="group">
-                    <div className="bg-dark-200 border border-dark-300 rounded-lg p-6 hover:border-primary-200 transition-colors">
-                        <div className="w-12 h-12 bg-primary-200/20 rounded-lg flex items-center justify-center mb-4">
-                            <svg className="w-6 h-6 text-primary-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6 hover:border-primary-200 transition-colors">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-primary-200/20 rounded-lg flex items-center justify-center mb-3 md:mb-4">
+                            <svg className="w-5 h-5 md:w-6 md:h-6 text-primary-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                             </svg>
                         </div>
-                        <h3 className="text-primary-100 font-semibold mb-2">Start Interview</h3>
-                        <p className="text-light-400 text-sm">Practice with AI interviewer</p>
+                        <h3 className="text-primary-100 font-semibold mb-1 md:mb-2 text-sm md:text-base">Start Interview</h3>
+                        <p className="text-light-400 text-xs md:text-sm">Practice with AI interviewer</p>
                     </div>
                 </Link>
 
                 <Link href="/courses" className="group">
-                    <div className="bg-dark-200 border border-dark-300 rounded-lg p-6 hover:border-primary-200 transition-colors">
-                        <div className="w-12 h-12 bg-success-100/20 rounded-lg flex items-center justify-center mb-4">
-                            <svg className="w-6 h-6 text-success-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6 hover:border-primary-200 transition-colors">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-success-100/20 rounded-lg flex items-center justify-center mb-3 md:mb-4">
+                            <svg className="w-5 h-5 md:w-6 md:h-6 text-success-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
                         </div>
-                        <h3 className="text-primary-100 font-semibold mb-2">Browse Courses</h3>
-                        <p className="text-light-400 text-sm">Learn interview skills</p>
+                        <h3 className="text-primary-100 font-semibold mb-1 md:mb-2 text-sm md:text-base">Browse Courses</h3>
+                        <p className="text-light-400 text-xs md:text-sm">Learn interview skills</p>
                     </div>
                 </Link>
 
                 <Link href="/roadmaps" className="group">
-                    <div className="bg-dark-200 border border-dark-300 rounded-lg p-6 hover:border-primary-200 transition-colors">
-                        <div className="w-12 h-12 bg-primary-100/20 rounded-lg flex items-center justify-center mb-4">
-                            <svg className="w-6 h-6 text-primary-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6 hover:border-primary-200 transition-colors">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-primary-100/20 rounded-lg flex items-center justify-center mb-3 md:mb-4">
+                            <svg className="w-5 h-5 md:w-6 md:h-6 text-primary-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                             </svg>
                         </div>
-                        <h3 className="text-primary-100 font-semibold mb-2">Learning Paths</h3>
-                        <p className="text-light-400 text-sm">Structured roadmaps</p>
+                        <h3 className="text-primary-100 font-semibold mb-1 md:mb-2 text-sm md:text-base">Learning Paths</h3>
+                        <p className="text-light-400 text-xs md:text-sm">Structured roadmaps</p>
                     </div>
                 </Link>
 
                 <Link href="/resume" className="group">
-                    <div className="bg-dark-200 border border-dark-300 rounded-lg p-6 hover:border-primary-200 transition-colors">
-                        <div className="w-12 h-12 bg-success-100/20 rounded-lg flex items-center justify-center mb-4">
-                            <svg className="w-6 h-6 text-success-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6 hover:border-primary-200 transition-colors">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-success-100/20 rounded-lg flex items-center justify-center mb-3 md:mb-4">
+                            <svg className="w-5 h-5 md:w-6 md:h-6 text-success-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
-                        <h3 className="text-primary-100 font-semibold mb-2">Resume Feedback</h3>
-                        <p className="text-light-400 text-sm">AI-powered resume analysis</p>
+                        <h3 className="text-primary-100 font-semibold mb-1 md:mb-2 text-sm md:text-base">Resume Feedback</h3>
+                        <p className="text-light-400 text-xs md:text-sm">AI-powered resume analysis</p>
                     </div>
                 </Link>
             </div>
 
             {/* Progress Tracking */}
             {userProgress.overallProgress > 0 && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                     {/* Skill Breakdown */}
-                    <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
-                        <h3 className="text-primary-100 font-semibold mb-4">Skill Breakdown</h3>
+                    <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6">
+                        <h3 className="text-primary-100 font-semibold mb-3 md:mb-4 text-base md:text-lg">Skill Breakdown</h3>
                         <div className="space-y-4">
                             {Object.entries(userProgress.skillBreakdown).map(([skill, score]) => (
                                 <div key={skill} className="space-y-2">
@@ -170,9 +170,9 @@ const DashboardPage = async () => {
                     </div>
 
                     {/* Strengths & Improvements */}
-                    <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
-                        <h3 className="text-primary-100 font-semibold mb-4">Performance Insights</h3>
-                        <div className="space-y-6">
+                    <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6">
+                        <h3 className="text-primary-100 font-semibold mb-3 md:mb-4 text-base md:text-lg">Performance Insights</h3>
+                        <div className="space-y-4 md:space-y-6">
                             {/* Strengths */}
                             {userProgress.strengths.length > 0 && (
                                 <div>
@@ -209,9 +209,9 @@ const DashboardPage = async () => {
 
             {/* Performance Trends */}
             {dashboardStats.monthlyStats.length > 0 && (
-                <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
-                    <h3 className="text-primary-100 font-semibold mb-4">Performance Trends</h3>
-                    <div className="grid grid-cols-6 gap-4">
+                <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6">
+                    <h3 className="text-primary-100 font-semibold mb-3 md:mb-4 text-base md:text-lg">Performance Trends</h3>
+                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 md:gap-4">
                         {dashboardStats.monthlyStats.map((stat, index) => (
                             <div key={index} className="text-center">
                                 <div className="text-light-400 text-sm mb-2">{stat.month}</div>
@@ -229,21 +229,21 @@ const DashboardPage = async () => {
             )}
 
             {/* Recent Activity */}
-            <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
-                <h3 className="text-primary-100 font-semibold mb-4">Recent Activity</h3>
+            <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6">
+                <h3 className="text-primary-100 font-semibold mb-3 md:mb-4 text-base md:text-lg">Recent Activity</h3>
                 {dashboardStats.recentInterviews.length > 0 ? (
-                    <div className="space-y-4">
+                    <div className="space-y-3 md:space-y-4">
                         {dashboardStats.recentInterviews.map((interview) => (
-                            <div key={interview.id} className="flex items-center justify-between p-4 bg-dark-300 rounded-lg">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 bg-primary-200/20 rounded-lg flex items-center justify-center">
-                                        <svg className="w-5 h-5 text-primary-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div key={interview.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 md:p-4 bg-dark-300 rounded-lg">
+                                <div className="flex items-start sm:items-center gap-3 md:gap-4 w-full sm:w-auto">
+                                    <div className="w-8 h-8 md:w-10 md:h-10 bg-primary-200/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg className="w-4 h-4 md:w-5 md:h-5 text-primary-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                         </svg>
                                     </div>
-                                    <div>
-                                        <h4 className="text-primary-100 font-medium">{interview.role}</h4>
-                                        <p className="text-light-400 text-sm">
+                                    <div className="flex-1 min-w-0">
+                                        <h4 className="text-primary-100 font-medium text-sm md:text-base truncate">{interview.role}</h4>
+                                        <p className="text-light-400 text-xs md:text-sm truncate">
                                             {interview.type} • {interview.level} • {interview.techstack.join(', ')}
                                         </p>
                                         <p className="text-light-400 text-xs">
@@ -251,8 +251,8 @@ const DashboardPage = async () => {
                                         </p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <span className={`px-2 py-1 rounded text-xs font-medium ${interview.finalized
+                                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                                    <span className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${interview.finalized
                                         ? 'bg-success-100/20 text-success-100'
                                         : 'bg-primary-200/20 text-primary-200'
                                         }`}>
@@ -268,8 +268,8 @@ const DashboardPage = async () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-8">
-                        <p className="text-light-400 mb-4">No recent activity yet</p>
+                    <div className="text-center py-6 md:py-8">
+                        <p className="text-light-400 mb-4 text-sm md:text-base">No recent activity yet</p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                             <Button asChild>
                                 <Link href="/interviews">Start Your First Interview</Link>
@@ -284,9 +284,9 @@ const DashboardPage = async () => {
 
             {/* Performance Insights */}
             {interviewStats.completed > 0 && (
-                <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
-                    <h3 className="text-primary-100 font-semibold mb-4">Performance Insights</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6">
+                    <h3 className="text-primary-100 font-semibold mb-3 md:mb-4 text-base md:text-lg">Performance Insights</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div className="space-y-4">
                             <h4 className="text-primary-200 font-medium">Quick Stats</h4>
                             <div className="space-y-3">

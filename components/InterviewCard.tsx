@@ -56,7 +56,7 @@ export const InterviewCard = ({
     };
 
     return (
-        <Link href={`/interviews/${id}/details`} className="card-border w-[360px] max-sm:w-full min-h-96 hover:border-primary-500 transition-colors cursor-pointer block">
+        <Link href={`/interviews/${id}/details`} className="card-border w-full hover:border-primary-500 transition-colors cursor-pointer block">
             <div className="card-interview">
                 <div>
                     {/* Status and Type Badges */}
@@ -96,29 +96,29 @@ export const InterviewCard = ({
 
                     {/* Metadata */}
                     <div className='flex flex-col gap-2 mt-3'>
-                        <div className='flex flex-row gap-5'>
+                        <div className='flex flex-col sm:flex-row gap-2 sm:gap-5'>
                             <div className='flex flex-row gap-2 items-center'>
                                 <Image src="/calendar.svg" alt="calendar" width={18} height={18} />
-                                <p className="text-sm">{formattedDate}</p>
+                                <p className="text-xs sm:text-sm">{formattedDate}</p>
                             </div>
                             <div className="flex flex-row gap-2 items-center">
                                 <Image src="/star.svg" alt="score" width={18} height={18} />
-                                <p className="text-sm">{feedback?.totalScore ? `${feedback.totalScore}/10` : '---'}</p>
+                                <p className="text-xs sm:text-sm">{feedback?.totalScore ? `${feedback.totalScore}/10` : '---'}</p>
                             </div>
                         </div>
 
                         {/* Additional metadata */}
-                        <div className='flex flex-row gap-5'>
+                        <div className='flex flex-col sm:flex-row gap-2 sm:gap-5'>
                             {questionsCount && (
                                 <div className='flex flex-row gap-2 items-center'>
                                     <span className="text-light-400">📝</span>
-                                    <p className="text-sm text-light-400">{questionsCount} questions</p>
+                                    <p className="text-xs sm:text-sm text-light-400">{questionsCount} questions</p>
                                 </div>
                             )}
                             {estimatedDuration && (
                                 <div className='flex flex-row gap-2 items-center'>
                                     <span className="text-light-400">⏱️</span>
-                                    <p className="text-sm text-light-400">{estimatedDuration}</p>
+                                    <p className="text-xs sm:text-sm text-light-400">{estimatedDuration}</p>
                                 </div>
                             )}
                         </div>
@@ -129,9 +129,9 @@ export const InterviewCard = ({
                     </p>
                 </div>
 
-                <div className="flex flex-row justify-between items-end mt-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mt-4">
                     <DisplayTechIcons techStack={techstack} />
-                    <Button className="btn-primary" onClick={(e) => {
+                    <Button className="btn-primary w-full sm:w-auto text-sm md:text-base" onClick={(e) => {
                         e.preventDefault();
                         window.location.href = feedback ? `/interviews/${id}/feedback` : `/interviews/${id}`;
                     }}>

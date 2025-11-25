@@ -76,44 +76,44 @@ export const InterviewsPageClient: React.FC<InterviewsPageClientProps> = ({
     return (
         <>
             {/* Statistics Section */}
-            <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-dark-200 border border-dark-300 rounded-lg p-4">
-                    <h3 className="text-primary-100 font-semibold">Total Interviews</h3>
-                    <p className="text-2xl font-bold text-white">{stats.total}</p>
+            <section className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
+                <div className="bg-dark-200 border border-dark-300 rounded-lg p-3 md:p-4">
+                    <h3 className="text-primary-100 font-semibold text-sm md:text-base">Total Interviews</h3>
+                    <p className="text-xl md:text-2xl font-bold text-white">{stats.total}</p>
                 </div>
-                <div className="bg-dark-200 border border-dark-300 rounded-lg p-4">
-                    <h3 className="text-primary-100 font-semibold">Completed</h3>
-                    <p className="text-2xl font-bold text-green-400">{stats.completed}</p>
+                <div className="bg-dark-200 border border-dark-300 rounded-lg p-3 md:p-4">
+                    <h3 className="text-primary-100 font-semibold text-sm md:text-base">Completed</h3>
+                    <p className="text-xl md:text-2xl font-bold text-green-400">{stats.completed}</p>
                 </div>
-                <div className="bg-dark-200 border border-dark-300 rounded-lg p-4">
-                    <h3 className="text-primary-100 font-semibold">In Progress</h3>
-                    <p className="text-2xl font-bold text-yellow-400">{stats.inProgress}</p>
+                <div className="bg-dark-200 border border-dark-300 rounded-lg p-3 md:p-4">
+                    <h3 className="text-primary-100 font-semibold text-sm md:text-base">In Progress</h3>
+                    <p className="text-xl md:text-2xl font-bold text-yellow-400">{stats.inProgress}</p>
                 </div>
-                <div className="bg-dark-200 border border-dark-300 rounded-lg p-4">
-                    <h3 className="text-primary-100 font-semibold">Average Score</h3>
-                    <p className="text-2xl font-bold text-blue-400">{stats.avgScore}/10</p>
+                <div className="bg-dark-200 border border-dark-300 rounded-lg p-3 md:p-4">
+                    <h3 className="text-primary-100 font-semibold text-sm md:text-base">Average Score</h3>
+                    <p className="text-xl md:text-2xl font-bold text-blue-400">{stats.avgScore}/10</p>
                 </div>
             </section>
 
             {/* Create Interview Section */}
-            <section className="flex flex-col gap-6 mb-8">
-                <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold text-primary-100">Create New Interview</h2>
+            <section className="flex flex-col gap-4 md:gap-6 mb-6 md:mb-8">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+                    <h2 className="text-xl md:text-2xl font-bold text-primary-100">Create New Interview</h2>
                     {user?.credits > 0 ? (
-                        <div className="flex items-center gap-4">
-                            <span className="text-light-400">Credits: {user.credits}</span>
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
+                            <span className="text-light-400 text-sm md:text-base">Credits: {user.credits}</span>
                             <Button
                                 onClick={() => setIsModalOpen(true)}
-                                className="btn-primary"
+                                className="btn-primary w-full sm:w-auto"
                                 disabled={isCreating}
                             >
                                 {isCreating ? 'Creating...' : 'Create Interview'}
                             </Button>
                         </div>
                     ) : (
-                        <div className="text-center">
-                            <p className="text-light-400 mb-2">No credits remaining</p>
-                            <Button className="btn-primary">
+                        <div className="text-center w-full sm:w-auto">
+                            <p className="text-light-400 mb-2 text-sm md:text-base">No credits remaining</p>
+                            <Button className="btn-primary w-full sm:w-auto">
                                 <Link href="/pricing">Buy Credits</Link>
                             </Button>
                         </div>
