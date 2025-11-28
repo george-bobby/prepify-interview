@@ -267,11 +267,11 @@ html {
 	}
 
 	.root-layout {
-		@apply flex mx-auto max-w-7xl flex-col gap-12 my-12 px-16 max-sm:px-4 max-sm:my-8;
+		@apply flex mx-auto max-w-7xl flex-col gap-12 my-12 max-sm:my-8;
 	}
 
 	.card-cta {
-		@apply flex flex-row blue-gradient-dark rounded-3xl px-16 py-6 items-center justify-between max-sm:px-4;
+		@apply flex flex-row blue-gradient-dark rounded-3xl px-6 py-6 items-center justify-between;
 	}
 
 	.interviews-section {
@@ -327,6 +327,10 @@ html {
 	animation: fadeIn 0.3s ease-in-out;
 }
 
+@utility animate-scroll {
+	animation: scroll 30s linear infinite;
+}
+
 @keyframes fadeIn {
 	from {
 		opacity: 0;
@@ -335,5 +339,14 @@ html {
 	to {
 		opacity: 1;
 		transform: translateY(0);
+	}
+}
+
+@keyframes scroll {
+	0% {
+		transform: translateX(0);
+	}
+	100% {
+		transform: translateX(-50%);
 	}
 }

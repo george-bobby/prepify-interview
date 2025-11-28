@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function AboutPage() {
     return (
-        <main className="max-w-4xl mx-auto py-20 px-6">
+        <main className="max-w-4xl mx-auto py-20 px-4">
             <h1 className="text-4xl font-bold mb-6">About Prepify</h1>
 
             <p className="text-lg text-slate-300 mb-4">
