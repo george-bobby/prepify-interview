@@ -83,7 +83,7 @@ const DashboardPage = async () => {
                 </div>
                 <div className="bg-dark-200 border border-dark-300 rounded-lg p-4 md:p-6">
                     <h3 className="text-primary-100 font-semibold mb-2 text-sm md:text-base">Average Score</h3>
-                    <p className={`text-xl md:text-2xl font-bold ${getScoreColor(interviewStats.averageScore)}`}>eScore)}`}>
+                    <p className={`text-xl md:text-2xl font-bold ${getScoreColor(interviewStats.averageScore)}`}>
                         {interviewStats.averageScore > 0 ? `${interviewStats.averageScore}/100` : '-'}
                     </p>
                     <p className="text-light-400 text-xs md:text-sm">Overall performance</p>
