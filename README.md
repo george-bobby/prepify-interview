@@ -41,9 +41,6 @@ FIREBASE_ADMIN_PRIVATE_KEY=your_firebase_private_key
 GEMINI_API_KEY=your_gemini_api_key
 OPENAI_API_KEY=your_openai_api_key
 
-# Vapi SDK
-VAPI_API_KEY=your_vapi_api_key
-
 # News API (Optional - for Insights page)
 NEWS_API_KEY=your_newsapi_key
 ```
