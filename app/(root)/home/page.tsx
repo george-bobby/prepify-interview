@@ -8,7 +8,7 @@ export default async function Home() {
     const user = await getCurrentUser();
 
     return (
-        <div className="min-h-screen relative overflow-hidden bg-black">
+        <div className="min-h-screen relative overflow-hidden bg-black -mx-8 w-[calc(100%+4rem)]">
             {/* Decorative background elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-20 left-10 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl"></div>
@@ -86,8 +86,8 @@ export default async function Home() {
                 </section>
 
                 {/* Company Logos Section */}
-                <section className="py-12 px-4 md:px-6 overflow-hidden">
-                    <div className="max-w-7xl mx-auto">
+                <section className="py-12 overflow-hidden w-[100vw] relative left-[50%] right-[50%] -ml-[50vw] -mr-[50vw]">
+                    <div className="w-full">
                         <h3 className="text-center text-lg md:text-xl font-semibold text-gray-400 mb-8">
                             Trusted by Job Seekers At
                         </h3>
@@ -339,7 +339,7 @@ export default async function Home() {
                 </section>
 
                 {/* Choose Your Plan Section */}
-                <section className="py-20 px-4 md:px-6">
+                <section id="pricing" className="py-20 px-4 md:px-6 scroll-mt-20">
                     <div className="max-w-6xl mx-auto">
                         <div className="text-center mb-16">
                             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">

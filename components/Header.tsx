@@ -10,43 +10,71 @@ import NotificationsButton from "@/components/NotificationsButton";
 const Header = async () => {
   const user = await getCurrentUser();
 
-  // Pages that are NOT in the bottom navigation bar
-  const sidebarNavLinks = [
-    { href: "/ideas", label: "Ideas" },
-    { href: "/courses", label: "Courses" },
+  // Main navigation links (max 6)
+  const mainNavLinks = [
+    { href: "/interviews", label: "Interviews" },
+    { href: "/dashboard", label: "Dashboard" },
+    { href: "/resume", label: "Resume" },
+    { href: "/home#pricing", label: "Pricing" },
+  ];
+
+  // Features dropdown items
+  const featuresLinks = [
     { href: "/feed", label: "Feed" },
-    { href: "/coding", label: "Coding" },
-    { href: "/roadmaps", label: "Roadmaps" },
-    { href: "/jobs", label: "Jobs" },
+    { href: "/ideas", label: "Ideas" },
     { href: "/insights", label: "Insights" },
+  ];
+
+  // Tools dropdown items
+  const toolsLinks = [
+    { href: "/coding", label: "Coding" },
+    { href: "/courses", label: "Courses" },
+    { href: "/roadmaps", label: "Roadmaps" },
+  ];
+
+  // Resources dropdown items
+  const resourcesLinks = [
+    { href: "/jobs", label: "Jobs" },
     { href: "/companies", label: "Companies" },
   ];
 
-  // All nav links for desktop
-  const allNavLinks = [
-    { href: "/interviews", label: "Interviews" },
-    { href: "/dashboard", label: "Dashboard" },
-    ...sidebarNavLinks,
-    { href: "/resume", label: "Resume" },
+  // Pages that are NOT in the bottom navigation bar (for mobile menu)
+  const sidebarNavLinks = [
+    ...featuresLinks,
+    ...toolsLinks,
+    ...resourcesLinks,
   ];
 
   return (
     <header className="border-b border-dark-300 bg-dark-100/95 backdrop-blur-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
+      <div className="max-w-[1920px] mx-auto px-8 py-6">
+        <div className="flex items-center justify-between gap-24">
           {/* Logo */}
-          <Link href="/home" className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="Prepify Logo" height={32} width={38} />
-            <h2 className="text-primary-100 text-xl font-semibold">Prepify</h2>
+          <Link href="/home" className="flex items-center gap-3 flex-shrink-0">
+            <Image src="/logo.svg" alt="Prepify Logo" height={40} width={48} />
+            <h2 className="text-primary-100 text-2xl font-semibold">Prepify</h2>
           </Link>
 
           {/* Desktop Navigation Links - only show for authenticated users */}
-          {user && <NavLinks navLinks={allNavLinks} />}
+          {user && (
+            <NavLinks 
+              navLinks={mainNavLinks.filter(link => link.label !== 'Pricing')}
+              featuresLinks={featuresLinks}
+              toolsLinks={toolsLinks}
+              resourcesLinks={resourcesLinks}
+            />
+          )}
 
           {/* Desktop User Info and Mobile Sidebar */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 ml-auto">
             {user ? (
               <>
+                <Link
+                  href="/home#pricing"
+                  className="hidden md:block text-light-100 hover:text-primary-200 transition-colors font-medium text-lg"
+                >
+                  Pricing
+                </Link>
                 <div className="flex items-center gap-2">
                   <NotificationsButton />
                   <div className="hidden md:block">

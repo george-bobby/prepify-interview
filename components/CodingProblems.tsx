@@ -75,20 +75,20 @@ const CodingProblems = () => {
         console.log('ProblemCard received:', problem);
 
         return (
-            <div className="bg-dark-200 rounded-lg p-6 border border-dark-300 hover:border-primary-200/30 transition-all duration-200 hover:shadow-lg">
+            <div className="bg-dark-200 rounded-lg p-4 md:p-6 border border-dark-300 hover:border-primary-200/30 transition-all duration-200 hover:shadow-lg">
                 <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-light-100 mb-2 hover:text-primary-200 transition-colors">
+                        <h3 className="text-base md:text-lg font-semibold text-light-100 mb-2 hover:text-primary-200 transition-colors">
                             {problem.id}. {problem.title}
                         </h3>
-                        <div className="flex items-center gap-3 mb-3">
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(problem.difficulty)}`}>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(problem.difficulty)} w-fit`}>
                                 {problem.difficulty}
                             </span>
-                            <span className="text-light-300 text-sm">
+                            <span className="text-light-300 text-xs sm:text-sm">
                                 Acceptance: {problem.acceptance}
                             </span>
-                            <div className="flex items-center gap-2 text-light-300 text-sm">
+                            <div className="flex items-center gap-2 text-light-300 text-xs sm:text-sm">
                                 <span className="text-green-400">👍 {problem.likes}</span>
                                 <span className="text-red-400">👎 {problem.dislikes}</span>
                             </div>
@@ -116,10 +116,10 @@ const CodingProblems = () => {
                     </div>
                 )}
 
-                <div className="flex justify-between items-center">
+                <div className="flex justify-start items-center">
                     <Button
                         onClick={() => window.open(getLeetCodeProblemUrl(problem.titleSlug), '_blank')}
-                        className="bg-primary-200 hover:bg-primary-100 text-dark-100 font-medium px-4 py-2 rounded-lg transition-colors"
+                        className="bg-primary-200 hover:bg-primary-100 text-dark-100 font-medium px-4 py-2 rounded-lg transition-colors text-sm md:text-base w-full sm:w-auto"
                     >
                         Solve on LeetCode →
                     </Button>
@@ -143,22 +143,22 @@ const CodingProblems = () => {
         };
 
         return (
-            <div className="bg-dark-200 rounded-lg p-6 border border-dark-300 hover:border-primary-200/30 transition-all duration-200">
-                <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 rounded-lg bg-white p-2 flex items-center justify-center">
+            <div className="bg-dark-200 rounded-lg p-4 md:p-6 border border-dark-300 hover:border-primary-200/30 transition-all duration-200">
+                <div className="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-white p-2 flex items-center justify-center flex-shrink-0">
                         <img
                             src={getCompanyLogo(company.company)}
                             alt={`${company.company} logo`}
-                            className="w-8 h-8 object-contain"
+                            className="w-6 h-6 md:w-8 md:h-8 object-contain"
                             onError={(e) => {
                                 const target = e.target as HTMLImageElement;
                                 target.src = 'https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/building.svg';
                             }}
                         />
                     </div>
-                    <div>
-                        <h3 className="text-xl font-semibold text-light-100">{company.company}</h3>
-                        <p className="text-light-300 text-sm">Top Interview Questions</p>
+                    <div className="min-w-0 flex-1">
+                        <h3 className="text-lg md:text-xl font-semibold text-light-100 truncate">{company.company}</h3>
+                        <p className="text-light-300 text-xs md:text-sm">Top Interview Questions</p>
                     </div>
                 </div>
 
@@ -220,14 +220,14 @@ const CodingProblems = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Daily Challenge */}
                 {dailyChallenge && (
-                    <div className="bg-gradient-to-r from-primary-200/10 to-primary-100/10 rounded-lg p-6 border border-primary-200/20">
+                    <div className="bg-gradient-to-r from-primary-200/10 to-primary-100/10 rounded-lg p-4 md:p-6 border border-primary-200/20">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 bg-primary-200 rounded-full flex items-center justify-center">
+                            <div className="w-10 h-10 bg-primary-200 rounded-full flex items-center justify-center flex-shrink-0">
                                 <span className="text-dark-100 font-bold text-lg">🏆</span>
                             </div>
-                            <div>
-                                <h2 className="text-xl font-bold text-light-100">Daily Challenge</h2>
-                                <p className="text-light-300 text-sm">{dailyChallenge.date}</p>
+                            <div className="min-w-0 flex-1">
+                                <h2 className="text-lg md:text-xl font-bold text-light-100">Daily Challenge</h2>
+                                <p className="text-light-300 text-xs md:text-sm truncate">{dailyChallenge.date}</p>
                             </div>
                         </div>
                         <ProblemCard problem={dailyChallenge.problem} />
@@ -236,20 +236,20 @@ const CodingProblems = () => {
 
                 {/* Random Problem */}
                 {randomProblem && (
-                    <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg p-6 border border-purple-500/20">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg p-4 md:p-6 border border-purple-500/20">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
                                     <span className="text-white font-bold text-lg">🎲</span>
                                 </div>
-                                <div>
-                                    <h2 className="text-xl font-bold text-light-100">Random Problem</h2>
-                                    <p className="text-light-300 text-sm">Challenge yourself</p>
+                                <div className="min-w-0 flex-1">
+                                    <h2 className="text-lg md:text-xl font-bold text-light-100">Random Problem</h2>
+                                    <p className="text-light-300 text-xs md:text-sm">Challenge yourself</p>
                                 </div>
                             </div>
                             <Button
                                 onClick={generateNewRandomProblem}
-                                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2"
+                                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 text-sm md:text-base w-full sm:w-auto flex-shrink-0"
                             >
                                 🎲 New Random
                             </Button>
