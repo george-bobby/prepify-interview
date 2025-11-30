@@ -39,10 +39,19 @@ export const InterviewCard = ({
 
     const getStatusColor = () => {
         switch (status) {
-            case 'completed': return 'bg-green-500';
-            case 'in_progress': return 'bg-yellow-500';
+            case 'completed': return 'bg-[#9cd052]';
+            case 'in_progress': return 'bg-[#7cb342]';
             case 'paused': return 'bg-orange-500';
             default: return 'bg-gray-500';
+        }
+    };
+
+    const getStatusTextColor = () => {
+        switch (status) {
+            case 'completed': return 'text-black';
+            case 'in_progress': return 'text-black';
+            case 'paused': return 'text-white';
+            default: return 'text-white';
         }
     };
 
@@ -56,38 +65,42 @@ export const InterviewCard = ({
     };
 
     return (
-        <Link href={`/interviews/${id}/details`} className="card-border w-full hover:border-primary-500 transition-colors cursor-pointer block">
-            <div className="card-interview">
-                <div>
+        <Link href={`/interviews/${id}/details`} className="block w-full group">
+            <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-gray-800 hover:border-[#c0fe72]/60 rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#c0fe72]/20 overflow-hidden">
+                {/* Animated background gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#c0fe72]/0 to-[#c0fe72]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <div className="relative z-10">
                     {/* Status and Type Badges */}
-                    <div className="absolute top-0 right-0 flex flex-col gap-1">
-                        <div className="w-fit px-3 py-1 rounded-bl-lg bg-light-600">
-                            <p className="badge-text text-xs">{normalizedType}</p>
+                    <div className="absolute -top-6 -right-6 flex flex-col gap-2">
+                        <div className="w-fit px-4 py-2 rounded-bl-xl bg-gradient-to-r from-[#c0fe72]/20 to-[#9cd052]/20 border border-[#c0fe72]/30 backdrop-blur-sm">
+                            <p className="text-[#c0fe72] font-semibold text-xs">{normalizedType}</p>
                         </div>
-                        <div className={`w-fit px-3 py-1 rounded-l-lg ${getStatusColor()}`}>
-                            <p className="text-white text-xs font-medium">{getStatusText()}</p>
+                        <div className={`w-fit px-4 py-2 rounded-l-xl ${getStatusColor()} shadow-lg`}>
+                            <p className={`${getStatusTextColor()} text-xs font-bold`}>{getStatusText()}</p>
                         </div>
                     </div>
 
-                    {/* Role Initials Avatar */}
-                    <div className={`rounded-full size-[90px] flex items-center justify-center ${generateRoleColor(role).backgroundColor}`}>
-                        <span className={`text-3xl font-bold ${generateRoleColor(role).textColor}`}>
+                    {/* Role Initials Avatar - Enhanced */}
+                    <div className={`rounded-2xl size-[100px] flex items-center justify-center ${generateRoleColor(role).backgroundColor} shadow-xl relative overflow-hidden group-hover:scale-110 transition-transform duration-300`}>
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                        <span className={`text-4xl font-bold ${generateRoleColor(role).textColor} relative z-10`}>
                             {generateInitials(role)}
                         </span>
                     </div>
 
-                    <h3 className='mt-5 capitalize font-semibold'>{role} Interview</h3>
+                    <h3 className='mt-6 capitalize font-bold text-xl text-white group-hover:text-[#c0fe72] transition-colors'>{role} Interview</h3>
 
                     {/* Level and Difficulty */}
                     {(level || difficulty) && (
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex gap-2 mt-3">
                             {level && (
-                                <span className="px-2 py-1 bg-primary-500/20 text-primary-300 rounded text-xs">
+                                <span className="px-3 py-1.5 bg-[#c0fe72]/20 border border-[#c0fe72]/30 text-[#c0fe72] rounded-lg text-xs font-semibold">
                                     {level}
                                 </span>
                             )}
                             {difficulty && (
-                                <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">
+                                <span className="px-3 py-1.5 bg-[#9cd052]/20 border border-[#9cd052]/30 text-[#9cd052] rounded-lg text-xs font-semibold">
                                     {difficulty}
                                 </span>
                             )}
@@ -95,47 +108,84 @@ export const InterviewCard = ({
                     )}
 
                     {/* Metadata */}
-                    <div className='flex flex-col gap-2 mt-3'>
-                        <div className='flex flex-col sm:flex-row gap-2 sm:gap-5'>
+                    <div className='flex flex-col gap-3 mt-4'>
+                        <div className='flex flex-col sm:flex-row gap-3 sm:gap-6'>
                             <div className='flex flex-row gap-2 items-center'>
-                                <Image src="/calendar.svg" alt="calendar" width={18} height={18} />
-                                <p className="text-xs sm:text-sm">{formattedDate}</p>
+                                <div className="w-8 h-8 bg-[#c0fe72]/10 rounded-lg flex items-center justify-center">
+                                    <Image src="/calendar.svg" alt="calendar" width={16} height={16} />
+                                </div>
+                                <p className="text-sm text-gray-300">{formattedDate}</p>
                             </div>
                             <div className="flex flex-row gap-2 items-center">
-                                <Image src="/star.svg" alt="score" width={18} height={18} />
-                                <p className="text-xs sm:text-sm">{feedback?.totalScore ? `${feedback.totalScore}/10` : '---'}</p>
+                                <div className="w-8 h-8 bg-[#c0fe72]/10 rounded-lg flex items-center justify-center">
+                                    <Image src="/star.svg" alt="score" width={16} height={16} />
+                                </div>
+                                <p className="text-sm font-semibold text-[#c0fe72]">{feedback?.totalScore ? `${feedback.totalScore}/10` : '---'}</p>
                             </div>
                         </div>
 
                         {/* Additional metadata */}
-                        <div className='flex flex-col sm:flex-row gap-2 sm:gap-5'>
+                        <div className='flex flex-col sm:flex-row gap-3 sm:gap-6'>
                             {questionsCount && (
                                 <div className='flex flex-row gap-2 items-center'>
-                                    <span className="text-light-400">📝</span>
-                                    <p className="text-xs sm:text-sm text-light-400">{questionsCount} questions</p>
+                                    <div className="w-8 h-8 bg-[#9cd052]/10 rounded-lg flex items-center justify-center">
+                                        <span className="text-sm">📝</span>
+                                    </div>
+                                    <p className="text-sm text-gray-400">{questionsCount} questions</p>
                                 </div>
                             )}
                             {estimatedDuration && (
                                 <div className='flex flex-row gap-2 items-center'>
-                                    <span className="text-light-400">⏱️</span>
-                                    <p className="text-xs sm:text-sm text-light-400">{estimatedDuration}</p>
+                                    <div className="w-8 h-8 bg-[#7cb342]/10 rounded-lg flex items-center justify-center">
+                                        <span className="text-sm">⏱️</span>
+                                    </div>
+                                    <p className="text-sm text-gray-400">{estimatedDuration}</p>
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    <p className='line-clamp-3 mt-4 text-sm text-light-300'>
-                        {feedback?.finalAssessment || "You haven't taken this interview yet. Start now to practice your skills and get AI-powered feedback."}
-                    </p>
+                    <div className="mt-4 p-4 bg-white/5 border border-[#c0fe72]/20 rounded-xl">
+                        <p className='line-clamp-3 text-sm text-gray-300 leading-relaxed'>
+                            {feedback?.finalAssessment || "You haven't taken this interview yet. Start now to practice your skills and get AI-powered feedback."}
+                        </p>
+                    </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mt-4">
+                <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mt-6 pt-6 border-t border-[#c0fe72]/20">
                     <DisplayTechIcons techStack={techstack} />
-                    <Button className="btn-primary w-full sm:w-auto text-sm md:text-base" onClick={(e) => {
-                        e.preventDefault();
-                        window.location.href = feedback ? `/interviews/${id}/feedback` : `/interviews/${id}`;
-                    }}>
-                        {feedback ? 'View Feedback' : (status === 'in_progress' ? 'Continue' : 'Start Interview')}
+                    <Button 
+                        className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] hover:from-[#a8dc5f] hover:to-[#8bc34a] text-black font-bold rounded-xl px-6 py-3 w-full sm:w-auto transition-all duration-300 hover:scale-105 shadow-lg shadow-[#c0fe72]/20" 
+                        onClick={(e) => {
+                            e.preventDefault();
+                            window.location.href = feedback ? `/interviews/${id}/feedback` : `/interviews/${id}`;
+                        }}
+                    >
+                        <span className="flex items-center gap-2">
+                            {feedback ? (
+                                <>
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    View Feedback
+                                </>
+                            ) : status === 'in_progress' ? (
+                                <>
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Continue Interview
+                                </>
+                            ) : (
+                                <>
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                    Start Interview
+                                </>
+                            )}
+                        </span>
                     </Button>
                 </div>
             </div>
