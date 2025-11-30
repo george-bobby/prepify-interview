@@ -18,29 +18,24 @@ const Header = async () => {
     { href: "/home#pricing", label: "Pricing" },
   ];
 
-  // Features dropdown items
-  const featuresLinks = [
-    { href: "/feed", label: "Feed" },
-    { href: "/ideas", label: "Ideas" },
-    { href: "/insights", label: "Insights" },
-  ];
-
   // Tools dropdown items
   const toolsLinks = [
     { href: "/coding", label: "Coding" },
-    { href: "/courses", label: "Courses" },
-    { href: "/roadmaps", label: "Roadmaps" },
+    { href: "/feed", label: "Feed" },
+    { href: "/ideas", label: "Ideas" },
   ];
 
   // Resources dropdown items
   const resourcesLinks = [
     { href: "/jobs", label: "Jobs" },
     { href: "/companies", label: "Companies" },
+    { href: "/insights", label: "Insights" },
+    { href: "/roadmaps", label: "Roadmaps" },
+    { href: "/courses", label: "Courses" },
   ];
 
   // Pages that are NOT in the bottom navigation bar (for mobile menu)
   const sidebarNavLinks = [
-    ...featuresLinks,
     ...toolsLinks,
     ...resourcesLinks,
   ];
@@ -59,7 +54,6 @@ const Header = async () => {
           {user && (
             <NavLinks 
               navLinks={mainNavLinks.filter(link => link.label !== 'Pricing')}
-              featuresLinks={featuresLinks}
               toolsLinks={toolsLinks}
               resourcesLinks={resourcesLinks}
             />

@@ -94,9 +94,6 @@ const NavLinks = ({ navLinks, featuresLinks, toolsLinks, resourcesLinks }: NavLi
                 );
             })}
             
-            {/* Features Dropdown */}
-            {featuresLinks && featuresLinks.length > 0 && renderDropdown('Features', featuresLinks)}
-            
             {/* Tools Dropdown */}
             {toolsLinks && toolsLinks.length > 0 && renderDropdown('Tools', toolsLinks)}
             
