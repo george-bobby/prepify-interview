@@ -15,7 +15,7 @@ Powered by **Vapi SDK** for real-time voice interactions, **Gemini API**, **Chat
 ## 🛠️ Tech Stack
 
 - **Frontend:** Next.js, React, Tailwind CSS, shadcn/ui
-- **AI & Voice:** Vapi SDK, Gemini API, ChatGPT API
+- **AI & Voice:** Vapi SDK & Gemini API
 - **Backend & Auth:** Firebase (Firestore & Authentication)
 - **News API:** NewsAPI.org for dynamic news fetching
 
