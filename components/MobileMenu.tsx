@@ -34,7 +34,7 @@ const MobileMenu = ({ navLinks, user }: MobileMenuProps) => {
                     <div className="fixed inset-0 bg-black/70" onClick={toggleMenu} />
                     <div className="fixed top-0 right-0 h-full w-72 bg-[#1a1a2e] border-l border-dark-300 shadow-xl">{/* Header */}
                         <div className="flex items-center justify-between p-6 border-b border-dark-300 bg-[#1a1a2e]">
-                            <h3 className="text-primary-100 font-semibold text-lg">More Pages</h3>
+                            <h3 className="text-primary-100 font-semibold text-lg">More Features</h3>
                             <Button variant="ghost" onClick={toggleMenu} className="text-light-100 p-2">
                                 <X className="w-6 h-6" />
                             </Button>
