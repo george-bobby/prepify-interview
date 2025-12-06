@@ -12,8 +12,8 @@ const Header = async () => {
 
   // Main navigation links (max 6)
   const mainNavLinks = [
-    { href: "/interviews", label: "Interviews" },
     { href: "/dashboard", label: "Dashboard" },
+    { href: "/interviews", label: "Interviews" },
     { href: "/resume", label: "Resume" },
     { href: "/home#pricing", label: "Pricing" },
   ];
@@ -42,12 +42,12 @@ const Header = async () => {
 
   return (
     <header className="border-b border-dark-300 bg-dark-100/95 backdrop-blur-sm sticky top-0 z-50">
-      <div className="max-w-[1920px] mx-auto px-8 py-6">
-        <div className="flex items-center justify-between gap-24">
+      <div className="max-w-[1920px] mx-auto px-4 md:px-8 py-3 md:py-6">
+        <div className="flex items-center justify-between gap-2 md:gap-24">
           {/* Logo */}
-          <Link href="/home" className="flex items-center gap-3 flex-shrink-0">
-            <Image src="/logo.svg" alt="Prepify Logo" height={40} width={48} />
-            <h2 className="text-primary-100 text-2xl font-semibold">Prepify</h2>
+          <Link href="/home" className="flex items-center gap-2 md:gap-3 flex-shrink-0">
+            <Image src="/logo.svg" alt="Prepify Logo" height={32} width={38} className="md:h-[40px] md:w-[48px]" />
+            <h2 className="text-primary-100 text-lg md:text-2xl font-semibold">Prepify</h2>
           </Link>
 
           {/* Desktop Navigation Links - only show for authenticated users */}
@@ -60,12 +60,12 @@ const Header = async () => {
           )}
 
           {/* Desktop User Info and Mobile Sidebar */}
-          <div className="flex items-center gap-4 ml-auto">
+          <div className="flex items-center gap-2 md:gap-4 ml-auto">
             {user ? (
               <>
                 <Link
                   href="/home#pricing"
-                  className="hidden md:block text-light-100 hover:text-primary-200 transition-colors font-medium text-lg"
+                  className="hidden md:block text-light-100 transition-colors font-medium text-lg"
                 >
                   Pricing
                 </Link>
@@ -80,36 +80,36 @@ const Header = async () => {
               </>
             ) : (
               /* Show navigation for landing page */
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2 md:gap-6">
                 <nav className="hidden md:flex items-center gap-6">
                   <a
                     href="#features"
-                    className="text-light-400 hover:text-primary-200 transition-colors"
+                    className="text-gray-300 transition-colors font-medium"
                   >
                     Features
                   </a>
                   <a
                     href="#how-it-works"
-                    className="text-light-400 hover:text-primary-200 transition-colors"
+                    className="text-gray-300 transition-colors font-medium"
                   >
                     How It Works
                   </a>
                   <a
                     href="#pricing"
-                    className="text-light-400 hover:text-primary-200 transition-colors"
+                    className="text-gray-300 transition-colors font-medium"
                   >
                     Pricing
                   </a>
                 </nav>
                 <Link
                   href="/signin"
-                  className="text-light-400 hover:text-primary-200 transition-colors"
+                  className="hidden sm:block px-3 md:px-4 py-1.5 md:py-2 text-[#c0fe72] font-semibold border-2 border-[#c0fe72]/30 rounded-lg transition-all text-sm md:text-base"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/signup"
-                  className="bg-primary-200 text-white px-4 py-2 rounded-lg hover:bg-primary-300 transition-colors"
+                  className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black px-4 md:px-6 py-1.5 md:py-2 rounded-lg font-bold shadow-xl shadow-[#c0fe72]/40 transition-all text-sm md:text-base whitespace-nowrap"
                 >
                   Sign Up
                 </Link>
@@ -123,3 +123,4 @@ const Header = async () => {
 };
 
 export default Header;
+

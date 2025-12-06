@@ -106,8 +106,12 @@ Provide specific, actionable feedback that will help improve the resume's effect
 		// Parse the AI response
 		let analysis;
 		try {
+			// Remove any markdown code blocks first
+			let cleanText = result.text.trim();
+			cleanText = cleanText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
+			
 			// First try to parse as JSON directly
-			analysis = JSON.parse(result.text);
+			analysis = JSON.parse(cleanText);
 		} catch (parseError) {
 			console.log(
 				'Direct JSON parsing failed, trying to extract JSON from text'
@@ -191,6 +195,25 @@ Provide specific, actionable feedback that will help improve the resume's effect
 			!analysis.summary
 		) {
 			throw new Error('Invalid analysis structure');
+		}
+
+		// Clean up summary if it contains JSON
+		if (typeof analysis.summary === 'string') {
+			let summaryText = analysis.summary.trim();
+			// Remove markdown code blocks
+			summaryText = summaryText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
+			
+			// Check if summary field contains the entire JSON object as a string
+			if (summaryText.startsWith('{')) {
+				try {
+					const parsed = JSON.parse(summaryText);
+					if (parsed.summary) {
+						analysis.summary = parsed.summary;
+					}
+				} catch {
+					// If can't parse, keep as is
+				}
+			}
 		}
 
 		// Deduct a resume review credit after successful analysis

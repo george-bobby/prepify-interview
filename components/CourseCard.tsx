@@ -42,7 +42,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onEnroll }) => {
   };
 
   return (
-    <div className="bg-dark-200 border border-dark-300 rounded-lg p-6 hover:border-primary-200 transition-all duration-200 group hover:shadow-lg">
+    <div className="bg-dark-200 border border-dark-300 rounded-lg p-6 transition-all duration-200 group">
       {/* Header with source badge */}
       <div className="flex justify-between items-start mb-4">
         <div className="text-4xl">{course.image}</div>
@@ -58,7 +58,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onEnroll }) => {
           <span className="text-light-400 text-sm">{course.category}</span>
         </div>
 
-        <h3 className="text-xl font-semibold text-primary-100 group-hover:text-primary-200 transition-colors line-clamp-2">
+        <h3 className="text-xl font-semibold text-primary-100 transition-colors line-clamp-2">
           {course.title}
         </h3>
 

@@ -37,7 +37,7 @@ const NewsCard = ({ article }: NewsCardProps) => {
     };
 
     return (
-        <div className="bg-dark-200 rounded-lg overflow-hidden hover:bg-dark-300 transition-colors duration-200 group">
+        <div className="bg-dark-200 rounded-lg overflow-hidden transition-colors duration-200 group">
             {/* Image */}
             <div className="relative h-48 w-full overflow-hidden">
                 {article.urlToImage ? (
@@ -45,7 +45,7 @@ const NewsCard = ({ article }: NewsCardProps) => {
                         src={article.urlToImage}
                         alt={article.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-200"
+                        className="object-cover transition-transform duration-200"
                         onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
@@ -74,7 +74,7 @@ const NewsCard = ({ article }: NewsCardProps) => {
                 </div>
 
                 {/* Title */}
-                <h3 className="text-lg font-semibold text-light-100 line-clamp-2 group-hover:text-primary-100 transition-colors">
+                <h3 className="text-lg font-semibold text-light-100 line-clamp-2 transition-colors">
                     {article.title}
                 </h3>
 
@@ -89,7 +89,7 @@ const NewsCard = ({ article }: NewsCardProps) => {
                         href={article.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center text-primary-200 hover:text-primary-100 font-medium text-sm transition-colors"
+                        className="inline-flex items-center text-primary-200 font-medium text-sm transition-colors"
                     >
                         Read More
                         <svg

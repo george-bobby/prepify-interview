@@ -21,6 +21,7 @@ export interface InterviewDocument {
 	feedbackId?: string;
 	finalScore?: number;
 	responses?: { [key: number]: InterviewResponse };
+	finalized?: boolean;
 }
 
 export interface InterviewResponse {

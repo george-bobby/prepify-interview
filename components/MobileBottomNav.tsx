@@ -24,14 +24,14 @@ const MobileBottomNav = ({ user }: MobileBottomNavProps) => {
       icon: Home,
     },
     {
-      href: "/interviews",
-      label: "Interviews",
-      icon: Briefcase,
-    },
-    {
       href: "/dashboard",
       label: "Dashboard",
       icon: LayoutDashboard,
+    },
+    {
+      href: "/interviews",
+      label: "Interviews",
+      icon: Briefcase,
     },
     {
       href: "/resume",

@@ -66,9 +66,9 @@ export const InterviewCard = ({
 
     return (
         <Link href={`/interviews/${id}/details`} className="block w-full group">
-            <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-gray-800 hover:border-[#c0fe72]/60 rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#c0fe72]/20 overflow-hidden">
+            <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-gray-800 rounded-2xl p-6 transition-all duration-300 overflow-hidden">
                 {/* Animated background gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#c0fe72]/0 to-[#c0fe72]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-[#c0fe72]/0 to-[#c0fe72]/5 opacity-0 transition-opacity duration-300"></div>
                 
                 <div className="relative z-10">
                     {/* Status and Type Badges */}
@@ -82,14 +82,14 @@ export const InterviewCard = ({
                     </div>
 
                     {/* Role Initials Avatar - Enhanced */}
-                    <div className={`rounded-2xl size-[100px] flex items-center justify-center ${generateRoleColor(role).backgroundColor} shadow-xl relative overflow-hidden group-hover:scale-110 transition-transform duration-300`}>
+                    <div className={`rounded-2xl size-[100px] flex items-center justify-center ${generateRoleColor(role).backgroundColor} shadow-xl relative overflow-hidden transition-transform duration-300`}>
                         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
                         <span className={`text-4xl font-bold ${generateRoleColor(role).textColor} relative z-10`}>
                             {generateInitials(role)}
                         </span>
                     </div>
 
-                    <h3 className='mt-6 capitalize font-bold text-xl text-white group-hover:text-[#c0fe72] transition-colors'>{role} Interview</h3>
+                    <h3 className='mt-6 capitalize font-bold text-xl text-white transition-colors'>{role} Interview</h3>
 
                     {/* Level and Difficulty */}
                     {(level || difficulty) && (
@@ -155,7 +155,7 @@ export const InterviewCard = ({
                 <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mt-6 pt-6 border-t border-[#c0fe72]/20">
                     <DisplayTechIcons techStack={techstack} />
                     <Button 
-                        className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] hover:from-[#a8dc5f] hover:to-[#8bc34a] text-black font-bold rounded-xl px-6 py-3 w-full sm:w-auto transition-all duration-300 hover:scale-105 shadow-lg shadow-[#c0fe72]/20" 
+                        className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black font-bold rounded-xl px-6 py-3 w-full sm:w-auto transition-all duration-300 shadow-lg shadow-[#c0fe72]/20" 
                         onClick={(e) => {
                             e.preventDefault();
                             window.location.href = feedback ? `/interviews/${id}/feedback` : `/interviews/${id}`;

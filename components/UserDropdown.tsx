@@ -52,8 +52,8 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center gap-2 text-light-100 hover:opacity-80 transition-opacity"
             >
-                <div className="w-8 h-8 bg-primary-200 rounded-full flex items-center justify-center hover:bg-primary-300 transition-colors">
-                    <span className="text-dark-100 text-sm font-medium">
+                <div className="w-8 h-8 bg-[#c0fe72] rounded-full flex items-center justify-center">
+                    <span className="text-black text-sm font-medium">
                         {user.name?.charAt(0).toUpperCase()}
                     </span>
                 </div>

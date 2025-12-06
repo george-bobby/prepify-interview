@@ -668,7 +668,7 @@ const ProjectsPage = () => {
 
     const getRequestButtonStyle = () => {
       if (!userRequest) {
-        return "bg-primary-200 text-dark-100 hover:bg-primary-200/80";
+        return "bg-primary-200 text-dark-100";
       }
       switch (userRequest.status) {
         case "pending":
@@ -678,15 +678,15 @@ const ProjectsPage = () => {
         case "rejected":
           return "bg-destructive-100/80 text-white cursor-not-allowed";
         default:
-          return "bg-primary-200 text-dark-100 hover:bg-primary-200/80";
+          return "bg-primary-200 text-dark-100";
       }
     };
 
     return (
-      <div className="bg-dark-200 border border-dark-300 rounded-2xl p-6 hover:border-primary-200/30 transition-all duration-200">
+      <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-2xl p-6 transition-all duration-300">
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
-            <h3 className="text-light-100 font-semibold text-lg mb-2 line-clamp-2">
+            <h3 className="text-white font-bold text-lg mb-2 line-clamp-2">
               {item.name}
             </h3>
             <div className="flex items-center gap-2 mb-2">
@@ -697,21 +697,21 @@ const ProjectsPage = () => {
               >
                 {item.status.replace("-", " ")}
               </span>
-              <span className="text-light-400 text-xs">•</span>
-              <span className="text-light-400 text-xs">
+              <span className="text-gray-400 text-xs">•</span>
+              <span className="text-gray-400 text-xs">
                 {getTimeAgo(item.createdAt)}
               </span>
               {currentUser?.skills && (
-                <span className="ml-2 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-dark-300 text-xs text-light-300 border border-dark-400">
+                <span className="ml-2 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[#c0fe72]/10 text-xs text-gray-300 border border-[#c0fe72]/30">
                   Match:
-                  <span className="text-primary-200 font-semibold">
+                  <span className="text-[#c0fe72] font-semibold">
                     {calculateSkillMatchScore(
                       currentUser.skills,
                       item.skillsRequired
                     )}
                     /{item.skillsRequired.length}
                   </span>
-                  <span className="text-light-500">
+                  <span className="text-gray-400">
                     ({Math.round(
                       (calculateSkillMatchScore(
                         currentUser.skills,
@@ -723,35 +723,35 @@ const ProjectsPage = () => {
                 </span>
               )}
             </div>
-            <div className="text-light-300 text-sm mb-3">
+            <div className="text-gray-300 text-sm mb-3">
               By {item.createdBy}
-              {isOwner && <span className="text-primary-200 ml-2">(You)</span>}
+              {isOwner && <span className="text-[#c0fe72] ml-2 font-semibold">(You)</span>}
             </div>
           </div>
-          <span className={`inline-block px-3 py-1 rounded-lg text-sm font-medium ${type === "project"
-            ? "bg-primary-200/20 text-primary-200"
-            : "bg-purple-400/20 text-purple-400"
+          <span className={`inline-block px-3 py-1 rounded-lg text-sm font-bold shadow-lg ${type === "project"
+            ? "bg-gradient-to-r from-[#c0fe72]/20 to-[#9cd052]/20 text-[#c0fe72] border border-[#c0fe72]/30"
+            : "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-400 border border-purple-500/30"
             }`}>
             {type === "project" ? "Project" : "Research"}
           </span>
         </div>
 
-        <div className="text-light-300 text-sm mb-4 line-clamp-3">
+        <div className="text-gray-300 text-sm mb-4 line-clamp-3">
           {item.description}
         </div>
 
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-light-400 text-sm">Team Members:</span>
-            <span className="text-primary-200 font-medium">
+            <span className="text-gray-400 text-sm">Team Members:</span>
+            <span className="text-[#c0fe72] font-bold">
               {acceptedCount}/{item.teamMembers}
             </span>
             {remainingSlots > 0 ? (
-              <span className="text-xs text-light-500 ml-2">
+              <span className="text-xs text-gray-400 ml-2">
                 {remainingSlots} slot{remainingSlots === 1 ? "" : "s"} open
               </span>
             ) : (
-              <span className="text-xs text-success-100 ml-2">Full</span>
+              <span className="text-xs text-green-400 font-semibold ml-2">Full</span>
             )}
           </div>
           <div className="flex flex-wrap gap-1">
@@ -794,11 +794,11 @@ const ProjectsPage = () => {
               <>
                 <button
                   onClick={() => openRequestsModal(item)}
-                  className="bg-primary-200 text-dark-100 px-4 py-2 rounded-lg font-medium hover:bg-primary-200/80 transition-colors duration-200 flex items-center"
+                  className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black px-4 py-2 rounded-lg font-bold transition-all duration-200 flex items-center"
                 >
                   Manage Requests
                   {pendingRequestsCount > 0 && (
-                    <span className="ml-2 bg-destructive-100 text-white text-xs px-2 py-1 rounded-full">
+                    <span className="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
                       {pendingRequestsCount}
                     </span>
                   )}
@@ -806,7 +806,7 @@ const ProjectsPage = () => {
                 {acceptedCount > 0 && (
                   <button
                     onClick={() => openAcceptedModal(item)}
-                    className="bg-dark-300 text-light-100 px-4 py-2 rounded-lg font-medium hover:bg-dark-200 transition-colors duration-200"
+                    className="bg-white/5 border border-[#c0fe72]/30 text-[#c0fe72] px-4 py-2 rounded-lg font-semibold transition-all duration-200"
                   >
                     View Team ({acceptedCount})
                   </button>
@@ -861,7 +861,7 @@ const ProjectsPage = () => {
             </div>
             <button
               onClick={() => setShowRequestsModal(false)}
-              className="text-light-400 hover:text-light-100 text-xl"
+              className="text-light-400 text-xl"
             >
               ✕
             </button>
@@ -1015,7 +1015,7 @@ const ProjectsPage = () => {
                               "accept"
                             );
                           }}
-                          className="flex-1 bg-success-100 text-white px-4 py-3 rounded-lg font-medium hover:bg-success-200 transition-colors duration-200 flex items-center justify-center gap-2"
+                          className="flex-1 bg-success-100 text-white px-4 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2"
                         >
                           ✓ Accept Request
                         </button>
@@ -1027,7 +1027,7 @@ const ProjectsPage = () => {
                               "reject"
                             );
                           }}
-                          className="flex-1 bg-destructive-100 text-white px-4 py-3 rounded-lg font-medium hover:bg-destructive-200 transition-colors duration-200 flex items-center justify-center gap-2"
+                          className="flex-1 bg-destructive-100 text-white px-4 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2"
                         >
                           ✕ Reject Request
                         </button>
@@ -1073,7 +1073,7 @@ const ProjectsPage = () => {
               </div>
               <button
                 onClick={() => setShowRequestsModal(false)}
-                className="bg-dark-300 text-light-100 px-6 py-2 rounded-lg hover:bg-dark-200 transition-colors duration-200"
+                className="bg-dark-300 text-light-100 px-6 py-2 rounded-lg transition-colors duration-200"
               >
                 Close
               </button>
@@ -1110,7 +1110,7 @@ const ProjectsPage = () => {
             </div>
             <button
               onClick={() => setShowAcceptedModal(false)}
-              className="text-light-400 hover:text-light-100 text-xl"
+              className="text-light-400 text-xl"
             >
               ✕
             </button>
@@ -1222,7 +1222,7 @@ const ProjectsPage = () => {
               </div>
               <button
                 onClick={() => setShowAcceptedModal(false)}
-                className="bg-dark-300 text-light-100 px-6 py-2 rounded-lg hover:bg-dark-200 transition-colors duration-200"
+                className="bg-dark-300 text-light-100 px-6 py-2 rounded-lg transition-colors duration-200"
               >
                 Close
               </button>
@@ -1243,7 +1243,7 @@ const ProjectsPage = () => {
             </h3>
             <button
               onClick={() => setShowCreateModal(false)}
-              className="text-light-400 hover:text-light-100"
+              className="text-light-400"
             >
               ✕
             </button>
@@ -1356,7 +1356,7 @@ const ProjectsPage = () => {
                   type="button"
                   onClick={addSkill}
                   disabled={!formData.skillInput.trim()}
-                  className="px-4 py-2 bg-primary-200 text-dark-100 rounded-lg hover:bg-primary-200/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-primary-200 text-dark-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Add
                 </button>
@@ -1371,7 +1371,7 @@ const ProjectsPage = () => {
                     <button
                       type="button"
                       onClick={() => removeSkill(skill)}
-                      className="text-primary-200 hover:text-primary-100"
+                      className="text-primary-200"
                     >
                       ✕
                     </button>
@@ -1389,14 +1389,14 @@ const ProjectsPage = () => {
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
-                className="flex-1 px-4 py-3 bg-dark-300 text-light-100 rounded-lg hover:bg-dark-200 transition-colors"
+                className="flex-1 px-4 py-3 bg-dark-300 text-light-100 rounded-lg transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={!isFormValid()}
-                className="flex-1 px-4 py-3 bg-primary-200 text-dark-100 rounded-lg hover:bg-primary-200/80 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-3 bg-primary-200 text-dark-100 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Create {createType === "project" ? "Project" : "Research Paper"}
               </button>
@@ -1408,30 +1408,101 @@ const ProjectsPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-dark-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-200"></div>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="relative">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-700"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-[#c0fe72] absolute top-0 left-0"></div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-dark-100">
-      <div className="container mx-auto px-4 py-8">
+    <main className="flex flex-col gap-6 md:gap-10 relative min-h-screen bg-black">
+      {/* Animated Background Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#c0fe72]/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+      </div>
 
-        {/* Header */}
-        <div className="text-center space-y-4 mb-8">
-          <h1 className="text-4xl font-bold text-primary-100">Projects & Research Papers</h1>
-          <p className="text-light-600 text-sm">
-            {sortedAllItems.length} total ({filteredProjects.length} projects, {filteredResearch.length} research papers)
-          </p>
+      <div className="container mx-auto px-4 py-6 md:py-8 relative z-10">
+        {/* Hero Banner Section */}
+        <section className="relative overflow-hidden bg-gradient-to-br from-black via-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-3xl p-6 md:p-10 shadow-2xl shadow-[#c0fe72]/20 mb-8">
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
+            <div className="flex flex-col gap-4 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/20 border border-purple-500/50 rounded-full w-fit">
+                <svg className="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                </svg>
+                <span className="text-purple-400 font-semibold text-sm">COLLABORATIVE IDEAS</span>
+              </div>
+              <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
+                Find Your Next{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c0fe72] to-purple-400">
+                  Project Partner
+                </span>
+              </h1>
+              <p className="text-lg text-gray-300">
+                Discover projects and research opportunities that match your skills. Collaborate with talented individuals worldwide.
+              </p>
+              <div className="flex flex-wrap gap-4 mt-2">
+                <div className="flex items-center gap-2 text-gray-400">
+                  <svg className="w-5 h-5 text-[#c0fe72]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-sm">Skill Matching</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-400">
+                  <svg className="w-5 h-5 text-[#c0fe72]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-sm">Real-time Updates</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-400">
+                  <svg className="w-5 h-5 text-[#c0fe72]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-sm">Easy Collaboration</span>
+                </div>
+              </div>
+            </div>
+            <div className="hidden lg:block relative">
+              <div className="relative w-64 h-64">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full opacity-20 animate-pulse"></div>
+                <div className="absolute inset-4 bg-gradient-to-br from-[#c0fe72] to-purple-500 rounded-full opacity-30 animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                <div className="absolute inset-8 bg-gradient-to-br from-blue-500 to-[#c0fe72] rounded-full opacity-40 animate-pulse" style={{animationDelay: '1s'}}></div>
+                <div className="absolute inset-0 flex items-center justify-center text-8xl">💡</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Stats Bar */}
+        <div className="bg-white/5 backdrop-blur-sm border border-[#c0fe72]/30 rounded-2xl p-4 mb-8">
+          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-12">
+            <div className="text-center">
+              <div className="text-2xl md:text-3xl font-bold text-[#c0fe72]">{sortedAllItems.length}</div>
+              <div className="text-sm text-gray-400">Total Opportunities</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl md:text-3xl font-bold text-purple-400">{filteredProjects.length}</div>
+              <div className="text-sm text-gray-400">Projects</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl md:text-3xl font-bold text-blue-400">{filteredResearch.length}</div>
+              <div className="text-sm text-gray-400">Research Papers</div>
+            </div>
+          </div>
         </div>
-        {/* Search Bar*/}
+
+        {/* Search Bar */}
         <div className="mb-8">
-          <div className="max-w-md mx-auto">
+          <div className="max-w-2xl mx-auto">
             <AutocompleteInput
               value={searchQuery}
               onChange={handleSearch}
-              placeholder="Search projects and research papers"
+              placeholder="Search projects and research papers by title, skills, or creator..."
               label=""
               apiEndpoint="/api/projects/search"
             />
@@ -1439,59 +1510,67 @@ const ProjectsPage = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-dark-200 border border-dark-300 rounded-2xl p-4 mb-8 grid gap-4 md:grid-cols-4">
-          <div className="flex flex-col gap-2">
-            <label className="text-xs text-light-400">Status</label>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="bg-dark-300 border border-dark-400 rounded-lg px-3 py-2 text-sm text-light-100"
-            >
-              <option value="all">All</option>
-              <option value="open">Open</option>
-              <option value="in-progress">In Progress</option>
-              <option value="completed">Completed</option>
-            </select>
-          </div>
-          <div className="flex flex-col gap-2">
-            <label className="text-xs text-light-400">Exact Skill</label>
-            <input
-              type="text"
-              value={filterSkill}
-              onChange={(e) => setFilterSkill(e.target.value)}
-              placeholder="e.g. react"
-              className="bg-dark-300 border border-dark-400 rounded-lg px-3 py-2 text-sm text-light-100 placeholder:text-light-500"
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <label className="text-xs text-light-400">Min Team Size</label>
-            <input
-              type="number"
-              min={1}
-              max={50}
-              value={filterTeamMin}
-              onChange={(e) => setFilterTeamMin(parseInt(e.target.value) || 1)}
-              className="bg-dark-300 border border-dark-400 rounded-lg px-3 py-2 text-sm text-light-100"
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <label className="text-xs text-light-400">Max Team Size</label>
-            <input
-              type="number"
-              min={filterTeamMin}
-              max={200}
-              value={filterTeamMax}
-              onChange={(e) => setFilterTeamMax(parseInt(e.target.value) || filterTeamMin)}
-              className="bg-dark-300 border border-dark-400 rounded-lg px-3 py-2 text-sm text-light-100"
-            />
+        <div className="bg-gradient-to-br from-gray-900/90 to-black/90 border-2 border-gray-700/50 rounded-2xl p-5 md:p-6 mb-8 shadow-2xl">
+          <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+            <svg className="w-5 h-5 text-[#c0fe72]" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
+            </svg>
+            Filter Options
+          </h3>
+          <div className="grid gap-4 md:grid-cols-4">
+            <div className="flex flex-col gap-2">
+              <label className="text-xs text-gray-400 font-medium">Status</label>
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="bg-black/60 border-2 border-gray-700/50 focus:border-[#c0fe72]/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#c0fe72]/30 transition-all"
+              >
+                <option value="all">All Status</option>
+                <option value="open">Open</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs text-gray-400 font-medium">Exact Skill</label>
+              <input
+                type="text"
+                value={filterSkill}
+                onChange={(e) => setFilterSkill(e.target.value)}
+                placeholder="e.g. React, Python"
+                className="bg-black/60 border-2 border-gray-700/50 focus:border-[#c0fe72]/50 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#c0fe72]/30 transition-all"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs text-gray-400 font-medium">Min Team Size</label>
+              <input
+                type="number"
+                min={1}
+                max={50}
+                value={filterTeamMin}
+                onChange={(e) => setFilterTeamMin(parseInt(e.target.value) || 1)}
+                className="bg-black/60 border-2 border-gray-700/50 focus:border-[#c0fe72]/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#c0fe72]/30 transition-all"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs text-gray-400 font-medium">Max Team Size</label>
+              <input
+                type="number"
+                min={filterTeamMin}
+                max={200}
+                value={filterTeamMax}
+                onChange={(e) => setFilterTeamMax(parseInt(e.target.value) || filterTeamMin)}
+                className="bg-black/60 border-2 border-gray-700/50 focus:border-[#c0fe72]/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#c0fe72]/30 transition-all"
+              />
+            </div>
           </div>
         </div>
 
         {/* Projects & Research Papers Section */}
-        <div className="bg-dark-200 border border-dark-300 rounded-2xl p-6 mb-8">
+        <div className="bg-gradient-to-br from-gray-900/50 to-black/50 border-2 border-gray-700/30 rounded-2xl p-6 md:p-8 mb-8 backdrop-blur-sm">
 
           {sortedAllItems.length > 0 ? (
-            <div className="grid gap-4">
+            <div className="grid gap-5 md:gap-6">
               {sortedAllItems.map((item) => (
                 <ProjectCard
                   key={item.id}
@@ -1584,7 +1663,7 @@ const ProjectsPage = () => {
                         type="button"
                         onClick={addSkill}
                         disabled={!formData.skillInput.trim()}
-                        className="px-4 py-2 bg-primary-200 text-dark-100 rounded-lg hover:bg-primary-200/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-2 bg-primary-200 text-dark-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Add
                       </button>
@@ -1600,7 +1679,7 @@ const ProjectsPage = () => {
                             <button
                               type="button"
                               onClick={() => removeSkill(skill)}
-                              className="text-primary-200/70 hover:text-primary-200"
+                              className="text-primary-200/70"
                             >
                               ×
                             </button>
@@ -1622,7 +1701,7 @@ const ProjectsPage = () => {
                     onClick={() => setCreateType("project")}
                     className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${createType === "project"
                       ? "bg-primary-200 text-dark-100 shadow-md"
-                      : "text-light-400 hover:text-light-200"
+                      : "text-light-400"
                       }`}
                   >
                     Project
@@ -1631,7 +1710,7 @@ const ProjectsPage = () => {
                     onClick={() => setCreateType("research")}
                     className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${createType === "research"
                       ? "bg-purple-500 text-white shadow-md"
-                      : "text-light-400 hover:text-light-200"
+                      : "text-light-400"
                       }`}
                   >
                     Research
@@ -1654,7 +1733,7 @@ const ProjectsPage = () => {
                     onClick={() => setFloatingInputExpanded(floatingInputExpanded === "description" ? false : "description")}
                     className={`p-2 rounded-lg transition-all duration-200 ${floatingInputExpanded === "description"
                       ? "bg-primary-200/20 text-primary-200"
-                      : "text-light-400 hover:text-light-200 hover:bg-dark-300"
+                      : "text-light-400"
                       }`}
                     title="Add Description"
                   >
@@ -1668,7 +1747,7 @@ const ProjectsPage = () => {
                     onClick={() => setFloatingInputExpanded(floatingInputExpanded === "team" ? false : "team")}
                     className={`p-2 rounded-lg transition-all duration-200 ${floatingInputExpanded === "team"
                       ? "bg-primary-200/20 text-primary-200"
-                      : "text-light-400 hover:text-light-200 hover:bg-dark-300"
+                      : "text-light-400"
                       }`}
                     title="Set Team Size"
                   >
@@ -1682,7 +1761,7 @@ const ProjectsPage = () => {
                     onClick={() => setFloatingInputExpanded(floatingInputExpanded === "skills" ? false : "skills")}
                     className={`p-2 rounded-lg transition-all duration-200 ${floatingInputExpanded === "skills"
                       ? "bg-primary-200/20 text-primary-200"
-                      : "text-light-400 hover:text-light-200 hover:bg-dark-300"
+                      : "text-light-400"
                       }`}
                     title="Add Skills"
                   >
@@ -1694,7 +1773,7 @@ const ProjectsPage = () => {
                   <button
                     onClick={handleSubmit}
                     disabled={!isFormValid()}
-                    className="p-2 rounded-lg bg-primary-200 text-dark-100 hover:bg-primary-200/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-2 rounded-lg bg-primary-200 text-dark-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Create"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -1711,7 +1790,7 @@ const ProjectsPage = () => {
       {/* Modals */}
       <CreateModal />
       <RequestsModal />
-    </div>
+    </main>
   );
 };
 

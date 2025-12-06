@@ -77,8 +77,8 @@ export const InterviewsPageClient: React.FC<InterviewsPageClientProps> = ({
         <>
             {/* Statistics Section - Enhanced */}
             <section className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-2xl p-4 md:p-6 hover:border-[#c0fe72]/60 transition-all hover:scale-105 duration-300 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-[#c0fe72]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-2xl p-4 md:p-6 transition-all duration-300 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-[#c0fe72]/5 opacity-0 transition-opacity"></div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-2 mb-2">
                             <div className="w-10 h-10 bg-[#c0fe72]/20 rounded-lg flex items-center justify-center">
@@ -92,8 +92,8 @@ export const InterviewsPageClient: React.FC<InterviewsPageClientProps> = ({
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#9cd052]/30 rounded-2xl p-4 md:p-6 hover:border-[#9cd052]/60 transition-all hover:scale-105 duration-300 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-[#9cd052]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#9cd052]/30 rounded-2xl p-4 md:p-6 transition-all duration-300 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-[#9cd052]/5 opacity-0 transition-opacity"></div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-2 mb-2">
                             <div className="w-10 h-10 bg-[#9cd052]/20 rounded-lg flex items-center justify-center">
@@ -107,8 +107,8 @@ export const InterviewsPageClient: React.FC<InterviewsPageClientProps> = ({
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#7cb342]/30 rounded-2xl p-4 md:p-6 hover:border-[#7cb342]/60 transition-all hover:scale-105 duration-300 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-[#7cb342]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#7cb342]/30 rounded-2xl p-4 md:p-6 transition-all duration-300 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-[#7cb342]/5 opacity-0 transition-opacity"></div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-2 mb-2">
                             <div className="w-10 h-10 bg-[#7cb342]/20 rounded-lg flex items-center justify-center">
@@ -122,8 +122,8 @@ export const InterviewsPageClient: React.FC<InterviewsPageClientProps> = ({
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-2xl p-4 md:p-6 hover:border-[#c0fe72]/60 transition-all hover:scale-105 duration-300 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-[#c0fe72]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-2xl p-4 md:p-6 transition-all duration-300 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-[#c0fe72]/5 opacity-0 transition-opacity"></div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-2 mb-2">
                             <div className="w-10 h-10 bg-[#c0fe72]/20 rounded-lg flex items-center justify-center">
@@ -161,28 +161,16 @@ export const InterviewsPageClient: React.FC<InterviewsPageClientProps> = ({
                                     </svg>
                                     <span className="text-[#c0fe72] font-bold">{user.credits} Credits</span>
                                 </div>
-                                <Button
-                                    onClick={() => setIsModalOpen(true)}
-                                    className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] hover:from-[#a8dc5f] hover:to-[#8bc34a] text-black font-bold rounded-xl px-6 py-6 w-full sm:w-auto transition-all duration-300 shadow-lg shadow-[#c0fe72]/20"
-                                    disabled={isCreating}
-                                >
-                                    {isCreating ? (
-                                        <span className="flex items-center gap-2">
-                                            <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                            Creating...
-                                        </span>
-                                    ) : (
+                                <Link href="/interviews/create">
+                                    <Button className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black font-bold rounded-xl px-6 py-6 w-full sm:w-auto shadow-lg shadow-[#c0fe72]/20">
                                         <span className="flex items-center gap-2">
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                             </svg>
                                             Create Interview
                                         </span>
-                                    )}
-                                </Button>
+                                    </Button>
+                                </Link>
                             </div>
                         ) : (
                             <div className="flex flex-col items-start sm:items-end gap-3 w-full sm:w-auto">
@@ -192,7 +180,7 @@ export const InterviewsPageClient: React.FC<InterviewsPageClientProps> = ({
                                     </svg>
                                     <span className="text-red-400 font-semibold text-sm">No credits remaining</span>
                                 </div>
-                                <Button className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] hover:from-[#a8dc5f] hover:to-[#8bc34a] text-black font-bold rounded-xl px-6 py-6 w-full sm:w-auto transition-all duration-300 hover:scale-105">
+                                <Button className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black font-bold rounded-xl px-6 py-6 w-full sm:w-auto transition-all duration-300">
                                     <Link href="/pricing" className="flex items-center gap-2">
                                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
@@ -232,7 +220,7 @@ export const InterviewsPageClient: React.FC<InterviewsPageClientProps> = ({
                             <p className="text-sm">{error}</p>
                         </div>
                         <button
-                            className="text-red-300 hover:text-red-100 font-semibold"
+                            className="text-red-300 font-semibold"
                             onClick={() => setError(null)}
                         >
                             ✕

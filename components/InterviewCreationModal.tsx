@@ -99,23 +99,28 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-dark-200 rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold text-primary-100">Create New Interview</h2>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-3xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl shadow-[#c0fe72]/20">
+                <div className="flex justify-between items-center mb-6">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-[#c0fe72]/20 to-[#9cd052]/20 rounded-xl flex items-center justify-center border border-[#c0fe72]/30">
+                            <span className="text-xl">🎯</span>
+                        </div>
+                        <h2 className="text-xl font-bold bg-gradient-to-r from-[#c0fe72] to-[#9cd052] bg-clip-text text-transparent">Create New Interview</h2>
+                    </div>
                     <button
                         onClick={onClose}
-                        className="text-light-400 hover:text-light-100"
+                        className="text-gray-400 hover:text-[#c0fe72] font-bold text-2xl"
                     >
                         ✕
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-5">
                     {/* Interview Mode */}
                     <div>
-                        <label className="block text-sm font-medium text-light-100 mb-2">
-                            Interview Type
+                        <label className="block text-sm font-bold text-[#c0fe72] mb-2">
+                            🎯 Interview Type
                         </label>
                         <div className="grid grid-cols-3 gap-2">
                             {(['technical', 'behavioral', 'mixed'] as const).map((modeOption) => (
@@ -123,10 +128,10 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
                                     key={modeOption}
                                     type="button"
                                     onClick={() => setMode(modeOption)}
-                                    className={`p-2 rounded text-sm capitalize ${
+                                    className={`p-3 rounded-xl text-sm capitalize font-semibold border-2 ${
                                         mode === modeOption
-                                            ? 'bg-primary-500 text-white'
-                                            : 'bg-dark-300 text-light-400 hover:bg-dark-400'
+                                            ? 'bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black border-[#c0fe72] shadow-lg'
+                                            : 'bg-white/5 text-gray-300 border-gray-700'
                                     }`}
                                 >
                                     {modeOption}
@@ -137,41 +142,41 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
 
                     {/* Role */}
                     <div>
-                        <label className="block text-sm font-medium text-light-100 mb-2">
-                            Role
+                        <label className="block text-sm font-bold text-[#c0fe72] mb-2">
+                            👔 Role
                         </label>
                         <input
                             type="text"
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
                             placeholder="e.g., Frontend Developer, Product Manager"
-                            className="w-full p-2 rounded bg-dark-300 text-light-100 border border-dark-400 focus:border-primary-500"
+                            className="w-full p-3 rounded-xl bg-white/5 text-gray-200 border-2 border-gray-700 focus:border-[#c0fe72] focus:outline-none placeholder:text-gray-500"
                             required
                         />
                     </div>
 
                     {/* Level */}
                     <div>
-                        <label className="block text-sm font-medium text-light-100 mb-2">
-                            Experience Level
+                        <label className="block text-sm font-bold text-[#c0fe72] mb-2">
+                            📊 Experience Level
                         </label>
                         <select
                             value={level}
                             onChange={(e) => setLevel(e.target.value as any)}
-                            className="w-full p-2 rounded bg-dark-300 text-light-100 border border-dark-400 focus:border-primary-500"
+                            className="w-full p-3 rounded-xl bg-white/5 text-gray-200 border-2 border-gray-700 focus:border-[#c0fe72] focus:outline-none"
                         >
-                            <option value="Junior">Junior</option>
-                            <option value="Mid">Mid</option>
-                            <option value="Senior">Senior</option>
-                            <option value="Lead">Lead</option>
+                            <option value="Junior" className="bg-gray-900">Junior</option>
+                            <option value="Mid" className="bg-gray-900">Mid</option>
+                            <option value="Senior" className="bg-gray-900">Senior</option>
+                            <option value="Lead" className="bg-gray-900">Lead</option>
                         </select>
                     </div>
 
                     {/* Tech Stack (for technical and mixed interviews) */}
                     {(mode === 'technical' || mode === 'mixed') && (
                         <div>
-                            <label className="block text-sm font-medium text-light-100 mb-2">
-                                Tech Stack
+                            <label className="block text-sm font-bold text-[#c0fe72] mb-2">
+                                💻 Tech Stack
                             </label>
                             <div className="flex gap-2 mb-2">
                                 <input
@@ -179,13 +184,13 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
                                     value={techStackInput}
                                     onChange={(e) => setTechStackInput(e.target.value)}
                                     placeholder="e.g., React, Node.js, Python"
-                                    className="flex-1 p-2 rounded bg-dark-300 text-light-100 border border-dark-400 focus:border-primary-500"
+                                    className="flex-1 p-3 rounded-xl bg-white/5 text-gray-200 border-2 border-gray-700 focus:border-[#c0fe72] focus:outline-none placeholder:text-gray-500"
                                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTechStack())}
                                 />
                                 <Button
                                     type="button"
                                     onClick={handleAddTechStack}
-                                    className="px-3 py-2"
+                                    className="px-4 bg-gradient-to-r from-[#9cd052] to-[#7cb342] text-black font-bold"
                                 >
                                     Add
                                 </Button>
@@ -194,13 +199,13 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
                                 {techStack.map((tech) => (
                                     <span
                                         key={tech}
-                                        className="bg-primary-500 text-white px-2 py-1 rounded text-sm flex items-center gap-1"
+                                        className="px-3 py-2 bg-gradient-to-r from-[#c0fe72]/20 to-[#9cd052]/20 text-[#c0fe72] rounded-full text-sm font-semibold border border-[#c0fe72]/30 flex items-center gap-2"
                                     >
                                         {tech}
                                         <button
                                             type="button"
                                             onClick={() => handleRemoveTechStack(tech)}
-                                            className="text-white hover:text-red-300"
+                                            className="text-[#c0fe72] font-bold"
                                         >
                                             ×
                                         </button>
@@ -212,43 +217,44 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
 
                     {/* Question Count */}
                     <div>
-                        <label className="block text-sm font-medium text-light-100 mb-2">
-                            Number of Questions
+                        <label className="block text-sm font-bold text-[#c0fe72] mb-2">
+                            🔢 Number of Questions
                         </label>
                         <select
                             value={questionCount}
                             onChange={(e) => setQuestionCount(Number(e.target.value))}
-                            className="w-full p-2 rounded bg-dark-300 text-light-100 border border-dark-400 focus:border-primary-500"
+                            className="w-full p-3 rounded-xl bg-white/5 text-gray-200 border-2 border-gray-700 focus:border-[#c0fe72] focus:outline-none"
                         >
-                            <option value={3}>3 Questions</option>
-                            <option value={5}>5 Questions</option>
-                            <option value={7}>7 Questions</option>
-                            <option value={10}>10 Questions</option>
+                            <option value={3} className="bg-gray-900">3 Questions</option>
+                            <option value={5} className="bg-gray-900">5 Questions</option>
+                            <option value={7} className="bg-gray-900">7 Questions</option>
+                            <option value={10} className="bg-gray-900">10 Questions</option>
                         </select>
                     </div>
 
                     {/* Error Display */}
                     {error && (
-                        <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                            {error}
+                        <div className="p-3 bg-red-500/20 border-2 border-red-500/50 text-red-300 rounded-xl flex items-start gap-2">
+                            <span className="text-xl">❌</span>
+                            <p className="text-sm">{error}</p>
                         </div>
                     )}
 
                     {/* Submit Button */}
-                    <div className="flex gap-2 pt-4">
+                    <div className="flex gap-3 pt-4">
                         <Button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 bg-dark-400 hover:bg-dark-500"
+                            className="flex-1 bg-white/5 border-2 border-gray-700 text-gray-300 font-semibold"
                         >
                             Cancel
                         </Button>
                         <Button
                             type="submit"
                             disabled={isCreating}
-                            className="flex-1 btn-primary"
+                            className="flex-1 bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black font-bold shadow-lg disabled:opacity-50"
                         >
-                            {isCreating ? 'Creating...' : 'Create Interview'}
+                            {isCreating ? 'Creating...' : '🚀 Create'}
                         </Button>
                     </div>
                 </form>

@@ -13,13 +13,18 @@ interface FormFieldProps<T extends FieldValues> {
 export const FormField = <T extends FieldValues>({ control, name, label, placeholder, type = "text" }: FormFieldProps<T>) => {
     return(
         <Controller name={name} control={control} render={({ field }) => (
-              <FormItem>
-                <FormLabel className="label">{label}</FormLabel>
+              <FormItem className="w-full">
+                <FormLabel className="text-sm font-bold text-[#c0fe72] mb-2 block">{label}</FormLabel>
                 <FormControl>
-                  <Input placeholder={placeholder} {...field} type={type} />
+                  <Input 
+                    placeholder={placeholder} 
+                    {...field} 
+                    type={type} 
+                    className="w-full p-4 rounded-xl !bg-black !text-white border-2 border-gray-700 focus:border-[#c0fe72] focus:outline-none text-base placeholder:text-gray-500 transition-all"
+                    style={{ backgroundColor: '#000000', color: '#ffffff' }}
+                  />
                 </FormControl>
-            
-                <FormMessage />
+                <FormMessage className="text-red-400 text-sm mt-1" />
               </FormItem>
             )}
           />

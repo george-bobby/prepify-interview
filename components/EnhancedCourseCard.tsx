@@ -69,7 +69,7 @@ const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({ course, onEnrol
       <CardHeader className="pb-4">
         {/* Header with icon and source badge */}
         <div className="flex justify-between items-start mb-4">
-          <div className="text-5xl group-hover:scale-110 transition-transform duration-200">
+          <div className="text-5xl transition-transform duration-200">
             {course.image}
           </div>
           <Badge variant={sourceConfig.variant} size="sm">
@@ -90,7 +90,7 @@ const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({ course, onEnrol
         </div>
 
         {/* Course Title */}
-        <h3 className="text-xl font-semibold text-primary-100 group-hover:text-primary-200 transition-colors line-clamp-2 leading-tight">
+        <h3 className="text-xl font-semibold text-primary-100 transition-colors line-clamp-2 leading-tight">
           {course.title}
         </h3>
       </CardHeader>
