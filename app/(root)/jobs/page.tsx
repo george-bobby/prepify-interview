@@ -118,31 +118,30 @@ const JobsPage = () => {
     };
 
     const JobCard = ({ job }: { job: Job }) => (
-        <div className="bg-dark-300 rounded-lg p-6 border border-dark-400 hover:border-primary-300 transition-all duration-200">
-            <div className="flex justify-between items-start mb-4">
+        <div className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 border-2 border-[#c0fe72]/30 hover:border-[#c0fe72]/50 hover:shadow-lg hover:shadow-[#c0fe72]/20 transition-all duration-300">
+            <div className="flex justify-between items-start mb-3">
                 <div className="flex-1">
-                    <h3 className="text-light-100 font-semibold text-lg mb-2 line-clamp-2">
+                    <h3 className="text-white font-bold text-lg mb-1 line-clamp-2">
                         {job.title}
                     </h3>
-                    <div className="flex items-center gap-4 text-light-300 text-sm mb-2 flex-wrap">
+                    <div className="flex items-center gap-2 text-sm text-gray-400 mb-1">
                         <span className="font-medium">{job.company}</span>
                         <span>•</span>
                         <span>{job.location}</span>
                         {job.via && (
                             <>
                                 <span>•</span>
-                                <span className="text-primary-200">via {job.via}</span>
+                                <span className="text-[#c0fe72]">via {job.via}</span>
                             </>
                         )}
                     </div>
                     {job.salary && (
-                        <div className="text-green-400 font-medium text-sm mb-2">
-                            {formatSalary(job.salary)}
+                        <div className="text-[#c0fe72] font-bold text-sm mb-2 bg-[#c0fe72]/10 px-2 py-1 rounded inline-block">
+                            💰 {formatSalary(job.salary)}
                         </div>
                     )}
                     {job.employment_type && (
-                        <span className="inline-block bg-primary-200/20 text-primary-200 px-2 py-1 rounded text-xs mr-2 mb-2">
-                            {job.employment_type}
+                        <span className="inline-block bg-[#c0fe72]/20 text-[#c0fe72] border border-[#c0fe72]/30 px-2 py-1 rounded text-xs font-semibold mr-2 mb-2">\n                            {job.employment_type}
                         </span>
                     )}
                     {job.posted_at && (
@@ -161,13 +160,13 @@ const JobsPage = () => {
             </div>
 
             {job.description && (
-                <div className="text-light-300 text-sm mb-4 line-clamp-3">
+                <div className="text-gray-300 text-sm mb-4 line-clamp-3">
                     {job.description.replace(/<[^>]*>/g, '').substring(0, 200)}...
                 </div>
             )}
 
             <div className="flex justify-between items-center">
-                <div className="text-light-400 text-xs">
+                <div className="text-gray-500 text-xs">
                     Job ID: {job.id.substring(0, 8)}...
                 </div>
                 {job.apply_link && (
@@ -175,9 +174,9 @@ const JobsPage = () => {
                         href={job.apply_link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-primary-200 text-dark-100 px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-100 transition-colors duration-200 flex-shrink-0"
+                        className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black px-4 py-2 rounded-lg text-sm font-bold hover:shadow-lg hover:shadow-[#c0fe72]/30 transition-all duration-200 flex-shrink-0"
                     >
-                        Apply Now
+                        🚀 Apply Now
                     </a>
                 )}
             </div>
@@ -185,32 +184,94 @@ const JobsPage = () => {
     );
 
     return (
-        <div className="min-h-screen bg-dark-100">
-            <div className="container mx-auto px-4 py-8">
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-light-100 mb-2">
-                        Job Search
-                    </h1>
-                    <p className="text-light-200">
-                        Find your dream job with our comprehensive job search platform powered by SerpAPI
-                    </p>
-                    {apiConfigured === false && (
-                        <div className="mt-4 text-sm text-light-400 bg-dark-200 p-3 rounded-lg">
-                            <p className="mb-2">
-                                <strong>Setup Required:</strong> To use job search functionality, add your SerpAPI key to environment variables:
+        <div className="min-h-screen bg-black relative overflow-hidden">
+            {/* Animated Background */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-10 left-10 w-64 h-64 bg-[#c0fe72]/5 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-20 right-20 w-80 h-80 bg-[#9cd052]/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+                <div className="absolute top-1/2 left-1/3 w-72 h-72 bg-[#7cb342]/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+            </div>
+            
+            <div className="container mx-auto px-4 py-8 relative z-10">
+                <div className="mb-8 bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-3xl p-8 shadow-2xl shadow-[#c0fe72]/20">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div className="flex-1 space-y-4">
+                            <div className="inline-flex items-center gap-2 bg-[#c0fe72]/10 border border-[#c0fe72]/30 rounded-full px-4 py-2">
+                                <span className="text-[#c0fe72]">⭐</span>
+                                <span className="text-[#c0fe72] font-bold text-sm uppercase tracking-wide">AI-Powered Job Search</span>
+                            </div>
+                            <h1 className="text-3xl md:text-5xl font-bold leading-tight">
+                                <span className="text-white">Find Your Dream Job with </span>
+                                <span className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] bg-clip-text text-transparent">AI Precision</span>
+                            </h1>
+                            <p className="text-gray-300 text-base md:text-lg leading-relaxed max-w-3xl">
+                                Discover opportunities from top companies, get personalized recommendations, and apply with confidence
                             </p>
-                            <code className="text-primary-200 bg-dark-300 px-2 py-1 rounded text-xs">
-                                SERPAPI_API_KEY=your_serpapi_key_here
-                            </code>
-                            <p className="mt-2">
-                                Get your free API key at: <a href="https://serpapi.com" target="_blank" className="text-primary-200 hover:underline">serpapi.com</a>
-                            </p>
+                            <div className="flex flex-wrap gap-4 text-sm">
+                                <div className="flex items-center gap-2 text-gray-300">
+                                    <span className="text-[#c0fe72]">✓</span>
+                                    <span>Real-time Listings</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-gray-300">
+                                    <span className="text-[#c0fe72]">✓</span>
+                                    <span>Smart Filters</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-gray-300">
+                                    <span className="text-[#c0fe72]">✓</span>
+                                    <span>Salary Insights</span>
+                                </div>
+                            </div>
+                            {apiConfigured === false && (
+                                <div className="mt-4 text-sm text-gray-300 bg-gradient-to-r from-[#c0fe72]/10 to-[#9cd052]/10 border border-[#c0fe72]/30 p-4 rounded-xl">
+                                    <p className="mb-2 font-semibold">
+                                        <span className="text-[#c0fe72]">⚙️ Setup Required:</span> To use job search functionality, add your SerpAPI key to environment variables:
+                                    </p>
+                                    <code className="text-[#c0fe72] bg-black/50 px-3 py-1.5 rounded text-xs font-mono border border-[#c0fe72]/20">
+                                        SERPAPI_API_KEY=your_serpapi_key_here
+                                    </code>
+                                    <p className="mt-2">
+                                        Get your free API key at: <a href="https://serpapi.com" target="_blank" className="text-[#c0fe72] hover:text-[#9cd052] font-semibold underline">serpapi.com</a>
+                                    </p>
+                                </div>
+                            )}
                         </div>
-                    )}
+                        {/* Animated Briefcase Stack */}
+                        <div className="hidden md:block relative w-64 h-64 flex-shrink-0">
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="relative w-48 h-48">
+                                    {/* Outer glow rings */}
+                                    <div className="absolute inset-0 rounded-full bg-[#c0fe72]/5 animate-pulse"></div>
+                                    <div className="absolute inset-4 rounded-full bg-[#9cd052]/5 animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                                    <div className="absolute inset-8 rounded-full bg-[#7cb342]/5 animate-pulse" style={{animationDelay: '1s'}}></div>
+                                    
+                                    {/* Briefcase stack */}
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="relative">
+                                            {/* Bottom briefcase */}
+                                            <div className="w-24 h-16 bg-gradient-to-br from-[#c0fe72]/20 to-[#9cd052]/30 rounded-lg border-2 border-[#c0fe72]/40 relative mb-2 transform hover:scale-110 transition-transform">
+                                                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-1 bg-[#c0fe72]/60 rounded"></div>
+                                                <div className="absolute top-2 left-2 right-2 h-1 bg-[#c0fe72]/30 rounded"></div>
+                                            </div>
+                                            {/* Middle briefcase */}
+                                            <div className="w-24 h-16 bg-gradient-to-br from-[#9cd052]/20 to-[#7cb342]/30 rounded-lg border-2 border-[#9cd052]/40 relative mb-2 transform hover:scale-110 transition-transform" style={{animationDelay: '0.3s'}}>
+                                                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-1 bg-[#9cd052]/60 rounded"></div>
+                                                <div className="absolute top-2 left-2 right-2 h-1 bg-[#9cd052]/30 rounded"></div>
+                                            </div>
+                                            {/* Top briefcase with bounce animation */}
+                                            <div className="w-24 h-16 bg-gradient-to-br from-[#7cb342]/20 to-[#c0fe72]/30 rounded-lg border-2 border-[#7cb342]/40 relative animate-bounce">
+                                                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-1 bg-[#7cb342]/60 rounded"></div>
+                                                <div className="absolute top-2 left-2 right-2 h-1 bg-[#7cb342]/30 rounded"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Search Section */}
-                <div className="bg-dark-200 rounded-lg p-6 mb-8">
+                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-3xl p-6 mb-8 shadow-xl shadow-[#c0fe72]/10">
                     <div className="grid md:grid-cols-3 gap-4">
                         <AutocompleteInput
                             value={searchParams.query}
@@ -233,20 +294,23 @@ const JobsPage = () => {
                             <button
                                 onClick={searchJobs}
                                 disabled={isLoading || !searchParams.query.trim() || apiConfigured === false}
-                                className="w-full bg-primary-200 text-dark-100 px-6 py-3 rounded-lg font-semibold hover:bg-primary-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                                className="w-full bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black px-6 py-3 rounded-lg font-bold hover:shadow-lg hover:shadow-[#c0fe72]/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                             >
-                                {isLoading ? 'Searching...' : apiConfigured === false ? 'API Setup Required' : 'Search Jobs'}
+                                {isLoading ? '🔍 Searching...' : apiConfigured === false ? '⚙️ API Setup Required' : '🚀 Search Jobs'}
                             </button>
                         </div>
                     </div>
                 </div>
 
                 {/* Filters Section */}
-                <div className="bg-dark-200 rounded-lg p-6 mb-8">
-                    <h3 className="text-light-100 font-semibold mb-4">Filters</h3>
+                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#9cd052]/30 rounded-3xl p-6 mb-8 shadow-xl shadow-[#9cd052]/10">
+                    <div className="flex items-center gap-2 mb-4">
+                        <span className="text-xl">🎛️</span>
+                        <h3 className="text-[#9cd052] font-bold text-lg">Filters</h3>
+                    </div>
                     <div className="grid md:grid-cols-4 gap-4">
                         <div>
-                            <label className="block text-light-200 text-sm font-medium mb-2">
+                            <label className="block text-gray-300 text-sm font-semibold mb-2">
                                 Job Type
                             </label>
                             <select
@@ -313,18 +377,21 @@ const JobsPage = () => {
                 </div>
 
                 {/* Results Section */}
-                <div className="bg-dark-200 rounded-lg p-6">
+                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#7cb342]/30 rounded-3xl p-6 shadow-xl shadow-[#7cb342]/10">
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-light-100 font-semibold">Job Results</h3>
-                        <span className="text-light-300 text-sm">
+                        <div className="flex items-center gap-2">
+                            <span className="text-xl">📋</span>
+                            <h3 className="text-[#7cb342] font-bold text-lg">Job Results</h3>
+                        </div>
+                        <span className="text-[#c0fe72] text-sm font-semibold bg-[#c0fe72]/10 px-3 py-1 rounded-full border border-[#c0fe72]/30">
                             {jobs.length} jobs found
                         </span>
                     </div>
 
                     {isLoading ? (
                         <div className="text-center py-12">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-200 mx-auto mb-4"></div>
-                            <p className="text-light-300">Searching for jobs...</p>
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#c0fe72] mx-auto mb-4"></div>
+                            <p className="text-gray-300">🔍 Searching for jobs...</p>
                         </div>
                     ) : jobs.length > 0 ? (
                         <div className="space-y-4">
@@ -335,8 +402,8 @@ const JobsPage = () => {
                     ) : hasSearched ? (
                         <div className="text-center py-12">
                             <div className="text-6xl mb-4">😔</div>
-                            <h3 className="text-light-100 text-xl mb-2">No Jobs Found</h3>
-                            <p className="text-light-300 mb-4">
+                            <h3 className="text-white font-bold text-xl mb-2">No Jobs Found</h3>
+                            <p className="text-gray-300 mb-4">
                                 Try adjusting your search terms or filters to find more results
                             </p>
                             <div className="text-light-400 text-sm">

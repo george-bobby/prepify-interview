@@ -494,10 +494,80 @@ const CompaniesPage: React.FC = () => {
     }, [onSearch]);
 
     return (
-        <div className="max-w-6xl mx-auto px-6 py-10">
-            <h1 className="text-2xl md:text-3xl font-semibold text-light-100 mb-6">Companies</h1>
+        <div className="min-h-screen bg-black relative overflow-hidden">
+            {/* Animated Background */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-10 left-10 w-64 h-64 bg-[#c0fe72]/5 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-20 right-20 w-80 h-80 bg-[#9cd052]/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+                <div className="absolute top-1/2 left-1/3 w-72 h-72 bg-[#7cb342]/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+            </div>
+            
+            <div className="max-w-6xl mx-auto px-6 py-10 relative z-10">
+                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-3xl p-8 shadow-2xl shadow-[#c0fe72]/20 mb-6">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div className="flex-1 space-y-4">
+                            <div className="inline-flex items-center gap-2 bg-[#c0fe72]/10 border border-[#c0fe72]/30 rounded-full px-4 py-2">
+                                <span className="text-[#c0fe72]">⭐</span>
+                                <span className="text-[#c0fe72] font-bold text-sm uppercase tracking-wide">Company Insights</span>
+                            </div>
+                            <h1 className="text-3xl md:text-5xl font-bold leading-tight">
+                                <span className="text-white">Explore Top Companies with </span>
+                                <span className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] bg-clip-text text-transparent">Deep Insights</span>
+                            </h1>
+                            <p className="text-gray-300 text-base md:text-lg leading-relaxed max-w-3xl">
+                                Research company culture, salaries, benefits, and interview processes to make informed career decisions
+                            </p>
+                            <div className="flex flex-wrap gap-4 text-sm">
+                                <div className="flex items-center gap-2 text-gray-300">
+                                    <span className="text-[#c0fe72]">✓</span>
+                                    <span>Culture & Benefits</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-gray-300">
+                                    <span className="text-[#c0fe72]">✓</span>
+                                    <span>Salary Data</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-gray-300">
+                                    <span className="text-[#c0fe72]">✓</span>
+                                    <span>Interview Tips</span>
+                                </div>
+                            </div>
+                        </div>
+                        {/* Animated Company Building */}
+                        <div className="hidden md:block relative w-64 h-64 flex-shrink-0">
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="relative w-48 h-48">
+                                    {/* Outer glow rings */}
+                                    <div className="absolute inset-0 rounded-full bg-[#c0fe72]/5 animate-pulse"></div>
+                                    <div className="absolute inset-4 rounded-full bg-[#9cd052]/5 animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                                    <div className="absolute inset-8 rounded-full bg-[#7cb342]/5 animate-pulse" style={{animationDelay: '1s'}}></div>
+                                    
+                                    {/* Building */}
+                                    <div className="absolute inset-0 flex items-end justify-center pb-8">
+                                        <div className="relative">
+                                            {/* Main building */}
+                                            <div className="w-32 h-40 bg-gradient-to-b from-[#c0fe72]/20 to-[#9cd052]/30 rounded-t-lg border-2 border-[#c0fe72]/40 relative">
+                                                {/* Windows - animated */}
+                                                <div className="grid grid-cols-3 gap-2 p-2">
+                                                    {[...Array(9)].map((_, i) => (
+                                                        <div key={i} className="w-6 h-5 bg-[#c0fe72]/40 rounded animate-pulse" style={{animationDelay: `${i * 0.2}s`}}></div>
+                                                    ))}
+                                                </div>
+                                                {/* Entrance */}
+                                                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-10 h-12 bg-[#c0fe72]/60 rounded-t-lg"></div>
+                                            </div>
+                                            {/* Antenna */}
+                                            <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-1 h-8 bg-[#c0fe72]/60 animate-pulse">
+                                                <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-[#c0fe72] rounded-full animate-ping"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <AutocompleteSearchBar
+                <AutocompleteSearchBar
                 onSearch={onSearch}
                 placeholder={placeholder}
                 isLoading={isLoading}
@@ -514,16 +584,18 @@ const CompaniesPage: React.FC = () => {
             {/* Default Famous Companies Grid */}
             {!isLoading && !data && !query && (
                 <div className="mt-8">
-                    <h2 className="text-xl font-semibold text-light-100 mb-6">Popular Companies</h2>
+                    <h2 className="text-2xl font-bold text-white mb-6">
+                        <span className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] bg-clip-text text-transparent">Popular Companies</span>
+                    </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {FAMOUS_COMPANIES.map((company) => (
                             <div
                                 key={company.name}
                                 onClick={() => handleCompanyClick(company.name)}
-                                className="bg-dark-200 rounded-lg p-6 cursor-pointer hover:bg-dark-300 transition-colors duration-200 border border-transparent hover:border-primary-200/30"
+                                className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-2xl p-6 cursor-pointer hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#c0fe72]/20 transition-all duration-300 hover:border-[#c0fe72]/50"
                             >
                                 <div className="flex items-center gap-4 mb-4">
-                                    <div className="w-12 h-12 rounded-lg bg-white p-1 flex items-center justify-center">
+                                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-white to-gray-100 p-2 flex items-center justify-center shadow-lg">
                                         <img
                                             src={company.logo}
                                             alt={`${company.name} logo`}
@@ -532,27 +604,30 @@ const CompaniesPage: React.FC = () => {
                                                 const target = e.target as HTMLImageElement;
                                                 const parent = target.parentElement;
                                                 if (parent) {
-                                                    parent.innerHTML = `<div class="w-full h-full bg-primary-200 rounded flex items-center justify-center text-white text-xs font-bold">${company.name.charAt(0)}</div>`;
+                                                    parent.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-[#c0fe72] to-[#9cd052] rounded flex items-center justify-center text-white text-lg font-bold">${company.name.charAt(0)}</div>`;
                                                 }
                                             }}
                                         />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-semibold text-light-100">{company.name}</h3>
-                                        <p className="text-sm text-light-300">{company.industry}</p>
+                                        <h3 className="text-lg font-bold text-white">{company.name}</h3>
+                                        <p className="text-sm text-[#c0fe72]">{company.industry}</p>
                                     </div>
                                 </div>
-                                <p className="text-sm text-light-200 mb-3">{company.description}</p>
+                                <p className="text-sm text-gray-300 mb-4 leading-relaxed">{company.description}</p>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-xs text-light-400">{company.headquarters}</span>
-                                    <div className="flex flex-wrap gap-1">
+                                    <span className="text-xs text-gray-400 flex items-center gap-1">
+                                        <span className="text-[#c0fe72]">📍</span>
+                                        {company.headquarters}
+                                    </span>
+                                    <div className="flex flex-wrap gap-1.5 justify-end">
                                         {company.keyTech.slice(0, 3).map((tech) => (
-                                            <span key={tech} className="px-2 py-1 rounded text-xs bg-dark-300 text-light-300">
+                                            <span key={tech} className="px-2 py-1 rounded-lg text-xs bg-[#c0fe72]/10 text-[#c0fe72] border border-[#c0fe72]/30 font-medium">
                                                 {tech}
                                             </span>
                                         ))}
                                         {company.keyTech.length > 3 && (
-                                            <span className="px-2 py-1 rounded text-xs bg-dark-300 text-light-300">
+                                            <span className="px-2 py-1 rounded-lg text-xs bg-[#9cd052]/10 text-[#9cd052] border border-[#9cd052]/30 font-medium">
                                                 +{company.keyTech.length - 3}
                                             </span>
                                         )}
@@ -568,8 +643,8 @@ const CompaniesPage: React.FC = () => {
             {isLoading && (
                 <div className="mt-8 flex items-center justify-center py-12">
                     <div className="flex items-center gap-3">
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-200"></div>
-                        <span className="text-light-300">Fetching company insights...</span>
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#c0fe72]"></div>
+                        <span className="text-gray-300">🔍 Fetching company insights...</span>
                     </div>
                 </div>
             )}
@@ -582,7 +657,7 @@ const CompaniesPage: React.FC = () => {
                             setQuery('');
                             setData(null);
                         }}
-                        className="text-primary-200 hover:text-primary-100 text-sm flex items-center gap-2"
+                        className="text-[#c0fe72] hover:text-[#9cd052] text-sm flex items-center gap-2 font-semibold"
                     >
                         ← Back to companies
                     </button>
@@ -605,17 +680,17 @@ const CompaniesPage: React.FC = () => {
                                     />
                                 </div>
                                 <div>
-                                    <h2 className="text-xl font-semibold text-light-100">{data.name}</h2>
+                                    <h2 className="text-xl font-bold text-white">{data.name}</h2>
                                     {data.website ? (
-                                        <a href={data.website} target="_blank" rel="noreferrer" className="text-primary-200 text-sm hover:text-primary-100">
+                                        <a href={data.website} target="_blank" rel="noreferrer" className="text-[#c0fe72] text-sm hover:text-[#9cd052] font-semibold">
                                             {data.website}
                                         </a>
                                     ) : (
-                                        <span className="text-light-400 text-sm">Website: Data unavailable</span>
+                                        <span className="text-gray-400 text-sm">Website: Data unavailable</span>
                                     )}
                                 </div>
                             </div>
-                            <div className="text-sm text-light-300">
+                            <div className="text-sm text-gray-300">
                                 <span className="mr-3">Industry: {data.industry || 'Data unavailable'}</span>
                                 <span className="mr-3">Size: {data.size || 'Data unavailable'}</span>
                                 <span>HQ: {data.headquarters || 'Data unavailable'}</span>
@@ -625,24 +700,27 @@ const CompaniesPage: React.FC = () => {
                     </div>
 
                     {/* Always show salary section */}
-                    <div className="bg-dark-200 rounded-lg p-6">
-                        <h3 className="text-lg font-semibold mb-3">Average Salary</h3>
+                    <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#9cd052]/30 rounded-3xl p-6 shadow-xl shadow-[#9cd052]/10">
+                        <div className="flex items-center gap-2 mb-3">
+                            <span className="text-xl">💰</span>
+                            <h3 className="text-lg font-bold text-[#9cd052]">Average Salary</h3>
+                        </div>
                         {data.averageSalary?.overall ? (
-                            <p className="text-light-200 mb-2">Overall: {data.averageSalary.overall}</p>
+                            <p className="text-gray-200 mb-2">Overall: <span className="text-[#c0fe72] font-bold">{data.averageSalary.overall}</span></p>
                         ) : (
-                            <p className="text-light-400 mb-2">Overall: Data unavailable</p>
+                            <p className="text-gray-400 mb-2">Overall: Data unavailable</p>
                         )}
                         {data.averageSalary?.byRole?.length ? (
                             <div className="grid md:grid-cols-2 gap-3">
                                 {data.averageSalary.byRole.map((r) => (
-                                    <div key={r.role} className="bg-dark-300 rounded p-3">
-                                        <div className="font-medium">{r.role}</div>
-                                        <div className="text-sm text-light-300">{r.salaryRange}{r.median ? ` • Median ${r.median}` : ''}</div>
+                                    <div key={r.role} className="bg-white/5 border border-[#c0fe72]/20 rounded-xl p-3">
+                                        <div className="font-semibold text-white">{r.role}</div>
+                                        <div className="text-sm text-gray-300">{r.salaryRange}{r.median ? ` • Median ${r.median}` : ''}</div>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-light-400 text-sm">Role-specific data: Data unavailable</p>
+                            <p className="text-gray-400 text-sm">Role-specific data: Data unavailable</p>
                         )}
                     </div>
 
@@ -754,6 +832,7 @@ const CompaniesPage: React.FC = () => {
                 </div>
             )}
         </div>
+    </div>
     );
 };
 

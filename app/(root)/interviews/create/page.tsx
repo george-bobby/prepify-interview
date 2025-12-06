@@ -1,13 +1,69 @@
-import React from 'react';
-import { redirect } from 'next/navigation';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { getCurrentUser } from '@/lib/actions/auth.action';
 import { InterviewCreationModal } from '@/components/InterviewCreationModal';
+import { InterviewConfig } from '@/lib/schemas/interview';
+import { toast } from 'sonner';
 
-const CreateInterviewPage = async () => {
-    const user = await getCurrentUser();
+const CreateInterviewPage = () => {
+    const router = useRouter();
+    const [user, setUser] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            const currentUser = await getCurrentUser();
+            if (!currentUser) {
+                router.push('/signin');
+            } else {
+                setUser(currentUser);
+            }
+            setLoading(false);
+        };
+        checkAuth();
+    }, [router]);
+
+    const handleCreateInterview = async (config: InterviewConfig, questionCount: number) => {
+        try {
+            const response = await fetch('/api/interviews/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    config,
+                    questionCount,
+                    userId: user.id,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || 'Failed to create interview');
+            }
+
+            toast.success('Interview created successfully!');
+            router.push('/interviews');
+        } catch (error) {
+            console.error('Error creating interview:', error);
+            toast.error(error instanceof Error ? error.message : 'Failed to create interview');
+            throw error;
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#c0fe72]"></div>
+            </div>
+        );
+    }
 
     if (!user) {
-        redirect('/signin');
+        return null;
     }
 
     return (
@@ -61,8 +117,8 @@ const CreateInterviewPage = async () => {
                 <InterviewCreationModal 
                     userId={user.id} 
                     isOpen={true} 
-                    onClose={() => {}} 
-                    onCreateInterview={async () => {}}
+                    onClose={() => router.push('/interviews')} 
+                    onCreateInterview={handleCreateInterview}
                 />
 
                 {/* Tips Section */}

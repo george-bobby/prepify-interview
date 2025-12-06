@@ -37,63 +37,77 @@ const NewsCard = ({ article }: NewsCardProps) => {
     };
 
     return (
-        <div className="bg-dark-200 rounded-lg overflow-hidden transition-colors duration-200 group">
+        <div className="bg-gradient-to-br from-gray-900 to-black rounded-2xl overflow-hidden border-2 border-[#c0fe72]/30 hover:border-[#c0fe72]/50 transition-all duration-300 group shadow-xl shadow-[#c0fe72]/10 hover:shadow-[#c0fe72]/20 hover:scale-[1.02]">
             {/* Image */}
-            <div className="relative h-48 w-full overflow-hidden">
+            <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
                 {article.urlToImage ? (
-                    <Image
-                        src={article.urlToImage}
-                        alt={article.title}
-                        fill
-                        className="object-cover transition-transform duration-200"
-                        onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                        }}
-                    />
+                    <>
+                        <Image
+                            src={article.urlToImage}
+                            alt={article.title}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-500"
+                            onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                            }}
+                        />
+                        {/* Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    </>
                 ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-primary-200/20 to-primary-300/20 flex items-center justify-center">
-                        <div className="text-primary-200 text-4xl">📰</div>
+                    <div className="w-full h-full bg-gradient-to-br from-[#c0fe72]/20 via-[#9cd052]/10 to-[#7cb342]/20 flex flex-col items-center justify-center border-b-2 border-[#c0fe72]/30">
+                        <div className="text-[#c0fe72] text-6xl mb-2 animate-pulse">📰</div>
+                        <div className="text-[#c0fe72] text-sm font-semibold">News Article</div>
                     </div>
                 )}
 
                 {/* Category Badge */}
-                <div className="absolute top-3 left-3">
-                    <span className="bg-primary-200 text-dark-100 px-2 py-1 rounded-full text-xs font-medium">
+                <div className="absolute top-3 right-3 z-10">
+                    <span className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black px-3 py-1.5 rounded-full text-xs font-bold shadow-lg shadow-[#c0fe72]/50 backdrop-blur-sm uppercase tracking-wide">
                         {article.category || 'News'}
                     </span>
                 </div>
             </div>
 
             {/* Content */}
-            <div className="p-6 space-y-3">
-                {/* Source and Date */}
-                <div className="flex items-center justify-between text-sm text-light-300">
-                    <span className="font-medium">{article.source.name}</span>
-                    <span>{formatDate(article.publishedAt)}</span>
-                </div>
-
-                {/* Title */}
-                <h3 className="text-lg font-semibold text-light-100 line-clamp-2 transition-colors">
+            <div className="p-5 sm:p-6 space-y-4">
+                {/* Title - Moved to top for better hierarchy */}
+                <h3 className="text-base sm:text-lg font-bold text-white line-clamp-2 group-hover:text-[#c0fe72] transition-colors leading-tight min-h-[3rem]">
                     {article.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-light-200 text-sm line-clamp-3">
-                    {truncateText(article.description, 120)}
+                <p className="text-gray-400 text-xs sm:text-sm line-clamp-3 leading-relaxed min-h-[3.5rem]">
+                    {truncateText(article.description, 130)}
                 </p>
 
+                {/* Divider */}
+                <div className="border-t border-[#c0fe72]/20"></div>
+
+                {/* Source and Date */}
+                <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-[#9cd052] flex items-center gap-1.5">
+                        <span className="text-sm">📝</span>
+                        <span className="truncate max-w-[150px]">{article.source.name}</span>
+                    </span>
+                    <span className="text-gray-500 flex items-center gap-1">
+                        <span>🕒</span>
+                        <span>{formatDate(article.publishedAt)}</span>
+                    </span>
+                </div>
+
                 {/* Read More Button */}
-                <div className="pt-2">
+                <div className="pt-1">
                     <Link
                         href={article.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center text-primary-200 font-medium text-sm transition-colors"
+                        className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black font-bold text-sm px-4 py-2.5 rounded-xl hover:shadow-lg hover:shadow-[#c0fe72]/50 transition-all group-hover:gap-3"
                     >
-                        Read More
+                        <span>Read Full Article</span>
                         <svg
-                            className="ml-1 w-4 h-4"
+                            className="w-4 h-4 group-hover:translate-x-1 transition-transform"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"

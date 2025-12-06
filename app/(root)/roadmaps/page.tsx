@@ -361,199 +361,288 @@ const RoadmapsPage = () => {
     ];
 
     return (
-        <div className="space-y-8">
-            {/* Header */}
-            <div className="text-center space-y-4">
-                <h1 className="text-4xl font-bold text-primary-100">Developer Roadmaps</h1>
-                <p className="text-light-400 text-lg max-w-3xl mx-auto">
-                    Community created roadmaps, guides and articles to help developers grow in their career.
-                    Based on the comprehensive roadmaps from <a href="https://roadmap.sh" target="_blank" rel="noopener noreferrer" className="text-primary-200 hover:text-primary-100 underline">roadmap.sh</a>.
-                </p>
+        <div className="min-h-screen bg-black relative overflow-hidden">
+            {/* Animated Background */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-10 left-10 w-64 h-64 bg-[#c0fe72]/5 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-20 right-20 w-80 h-80 bg-[#9cd052]/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+                <div className="absolute top-1/2 left-1/3 w-72 h-72 bg-[#7cb342]/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
             </div>
 
-            {/* Learning Process */}
-            <div className="bg-dark-200 border border-dark-300 rounded-lg p-6">
-                <h2 className="text-2xl font-bold text-primary-100 mb-6 text-center">How Our Roadmaps Work</h2>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-                    {learningPhases.map((phase, index) => (
-                        <div key={phase.phase} className="text-center relative">
-                            <div className="w-16 h-16 bg-primary-200/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <span className="text-2xl">{phase.icon}</span>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 relative z-10 space-y-6 sm:space-y-8">
+                {/* Header */}
+                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-[#c0fe72]/20">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div className="flex-1 space-y-4">
+                            <div className="inline-flex items-center gap-2 bg-[#c0fe72]/10 border border-[#c0fe72]/30 rounded-full px-4 py-2">
+                                <span className="text-[#c0fe72]">⭐</span>
+                                <span className="text-[#c0fe72] font-bold text-sm uppercase tracking-wide">Career Roadmaps</span>
                             </div>
-                            <h3 className="text-primary-100 font-semibold mb-2">{phase.phase}</h3>
-                            <p className="text-light-400 text-sm mb-2">{phase.description}</p>
-                            <span className="text-primary-200 text-xs font-medium">{phase.duration}</span>
-                            {index < learningPhases.length - 1 && (
-                                <div className="hidden md:block absolute top-8 right-0 transform translate-x-1/2">
-                                    <svg className="w-6 h-6 text-primary-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Tab Navigation */}
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                <div className="flex bg-dark-200 rounded-lg p-1 border border-dark-300">
-                    <button
-                        onClick={() => setActiveTab('role')}
-                        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'role'
-                            ? 'bg-primary-100 text-white'
-                            : 'text-light-400 hover:text-primary-100'
-                            }`}
-                    >
-                        Role-based Roadmaps
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('skill')}
-                        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'skill'
-                            ? 'bg-primary-100 text-white'
-                            : 'text-light-400 hover:text-primary-100'
-                            }`}
-                    >
-                        Skill-based Roadmaps
-                    </button>
-                </div>
-
-                {/* Search */}
-                <div className="relative">
-                    <input
-                        type="text"
-                        placeholder="Search roadmaps..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="bg-dark-200 border border-dark-300 rounded-lg px-4 py-2 pl-10 text-light-100 placeholder-light-400 focus:outline-none focus:border-primary-200 w-64"
-                    />
-                    <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-light-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
-            </div>
-
-            {/* Roadmaps Count */}
-            <div className="text-center">
-                <p className="text-light-400">
-                    Showing {filteredRoadmaps.length} {activeTab === 'role' ? 'role-based' : 'skill-based'} roadmaps
-                </p>
-            </div>
-
-            {/* Roadmaps Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredRoadmaps.map((roadmap) => (
-                    <div
-                        key={roadmap.id}
-                        className={`bg-gradient-to-br ${roadmap.color} rounded-lg p-6 border hover:scale-105 transition-all duration-200 group cursor-pointer`}
-                    >
-                        {/* Roadmap Header */}
-                        <div className="flex items-start justify-between mb-4">
-                            <div className="text-4xl">{roadmap.icon}</div>
-                            <span className="bg-primary-100/10 text-primary-100 px-3 py-1 rounded-full text-xs font-medium">
-                                {roadmap.steps} Steps
-                            </span>
-                        </div>
-
-                        {/* Roadmap Content */}
-                        <div className="space-y-4">
-                            <h3 className="text-xl font-bold text-primary-100 group-hover:text-primary-200 transition-colors">
-                                {roadmap.title}
-                            </h3>
-
-                            <p className="text-light-100 leading-relaxed text-sm">
-                                {roadmap.description}
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
+                                <span className="text-white">Navigate Your Career with </span>
+                                <span className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] bg-clip-text text-transparent">Expert Roadmaps</span>
+                            </h1>
+                            <p className="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed max-w-3xl">
+                                Follow community-created roadmaps and guides to grow your skills and advance your career. Based on <a href="https://roadmap.sh" target="_blank" rel="noopener noreferrer" className="text-[#c0fe72] hover:text-[#9cd052] underline font-semibold">roadmap.sh</a>
                             </p>
-
-                            {/* Roadmap Details */}
-                            <div className="space-y-2 text-sm">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-primary-200">⏱️</span>
-                                    <span className="text-light-100">Duration: {roadmap.duration}</span>
+                            <div className="flex flex-wrap gap-3 sm:gap-4 text-xs sm:text-sm">
+                                <div className="flex items-center gap-2 text-gray-300">
+                                    <span className="text-[#c0fe72]">✓</span>
+                                    <span>Step-by-Step Guides</span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-primary-200">📈</span>
-                                    <span className="text-light-100">Level: {roadmap.difficulty}</span>
+                                <div className="flex items-center gap-2 text-gray-300">
+                                    <span className="text-[#c0fe72]">✓</span>
+                                    <span>Community Verified</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-gray-300">
+                                    <span className="text-[#c0fe72]">✓</span>
+                                    <span>Track Progress</span>
                                 </div>
                             </div>
-
-                            {/* Technologies */}
-                            <div className="flex flex-wrap gap-2">
-                                {roadmap.technologies.slice(0, 3).map((tech) => (
-                                    <span
-                                        key={tech}
-                                        className="bg-primary-100/10 text-primary-100 px-2 py-1 rounded text-xs"
-                                    >
-                                        {tech}
-                                    </span>
-                                ))}
-                                {roadmap.technologies.length > 3 && (
-                                    <span className="bg-primary-100/10 text-primary-100 px-2 py-1 rounded text-xs">
-                                        +{roadmap.technologies.length - 3} more
-                                    </span>
-                                )}
-                            </div>
-
-                            {/* Action Buttons */}
-                            <div className="flex gap-3 pt-2">
-                                <Button className="flex-1" size="sm" asChild>
-                                    <a href={roadmap.externalLink} target="_blank" rel="noopener noreferrer">
-                                        View Roadmap
-                                    </a>
-                                </Button>
-                                <Button variant="outline" size="sm" className="flex-1">
-                                    Start Journey
-                                </Button>
+                        </div>
+                        {/* Animated Roadmap Path */}
+                        <div className="hidden md:block relative w-64 h-64 flex-shrink-0">
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="relative w-48 h-48">
+                                    {/* Outer glow rings */}
+                                    <div className="absolute inset-0 rounded-full bg-[#c0fe72]/5 animate-pulse"></div>
+                                    <div className="absolute inset-4 rounded-full bg-[#9cd052]/5 animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                                    <div className="absolute inset-8 rounded-full bg-[#7cb342]/5 animate-pulse" style={{animationDelay: '1s'}}></div>
+                                    
+                                    {/* Roadmap Path */}
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="relative w-32 h-40">
+                                            {/* Path line */}
+                                            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 120">
+                                                <path d="M 20 10 Q 30 30 20 50 T 20 90 L 20 110" stroke="#c0fe72" strokeWidth="2" fill="none" strokeOpacity="0.3" strokeDasharray="5,5">
+                                                    <animate attributeName="stroke-dashoffset" from="0" to="10" dur="1s" repeatCount="indefinite" />
+                                                </path>
+                                            </svg>
+                                            
+                                            {/* Milestone 1 - Start */}
+                                            <div className="absolute top-2 left-4 w-8 h-8 bg-[#c0fe72]/20 border-2 border-[#c0fe72]/60 rounded-full flex items-center justify-center animate-pulse">
+                                                <div className="w-3 h-3 bg-[#c0fe72] rounded-full"></div>
+                                            </div>
+                                            
+                                            {/* Milestone 2 */}
+                                            <div className="absolute top-12 left-8 w-8 h-8 bg-[#9cd052]/20 border-2 border-[#9cd052]/60 rounded-full flex items-center justify-center animate-pulse" style={{animationDelay: '0.3s'}}>
+                                                <div className="w-3 h-3 bg-[#9cd052] rounded-full"></div>
+                                            </div>
+                                            
+                                            {/* Milestone 3 */}
+                                            <div className="absolute top-24 left-4 w-8 h-8 bg-[#7cb342]/20 border-2 border-[#7cb342]/60 rounded-full flex items-center justify-center animate-pulse" style={{animationDelay: '0.6s'}}>
+                                                <div className="w-3 h-3 bg-[#7cb342] rounded-full"></div>
+                                            </div>
+                                            
+                                            {/* Milestone 4 - End (with bounce) */}
+                                            <div className="absolute bottom-2 left-4 w-10 h-10 bg-gradient-to-br from-[#c0fe72]/30 to-[#9cd052]/40 border-2 border-[#c0fe72]/80 rounded-full flex items-center justify-center animate-bounce shadow-lg shadow-[#c0fe72]/40">
+                                                <div className="w-4 h-4 bg-[#c0fe72] rounded-full animate-ping"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                ))}
-            </div>
-
-            {/* No Results */}
-            {filteredRoadmaps.length === 0 && (
-                <div className="text-center py-12">
-                    <div className="text-6xl mb-4">🔍</div>
-                    <h3 className="text-xl font-semibold text-primary-100 mb-2">No roadmaps found</h3>
-                    <p className="text-light-400 mb-4">Try adjusting your search terms or switch between role-based and skill-based roadmaps.</p>
-                    <Button onClick={() => setSearchTerm('')}>Clear Search</Button>
                 </div>
-            )}
 
-            {/* External Resources Section */}
-            <div className="bg-gradient-to-r from-dark-200 to-dark-300 rounded-lg p-8 border border-dark-300">
-                <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-primary-100 mb-2">Powered by roadmap.sh</h2>
-                    <p className="text-light-400">
-                        These roadmaps are based on the comprehensive guides from roadmap.sh,
-                        the 6th most starred project on GitHub with 335K+ stars.
+                {/* Learning Process */}
+                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/20 rounded-2xl p-6 sm:p-8 shadow-xl shadow-[#c0fe72]/10">
+                    <h2 className="text-xl sm:text-2xl font-bold text-[#c0fe72] mb-6 text-center flex items-center justify-center gap-2">
+                        <span>✨</span>
+                        <span>How Our Roadmaps Work</span>
+                        <span>✨</span>
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+                        {learningPhases.map((phase, index) => (
+                            <div key={phase.phase} className="text-center relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-[#c0fe72]/20 rounded-xl p-4 hover:border-[#c0fe72]/40 transition-all hover:scale-105">
+                                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-[#c0fe72]/20 to-[#9cd052]/20 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-[#c0fe72]/30 shadow-lg shadow-[#c0fe72]/20">
+                                    <span className="text-2xl sm:text-3xl">{phase.icon}</span>
+                                </div>
+                                <h3 className="text-white font-bold mb-2 text-sm sm:text-base">{phase.phase}</h3>
+                                <p className="text-gray-400 text-xs sm:text-sm mb-2">{phase.description}</p>
+                                <span className="inline-block bg-[#c0fe72]/10 text-[#c0fe72] px-2 py-1 rounded-full text-xs font-semibold border border-[#c0fe72]/30">{phase.duration}</span>
+                                {index < learningPhases.length - 1 && (
+                                    <div className="hidden lg:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
+                                        <svg className="w-6 h-6 text-[#c0fe72]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Tab Navigation */}
+                <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/20 rounded-2xl p-4 shadow-xl shadow-[#c0fe72]/10">
+                    <div className="flex bg-gray-800/50 rounded-xl p-1 border border-[#c0fe72]/20">
+                        <button
+                            onClick={() => setActiveTab('role')}
+                            className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+                                activeTab === 'role'
+                                    ? 'bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black shadow-lg shadow-[#c0fe72]/30'
+                                    : 'text-gray-400 hover:text-white'
+                            }`}
+                        >
+                            🎯 Role-based Roadmaps
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('skill')}
+                            className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+                                activeTab === 'skill'
+                                    ? 'bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black shadow-lg shadow-[#c0fe72]/30'
+                                    : 'text-gray-400 hover:text-white'
+                            }`}
+                        >
+                            🛠️ Skill-based Roadmaps
+                        </button>
+                    </div>
+
+                    {/* Search */}
+                    <div className="relative w-full sm:w-auto">
+                        <input
+                            type="text"
+                            placeholder="🔍 Search roadmaps..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="bg-gray-800/50 border border-[#c0fe72]/30 rounded-xl px-4 py-2 pl-10 text-white placeholder-gray-500 focus:outline-none focus:border-[#c0fe72] w-full sm:w-64 transition-all"
+                        />
+                        <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#c0fe72]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                </div>
+
+                {/* Roadmaps Count */}
+                <div className="text-center">
+                    <p className="text-gray-400 flex items-center justify-center gap-2">
+                        <span className="text-[#c0fe72] font-bold text-lg">{filteredRoadmaps.length}</span>
+                        <span>{activeTab === 'role' ? 'role-based' : 'skill-based'} roadmaps available</span>
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div className="text-center">
-                        <div className="text-3xl font-bold text-primary-200 mb-2">335K+</div>
-                        <div className="text-light-400">GitHub Stars</div>
-                    </div>
-                    <div className="text-center">
-                        <div className="text-3xl font-bold text-primary-200 mb-2">2.1M+</div>
-                        <div className="text-light-400">Registered Users</div>
-                    </div>
-                    <div className="text-center">
-                        <div className="text-3xl font-bold text-primary-200 mb-2">40K+</div>
-                        <div className="text-light-400">Discord Members</div>
-                    </div>
+                {/* Roadmaps Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                    {filteredRoadmaps.map((roadmap) => (
+                        <div
+                            key={roadmap.id}
+                            className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-5 sm:p-6 border-2 border-[#c0fe72]/30 hover:border-[#c0fe72]/50 hover:scale-[1.02] transition-all duration-300 group shadow-xl shadow-[#c0fe72]/10 hover:shadow-[#c0fe72]/20"
+                        >
+                            {/* Roadmap Header */}
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="text-4xl sm:text-5xl">{roadmap.icon}</div>
+                                <span className="bg-gradient-to-r from-[#c0fe72]/20 to-[#9cd052]/20 text-[#c0fe72] px-3 py-1 rounded-full text-xs font-bold border border-[#c0fe72]/30">
+                                    {roadmap.steps} Steps
+                                </span>
+                            </div>
+
+                            {/* Roadmap Content */}
+                            <div className="space-y-4">
+                                <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-[#c0fe72] transition-colors">
+                                    {roadmap.title}
+                                </h3>
+
+                                <p className="text-gray-400 leading-relaxed text-sm">
+                                    {roadmap.description}
+                                </p>
+
+                                {/* Roadmap Details */}
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[#9cd052]">⏱️</span>
+                                        <span className="text-gray-300">Duration: <span className="text-white font-semibold">{roadmap.duration}</span></span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[#9cd052]">📈</span>
+                                        <span className="text-gray-300">Level: <span className="text-white font-semibold">{roadmap.difficulty}</span></span>
+                                    </div>
+                                </div>
+
+                                {/* Technologies */}
+                                <div className="flex flex-wrap gap-2">
+                                    {roadmap.technologies.slice(0, 3).map((tech) => (
+                                        <span
+                                            key={tech}
+                                            className="bg-[#c0fe72]/10 text-[#c0fe72] px-2 py-1 rounded-lg text-xs font-semibold border border-[#c0fe72]/30"
+                                        >
+                                            {tech}
+                                        </span>
+                                    ))}
+                                    {roadmap.technologies.length > 3 && (
+                                        <span className="bg-[#9cd052]/10 text-[#9cd052] px-2 py-1 rounded-lg text-xs font-semibold border border-[#9cd052]/30">
+                                            +{roadmap.technologies.length - 3} more
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="flex gap-3 pt-2">
+                                    <Button className="flex-1 bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black font-bold hover:shadow-lg hover:shadow-[#c0fe72]/40 border-0" size="sm" asChild>
+                                        <a href={roadmap.externalLink} target="_blank" rel="noopener noreferrer">
+                                            View Roadmap
+                                        </a>
+                                    </Button>
+                                    <Button className="flex-1 bg-gray-800/50 text-white border-[#c0fe72]/30 hover:bg-gray-700 hover:border-[#c0fe72]/50" size="sm">
+                                        Start Journey
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button asChild>
-                        <a href="https://roadmap.sh" target="_blank" rel="noopener noreferrer">
-                            Visit roadmap.sh
-                        </a>
-                    </Button>
-                    <Button variant="outline" asChild>
-                        <Link href="/dashboard">Back to Dashboard</Link>
-                    </Button>
+                {/* No Results */}
+                {filteredRoadmaps.length === 0 && (
+                    <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/20 rounded-2xl p-8 sm:p-12 text-center shadow-xl">
+                        <div className="text-5xl sm:text-6xl mb-4">🔍</div>
+                        <h3 className="text-xl font-bold text-[#c0fe72] mb-2">No roadmaps found</h3>
+                        <p className="text-gray-400 mb-6">Try adjusting your search terms or switch between role-based and skill-based roadmaps.</p>
+                        <Button onClick={() => setSearchTerm('')} className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black font-bold hover:shadow-lg hover:shadow-[#c0fe72]/40 border-0">
+                            Clear Search
+                        </Button>
+                    </div>
+                )}
+
+                {/* External Resources Section */}
+                <div className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 sm:p-8 border-2 border-[#c0fe72]/30 shadow-2xl shadow-[#c0fe72]/20">
+                    <div className="text-center mb-6">
+                        <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#c0fe72] to-[#9cd052] bg-clip-text text-transparent mb-2 flex items-center justify-center gap-2">
+                            <span>⭐</span>
+                            <span>Powered by roadmap.sh</span>
+                            <span>⭐</span>
+                        </h2>
+                        <p className="text-gray-400 text-sm sm:text-base">
+                            These roadmaps are based on the comprehensive guides from roadmap.sh,
+                            the 6th most starred project on GitHub with 335K+ stars.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+                        <div className="text-center bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-[#c0fe72]/20 rounded-xl p-4">
+                            <div className="text-2xl sm:text-3xl font-bold text-[#c0fe72] mb-2">335K+</div>
+                            <div className="text-gray-400 text-sm">GitHub Stars ⭐</div>
+                        </div>
+                        <div className="text-center bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-[#9cd052]/20 rounded-xl p-4">
+                            <div className="text-2xl sm:text-3xl font-bold text-[#9cd052] mb-2">2.1M+</div>
+                            <div className="text-gray-400 text-sm">Registered Users 👥</div>
+                        </div>
+                        <div className="text-center bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-[#7cb342]/20 rounded-xl p-4">
+                            <div className="text-2xl sm:text-3xl font-bold text-[#7cb342] mb-2">40K+</div>
+                            <div className="text-gray-400 text-sm">Discord Members 💬</div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <Button asChild className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black font-bold hover:shadow-lg hover:shadow-[#c0fe72]/40 border-0">
+                            <a href="https://roadmap.sh" target="_blank" rel="noopener noreferrer">
+                                🌐 Visit roadmap.sh
+                            </a>
+                        </Button>
+                        <Button asChild className="bg-gray-800/50 text-white border-[#c0fe72]/30 hover:bg-gray-700 hover:border-[#c0fe72]/50">
+                            <Link href="/dashboard">← Back to Dashboard</Link>
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

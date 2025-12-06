@@ -99,24 +99,24 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-3xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl shadow-[#c0fe72]/20">
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-[#c0fe72]/20 to-[#9cd052]/20 rounded-xl flex items-center justify-center border border-[#c0fe72]/30">
-                            <span className="text-xl">🎯</span>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6 pt-20 pb-8">
+            <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-2xl p-4 sm:p-6 w-full max-w-lg shadow-2xl shadow-[#c0fe72]/20 relative max-h-[85vh] overflow-y-auto">
+                <div className="flex justify-between items-center mb-4">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-gradient-to-br from-[#c0fe72]/20 to-[#9cd052]/20 rounded-lg flex items-center justify-center border border-[#c0fe72]/30">
+                            <span className="text-lg">🎯</span>
                         </div>
-                        <h2 className="text-xl font-bold bg-gradient-to-r from-[#c0fe72] to-[#9cd052] bg-clip-text text-transparent">Create New Interview</h2>
+                        <h2 className="text-lg font-bold bg-gradient-to-r from-[#c0fe72] to-[#9cd052] bg-clip-text text-transparent">Create New Interview</h2>
                     </div>
                     <button
                         onClick={onClose}
-                        className="text-gray-400 hover:text-[#c0fe72] font-bold text-2xl"
+                        className="text-gray-400 hover:text-[#c0fe72] font-bold text-xl"
                     >
                         ✕
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Interview Mode */}
                     <div>
                         <label className="block text-sm font-bold text-[#c0fe72] mb-2">
@@ -128,7 +128,7 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
                                     key={modeOption}
                                     type="button"
                                     onClick={() => setMode(modeOption)}
-                                    className={`p-3 rounded-xl text-sm capitalize font-semibold border-2 ${
+                                    className={`p-2 rounded-lg text-xs capitalize font-semibold border-2 ${
                                         mode === modeOption
                                             ? 'bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black border-[#c0fe72] shadow-lg'
                                             : 'bg-white/5 text-gray-300 border-gray-700'
@@ -150,7 +150,7 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
                             placeholder="e.g., Frontend Developer, Product Manager"
-                            className="w-full p-3 rounded-xl bg-white/5 text-gray-200 border-2 border-gray-700 focus:border-[#c0fe72] focus:outline-none placeholder:text-gray-500"
+                            className="w-full p-2 text-sm rounded-lg bg-white/5 text-gray-200 border-2 border-gray-700 focus:border-[#c0fe72] focus:outline-none placeholder:text-gray-500"
                             required
                         />
                     </div>
@@ -163,7 +163,7 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
                         <select
                             value={level}
                             onChange={(e) => setLevel(e.target.value as any)}
-                            className="w-full p-3 rounded-xl bg-white/5 text-gray-200 border-2 border-gray-700 focus:border-[#c0fe72] focus:outline-none"
+                            className="w-full p-2 text-sm rounded-lg bg-white/5 text-gray-200 border-2 border-gray-700 focus:border-[#c0fe72] focus:outline-none"
                         >
                             <option value="Junior" className="bg-gray-900">Junior</option>
                             <option value="Mid" className="bg-gray-900">Mid</option>
@@ -184,13 +184,13 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
                                     value={techStackInput}
                                     onChange={(e) => setTechStackInput(e.target.value)}
                                     placeholder="e.g., React, Node.js, Python"
-                                    className="flex-1 p-3 rounded-xl bg-white/5 text-gray-200 border-2 border-gray-700 focus:border-[#c0fe72] focus:outline-none placeholder:text-gray-500"
+                                    className="flex-1 p-2 text-sm rounded-lg bg-white/5 text-gray-200 border-2 border-gray-700 focus:border-[#c0fe72] focus:outline-none placeholder:text-gray-500"
                                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTechStack())}
                                 />
                                 <Button
                                     type="button"
                                     onClick={handleAddTechStack}
-                                    className="px-4 bg-gradient-to-r from-[#9cd052] to-[#7cb342] text-black font-bold"
+                                    className="px-3 py-2 text-sm bg-gradient-to-r from-[#9cd052] to-[#7cb342] text-black font-bold"
                                 >
                                     Add
                                 </Button>
@@ -199,7 +199,7 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
                                 {techStack.map((tech) => (
                                     <span
                                         key={tech}
-                                        className="px-3 py-2 bg-gradient-to-r from-[#c0fe72]/20 to-[#9cd052]/20 text-[#c0fe72] rounded-full text-sm font-semibold border border-[#c0fe72]/30 flex items-center gap-2"
+                                        className="px-2 py-1 bg-gradient-to-r from-[#c0fe72]/20 to-[#9cd052]/20 text-[#c0fe72] rounded-full text-xs font-semibold border border-[#c0fe72]/30 flex items-center gap-1"
                                     >
                                         {tech}
                                         <button
@@ -223,7 +223,7 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
                         <select
                             value={questionCount}
                             onChange={(e) => setQuestionCount(Number(e.target.value))}
-                            className="w-full p-3 rounded-xl bg-white/5 text-gray-200 border-2 border-gray-700 focus:border-[#c0fe72] focus:outline-none"
+                            className="w-full p-2 text-sm rounded-lg bg-white/5 text-gray-200 border-2 border-gray-700 focus:border-[#c0fe72] focus:outline-none"
                         >
                             <option value={3} className="bg-gray-900">3 Questions</option>
                             <option value={5} className="bg-gray-900">5 Questions</option>
@@ -241,18 +241,18 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
                     )}
 
                     {/* Submit Button */}
-                    <div className="flex gap-3 pt-4">
+                    <div className="flex gap-2 pt-2">
                         <Button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 bg-white/5 border-2 border-gray-700 text-gray-300 font-semibold"
+                            className="flex-1 text-sm py-2 bg-white/5 border-2 border-gray-700 text-gray-300 font-semibold"
                         >
                             Cancel
                         </Button>
                         <Button
                             type="submit"
                             disabled={isCreating}
-                            className="flex-1 bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black font-bold shadow-lg disabled:opacity-50"
+                            className="flex-1 text-sm py-2 bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black font-bold shadow-lg disabled:opacity-50"
                         >
                             {isCreating ? 'Creating...' : '🚀 Create'}
                         </Button>
