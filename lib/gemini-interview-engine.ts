@@ -11,7 +11,7 @@ import {
 } from './schemas/interview';
 
 export class GeminiInterviewEngine {
-	private model = google('gemini-1.5-flash');
+	private model = google('gemini-1.5-flash-latest');
 
 	/**
 	 * Generate interview questions based on configuration
