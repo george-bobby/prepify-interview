@@ -6,12 +6,13 @@ import { interviewService } from '@/lib/firebase/interview-service';
 import { Button } from '@/components/ui/button';
 
 interface FeedbackPageProps {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 const FeedbackPage = async ({ params }: FeedbackPageProps) => {
+    const { id } = await params;
     const user = await getCurrentUser();
 
     if (!user) {
@@ -20,7 +21,7 @@ const FeedbackPage = async ({ params }: FeedbackPageProps) => {
 
     try {
         // Get interview details
-        const interview = await interviewService.getInterview(params.id);
+        const interview = await interviewService.getInterview(id);
 
         if (!interview) {
             notFound();
@@ -32,11 +33,11 @@ const FeedbackPage = async ({ params }: FeedbackPageProps) => {
         }
 
         // Get feedback
-        const feedback = await interviewService.getFeedbackByInterviewId(params.id);
+        const feedback = await interviewService.getFeedbackByInterviewId(id);
 
         if (!feedback) {
             // If no feedback yet, redirect back to interview
-            redirect(`/interviews/${params.id}`);
+            redirect(`/interviews/${id}`);
         }
 
         return (

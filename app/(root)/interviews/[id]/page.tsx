@@ -5,22 +5,23 @@ import { interviewService } from '@/lib/firebase/interview-service';
 import { Agent } from '@/components/Agent';
 
 interface InterviewPageProps {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 const InterviewPage = async ({ params }: InterviewPageProps) => {
+    const { id } = await params;
     const user = await getCurrentUser();
-    
+
     if (!user) {
         redirect('/signin');
     }
 
     try {
         // Get interview details
-        const interview = await interviewService.getInterview(params.id);
-        
+        const interview = await interviewService.getInterview(id);
+
         if (!interview) {
             notFound();
         }
@@ -32,7 +33,7 @@ const InterviewPage = async ({ params }: InterviewPageProps) => {
 
         // If interview is already completed, redirect to feedback
         if (interview.finalized) {
-            redirect(`/interviews/${params.id}/feedback`);
+            redirect(`/interviews/${id}/feedback`);
         }
 
         return (
@@ -40,8 +41,8 @@ const InterviewPage = async ({ params }: InterviewPageProps) => {
                 {/* Animated Background Elements */}
                 <div className="fixed inset-0 overflow-hidden pointer-events-none">
                     <div className="absolute top-0 right-0 w-96 h-96 bg-[#c0fe72]/10 rounded-full blur-3xl animate-pulse"></div>
-                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#c0fe72]/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-                    <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-[#c0fe72]/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#c0fe72]/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+                    <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-[#c0fe72]/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
                 </div>
 
                 {/* Main Content */}
@@ -51,7 +52,7 @@ const InterviewPage = async ({ params }: InterviewPageProps) => {
                             userName={user.name}
                             userId={user.id}
                             type={interview.type}
-                            interviewId={params.id}
+                            interviewId={id}
                             questions={interview.questions}
                         />
                     </div>

@@ -6,22 +6,23 @@ import { interviewService } from '@/lib/firebase/interview-service';
 import { Button } from '@/components/ui/button';
 
 interface DetailsPageProps {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 const DetailsPage = async ({ params }: DetailsPageProps) => {
+    const { id } = await params;
     const user = await getCurrentUser();
-    
+
     if (!user) {
         redirect('/signin');
     }
 
     try {
         // Get interview details
-        const interview = await interviewService.getInterview(params.id);
-        
+        const interview = await interviewService.getInterview(id);
+
         if (!interview) {
             notFound();
         }
@@ -36,8 +37,8 @@ const DetailsPage = async ({ params }: DetailsPageProps) => {
                 {/* Animated Background */}
                 <div className="fixed inset-0 pointer-events-none overflow-hidden">
                     <div className="absolute top-10 left-10 w-64 h-64 bg-[#c0fe72]/5 rounded-full blur-3xl animate-pulse"></div>
-                    <div className="absolute bottom-20 right-20 w-80 h-80 bg-[#9cd052]/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-                    <div className="absolute top-1/2 left-1/3 w-72 h-72 bg-[#7cb342]/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+                    <div className="absolute bottom-20 right-20 w-80 h-80 bg-[#9cd052]/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+                    <div className="absolute top-1/2 left-1/3 w-72 h-72 bg-[#7cb342]/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
                 </div>
 
                 <div className="max-w-4xl mx-auto space-y-5 relative z-10">
@@ -73,13 +74,13 @@ const DetailsPage = async ({ params }: DetailsPageProps) => {
                                     </Button>
                                     {!interview.finalized ? (
                                         <Button asChild className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black font-bold shadow-lg shadow-[#c0fe72]/30">
-                                            <Link href={`/interviews/${params.id}`}>
+                                            <Link href={`/interviews/${id}`}>
                                                 {interview.status === 'in_progress' ? '▶️ Continue' : '🚀 Start Interview'}
                                             </Link>
                                         </Button>
                                     ) : (
                                         <Button asChild className="bg-gradient-to-r from-[#c0fe72] to-[#9cd052] text-black font-bold shadow-lg shadow-[#c0fe72]/30">
-                                            <Link href={`/interviews/${params.id}/feedback`}>📊 View Feedback</Link>
+                                            <Link href={`/interviews/${id}/feedback`}>📊 View Feedback</Link>
                                         </Button>
                                     )}
                                 </div>
@@ -123,13 +124,12 @@ const DetailsPage = async ({ params }: DetailsPageProps) => {
                                 )}
                                 <div className="bg-white/5 rounded-xl p-3 border border-gray-700/50">
                                     <span className="text-gray-400 text-sm">Status:</span>
-                                    <span className={`ml-2 px-3 py-1 rounded-full text-xs font-bold ${
-                                        interview.finalized 
+                                    <span className={`ml-2 px-3 py-1 rounded-full text-xs font-bold ${interview.finalized
                                             ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border border-green-500/30'
                                             : interview.status === 'in_progress'
-                                            ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 border border-yellow-500/30'
-                                            : 'bg-gradient-to-r from-[#c0fe72]/20 to-[#9cd052]/20 text-[#c0fe72] border border-[#c0fe72]/30'
-                                    }`}>
+                                                ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 border border-yellow-500/30'
+                                                : 'bg-gradient-to-r from-[#c0fe72]/20 to-[#9cd052]/20 text-[#c0fe72] border border-[#c0fe72]/30'
+                                        }`}>
                                         {interview.finalized ? '✅ Completed' : interview.status === 'in_progress' ? '⏳ In Progress' : '🆕 Not Started'}
                                     </span>
                                 </div>
