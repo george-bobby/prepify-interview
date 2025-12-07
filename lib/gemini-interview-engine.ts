@@ -11,12 +11,15 @@ import {
 } from './schemas/interview';
 
 export class GeminiInterviewEngine {
-	private model = google('gemini-2.0-flash-001');
+	private model = google('gemini-1.5-flash');
 
 	/**
 	 * Generate interview questions based on configuration
 	 */
-	async generateQuestions(config: InterviewConfig, questionCount: number = 5): Promise<QuestionGeneration> {
+	async generateQuestions(
+		config: InterviewConfig,
+		questionCount: number = 5
+	): Promise<QuestionGeneration> {
 		const prompt = this.buildQuestionPrompt(config, questionCount);
 
 		const result = await generateObject({
@@ -37,7 +40,12 @@ export class GeminiInterviewEngine {
 		config: InterviewConfig,
 		context?: string
 	): Promise<ResponseEvaluation> {
-		const prompt = this.buildEvaluationPrompt(question, answer, config, context);
+		const prompt = this.buildEvaluationPrompt(
+			question,
+			answer,
+			config,
+			context
+		);
 
 		const result = await generateObject({
 			model: this.model,
@@ -115,7 +123,11 @@ Follow-up Question:`;
 		const prompt = `You are a professional AI interviewer. Generate a natural, conversational response.
 
 Context: ${context}
-${lastCandidateResponse ? `Last candidate response: ${lastCandidateResponse}` : ''}
+${
+	lastCandidateResponse
+		? `Last candidate response: ${lastCandidateResponse}`
+		: ''
+}
 ${nextQuestion ? `Next question to ask: ${nextQuestion}` : ''}
 
 Generate a professional, warm response that:
@@ -134,7 +146,10 @@ Response:`;
 		return result.text.trim();
 	}
 
-	private buildQuestionPrompt(config: InterviewConfig, questionCount: number): string {
+	private buildQuestionPrompt(
+		config: InterviewConfig,
+		questionCount: number
+	): string {
 		let prompt = `Generate ${questionCount} interview questions for a ${config.role} position at ${config.level} level.
 
 Interview Type: ${config.mode}
@@ -214,7 +229,12 @@ Be fair but thorough in evaluation.`;
 		duration: string
 	): string {
 		const responseSummary = responses
-			.map((r, i) => `Q${i + 1}: ${r.question}\nA${i + 1}: ${r.answer}\nScore: ${r.score}/10\n`)
+			.map(
+				(r, i) =>
+					`Q${i + 1}: ${r.question}\nA${i + 1}: ${r.answer}\nScore: ${
+						r.score
+					}/10\n`
+			)
 			.join('\n');
 
 		return `Generate a comprehensive interview summary:
