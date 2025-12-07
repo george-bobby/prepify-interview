@@ -99,8 +99,8 @@ export const InterviewCreationModal: React.FC<InterviewCreationModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6 pt-20 pb-8">
-            <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-2xl p-4 sm:p-6 w-full max-w-lg shadow-2xl shadow-[#c0fe72]/20 relative max-h-[85vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center z-50 p-4 sm:p-6 overflow-y-auto">
+            <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-[#c0fe72]/30 rounded-2xl p-4 sm:p-6 w-full max-w-lg shadow-2xl shadow-[#c0fe72]/20 relative max-h-[85vh] my-auto mt-24 mb-8">
                 <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 bg-gradient-to-br from-[#c0fe72]/20 to-[#9cd052]/20 rounded-lg flex items-center justify-center border border-[#c0fe72]/30">
