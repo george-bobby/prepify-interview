@@ -2,12 +2,12 @@
 
 **Prepify** is a SaaS platform designed to help users practice interviews with the power of AI.  
 Built with **Next.js**, **Tailwind CSS**, **React**, and **shadcn/ui** for a sleek, responsive frontend.  
-Powered by **Vapi SDK** for real-time voice interactions, **Gemini API**, **ChatGPT API** for AI responses, and **Firebase** for authentication and data storage.
+Powered by **Vapi SDK** for real-time voice interactions, **OpenAI GPT-4o** and **GPT-4o Mini** for AI responses, and **Firebase** for authentication and data storage.
 
 ## 🚀 Features
 
 - 🎙️ AI-powered mock interviews with real-time voice using Vapi SDK
-- 🤖 Smart responses and feedback powered by Gemini and ChatGPT
+- 🤖 Smart responses and feedback powered by OpenAI GPT-4o and GPT-4o Mini
 - 🔒 Secure authentication and real-time data storage with Firebase
 - 💻 Modern UI/UX built with Next.js, Tailwind CSS, React & shadcn/ui
 - 📝 Instant feedback and performance tracking
@@ -15,7 +15,7 @@ Powered by **Vapi SDK** for real-time voice interactions, **Gemini API**, **Chat
 ## 🛠️ Tech Stack
 
 - **Frontend:** Next.js, React, Tailwind CSS, shadcn/ui
-- **AI & Voice:** Vapi SDK & Gemini API
+- **AI & Voice:** Vapi SDK & OpenAI (GPT-4o, GPT-4o Mini)
 - **Backend & Auth:** Firebase (Firestore & Authentication)
 - **News API:** NewsAPI.org for dynamic news fetching
 
@@ -38,7 +38,6 @@ FIREBASE_ADMIN_CLIENT_EMAIL=your_firebase_client_email
 FIREBASE_ADMIN_PRIVATE_KEY=your_firebase_private_key
 
 # AI APIs
-GEMINI_API_KEY=your_gemini_api_key
 OPENAI_API_KEY=your_openai_api_key
 
 # News API (Optional - for Insights page)

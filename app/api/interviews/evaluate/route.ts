@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { geminiInterviewEngine } from '@/lib/gemini-interview-engine';
+import { openaiInterviewEngine } from '@/lib/openai-interview-engine';
 import { interviewService } from '@/lib/firebase/interview-service';
 
 export async function POST(request: NextRequest) {
@@ -24,8 +24,8 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Evaluate the response using Gemini
-		const evaluation = await geminiInterviewEngine.evaluateResponse(
+		// Evaluate the response using OpenAI
+		const evaluation = await openaiInterviewEngine.evaluateResponse(
 			question,
 			answer,
 			interview.config,
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 
 		// Generate interviewer response
 		const interviewerResponse =
-			await geminiInterviewEngine.generateInterviewerResponse(
+			await openaiInterviewEngine.generateInterviewerResponse(
 				`Interview for ${interview.role} position. Current question: ${question}`,
 				answer,
 				followUpQuestion ||

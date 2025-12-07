@@ -96,7 +96,7 @@ export const mappings = {
 	'aws amplify': 'amplify',
 };
 
-// Interview configuration for Gemini AI
+// Interview configuration for OpenAI
 export const interviewConfig = {
 	name: 'AI Interviewer',
 	firstMessage:

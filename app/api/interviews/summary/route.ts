@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { geminiInterviewEngine } from '@/lib/gemini-interview-engine';
+import { openaiInterviewEngine } from '@/lib/openai-interview-engine';
 import { interviewService } from '@/lib/firebase/interview-service';
 
 export async function POST(request: NextRequest) {
@@ -47,8 +47,8 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Generate summary using Gemini
-		const summary = await geminiInterviewEngine.generateSummary(
+		// Generate summary using OpenAI
+		const summary = await openaiInterviewEngine.generateSummary(
 			responses,
 			interview.config,
 			duration || 'Unknown'

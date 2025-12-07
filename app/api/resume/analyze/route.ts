@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { google } from '@ai-sdk/google';
+import { openai } from '@ai-sdk/openai';
 import { generateText } from 'ai';
 import { getCurrentUser } from '@/lib/actions/auth.action';
 import { interviewService } from '@/lib/firebase/interview-service';
@@ -76,9 +76,9 @@ export async function POST(request: NextRequest) {
 			fileContent = await file.text();
 		}
 
-		// Generate AI analysis using Gemini
+		// Generate AI analysis using OpenAI
 		const result = await generateText({
-			model: google('gemini-2.5-flash'),
+			model: openai('gpt-4o'),
 			prompt: `Analyze the following resume and provide comprehensive feedback. Please respond with a JSON object containing the following structure:
 
 {
@@ -116,7 +116,7 @@ Provide specific, actionable feedback that will help improve the resume's effect
 			console.log(
 				'Direct JSON parsing failed, trying to extract JSON from text'
 			);
-			console.log('Gemini response:', result.text);
+			console.log('OpenAI response:', result.text);
 
 			try {
 				// Try to extract JSON from the response text

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { geminiInterviewEngine } from '@/lib/gemini-interview-engine';
+import { openaiInterviewEngine } from '@/lib/openai-interview-engine';
 import { interviewConfigSchema } from '@/lib/schemas/interview';
 import { interviewService } from '@/lib/firebase/interview-service';
 import { getRandomInterviewCover } from '@/lib/utils';
@@ -12,8 +12,8 @@ export async function POST(request: NextRequest) {
 		// Validate the interview configuration
 		const validatedConfig = interviewConfigSchema.parse(config);
 
-		// Generate questions using Gemini
-		const questionGeneration = await geminiInterviewEngine.generateQuestions(
+		// Generate questions using OpenAI
+		const questionGeneration = await openaiInterviewEngine.generateQuestions(
 			validatedConfig,
 			questionCount
 		);

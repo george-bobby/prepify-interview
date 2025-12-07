@@ -1,5 +1,5 @@
 import { generateObject, generateText } from 'ai';
-import { google } from '@ai-sdk/google';
+import { openai } from '@ai-sdk/openai';
 import {
 	questionGenerationSchema,
 	responseEvaluationSchema,
@@ -10,8 +10,11 @@ import {
 	type InterviewSummary,
 } from './schemas/interview';
 
-export class GeminiInterviewEngine {
-	private model = google('gemini-2.0-flash-001');
+export class OpenAIInterviewEngine {
+	// GPT-4o for complex evaluation tasks
+	private evaluationModel = openai('gpt-4o');
+	// GPT-4o Mini for faster generation tasks
+	private generationModel = openai('gpt-4o-mini');
 
 	/**
 	 * Generate interview questions based on configuration
@@ -20,7 +23,7 @@ export class GeminiInterviewEngine {
 		const prompt = this.buildQuestionPrompt(config, questionCount);
 
 		const result = await generateObject({
-			model: this.model,
+			model: this.generationModel,
 			schema: questionGenerationSchema,
 			prompt,
 		});
@@ -40,7 +43,7 @@ export class GeminiInterviewEngine {
 		const prompt = this.buildEvaluationPrompt(question, answer, config, context);
 
 		const result = await generateObject({
-			model: this.model,
+			model: this.evaluationModel,
 			schema: responseEvaluationSchema,
 			prompt,
 		});
@@ -73,7 +76,7 @@ Generate a follow-up question that:
 Follow-up Question:`;
 
 		const result = await generateText({
-			model: this.model,
+			model: this.generationModel,
 			prompt,
 		});
 
@@ -96,7 +99,7 @@ Follow-up Question:`;
 		const prompt = this.buildSummaryPrompt(responses, config, duration);
 
 		const result = await generateObject({
-			model: this.model,
+			model: this.evaluationModel,
 			schema: interviewSummarySchema,
 			prompt,
 		});
@@ -127,7 +130,7 @@ Generate a professional, warm response that:
 Response:`;
 
 		const result = await generateText({
-			model: this.model,
+			model: this.generationModel,
 			prompt,
 		});
 
@@ -241,4 +244,5 @@ Generate a professional summary including:
 }
 
 // Singleton instance
-export const geminiInterviewEngine = new GeminiInterviewEngine();
+export const openaiInterviewEngine = new OpenAIInterviewEngine();
+

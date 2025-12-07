@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { google } from '@ai-sdk/google';
+import { openai } from '@ai-sdk/openai';
 import { generateText } from 'ai';
 
 type Insights = {
@@ -65,7 +65,7 @@ IMPORTANT:
 - If you don't know specific details, provide reasonable estimates based on company size and industry`;
 
 		const result = await generateText({
-			model: google('gemini-2.5-flash'),
+			model: openai('gpt-4o-mini'),
 			prompt,
 		});
 
