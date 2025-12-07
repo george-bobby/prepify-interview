@@ -51,7 +51,6 @@ export async function fetchLeetCodeProblems(
 
 		const data = await response.json();
 
-		// Take only the requested number of problems
 		const problems = data.slice(0, limit).map((problem: any) => {
 			return {
 				id: problem.id,
