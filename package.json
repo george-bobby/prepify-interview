@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.22",
+    "@dodopayments/nextjs": "^0.3.5",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.2",
@@ -19,6 +20,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
+    "dodopayments": "^2.26.0",
     "dotenv": "^17.2.2",
     "firebase": "^11.6.0",
     "firebase-admin": "^13.2.0",
@@ -29,7 +31,6 @@
     "next": "16.0.10",
     "next-themes": "^0.4.6",
     "pdf-parse": "^1.1.1",
-    "razorpay": "^2.9.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",

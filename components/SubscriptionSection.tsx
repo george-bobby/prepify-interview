@@ -11,12 +11,6 @@ interface Subscription {
     planId: string;
     currentStart?: number;
     currentEnd?: number;
-    startAt?: number;
-    endAt?: number;
-    totalCount?: number;
-    paidCount?: number;
-    remainingCount?: number;
-    shortUrl?: string;
 }
 
 interface SubscriptionData {
@@ -37,7 +31,7 @@ export default function SubscriptionSection() {
 
     const fetchSubscriptionData = async () => {
         try {
-            const response = await fetch('/api/razorpay/subscription');
+            const response = await fetch('/api/dodo/subscription');
             if (response.ok) {
                 const data = await response.json();
                 setSubscriptionData(data);
@@ -52,7 +46,7 @@ export default function SubscriptionSection() {
     const handleCancelSubscription = async () => {
         setCancelling(true);
         try {
-            const response = await fetch('/api/razorpay/subscription', {
+            const response = await fetch('/api/dodo/subscription', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -170,17 +164,31 @@ export default function SubscriptionSection() {
                             </div>
                         </div>
 
-                        {subscriptionData.subscription?.status === 'active' && (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={handleCancelSubscription}
-                                disabled={cancelling}
-                                className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                            >
-                                {cancelling ? 'Cancelling...' : 'Cancel Subscription'}
-                            </Button>
-                        )}
+                        <div className="flex flex-wrap gap-2">
+                            {subscriptionData.subscription?.status === 'active' && (
+                                <>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        asChild
+                                        className="border-light-400 text-light-100"
+                                    >
+                                        <a href="/customer-portal" target="_blank" rel="noopener noreferrer">
+                                            Manage billing
+                                        </a>
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={handleCancelSubscription}
+                                        disabled={cancelling}
+                                        className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                                    >
+                                        {cancelling ? 'Cancelling...' : 'Cancel Subscription'}
+                                    </Button>
+                                </>
+                            )}
+                        </div>
                     </div>
                 ) : (
                     <div className="bg-dark-300 rounded-lg p-6">

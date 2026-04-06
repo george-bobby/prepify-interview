@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import Script from "next/script";
 import { Button } from "@/components/ui/button";
+import { getDodoProductIdForPlan } from "@/lib/dodo-products";
 
 export default function PaymentPopup({ showPopup, setShowPopup }: { showPopup: boolean; setShowPopup: (value: boolean) => void }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -12,67 +12,45 @@ export default function PaymentPopup({ showPopup, setShowPopup }: { showPopup: b
   const handleSubscription = async () => {
     setIsLoading(true);
     try {
-      // Create subscription
-      const res = await fetch("/api/razorpay/createSubscription", {
+      const productId = getDodoProductIdForPlan("pro");
+      const trialDaysRaw = process.env.NEXT_PUBLIC_DODO_TRIAL_DAYS || "0";
+      const trialDays = Number.isNaN(parseInt(trialDaysRaw)) ? 0 : parseInt(trialDaysRaw, 10);
+
+      if (!productId) {
+        throw new Error("Missing NEXT_PUBLIC_DODO_PRO_PRODUCT_ID");
+      }
+
+      // Create a Dodo Checkout Session (recommended)
+      const body: any = {
+        product_cart: [{ product_id: productId, quantity: 1 }],
+        // Optional: pass subscription trial configuration
+        ...(trialDays > 0 ? { subscription_data: { trial_period_days: trialDays } } : {}),
+        // You can add metadata or customer prefill here if desired
+        // metadata: { source: "prepify-app" }
+      };
+
+      const res = await fetch("/checkout", {
         method: "POST",
-        body: JSON.stringify({}),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
-        throw new Error("Failed to create subscription");
+        const text = await res.text();
+        throw new Error(`Failed to create checkout session: ${res.status} ${text}`);
       }
 
       const data = await res.json();
+      const checkoutUrl = data.checkout_url || data.url;
+      if (!checkoutUrl) {
+        throw new Error("No checkout_url returned from Dodo checkout route");
+      }
 
-      const paymentData = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        subscription_id: data.subscriptionId,
-        name: "Prepify Pro Subscription",
-        description: "Monthly subscription for unlimited interviews and resume reviews",
-        handler: async function (response: any) {
-          try {
-            const verifyRes = await fetch("/api/razorpay/verifySubscription", {
-              method: "POST",
-              body: JSON.stringify({
-                subscriptionId: response.razorpay_subscription_id,
-                razorpayPaymentId: response.razorpay_payment_id,
-                razorpaySignature: response.razorpay_signature,
-              }),
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
-
-            const verifyData = await verifyRes.json();
-
-            if (verifyData.isOk) {
-              toast.success("Subscription activated successfully! Welcome to Prepify Pro!");
-              setTimeout(() => {
-                window.location.reload();
-              }, 1000);
-            } else {
-              toast.error("Subscription verification failed");
-            }
-          } catch (error) {
-            console.error("Verification error:", error);
-            toast.error("Subscription verification failed");
-          }
-        },
-        modal: {
-          ondismiss: function () {
-            setIsLoading(false);
-          }
-        }
-      };
-
-      const payment = new (window as any).Razorpay(paymentData);
-      payment.open();
+      // Redirect to hosted checkout; return_url will bring the user back.
+      window.location.href = checkoutUrl;
     } catch (error) {
       console.error("Subscription error:", error);
-      toast.error("Failed to create subscription");
+      toast.error("Failed to start checkout");
       setIsLoading(false);
     }
   };
@@ -81,7 +59,6 @@ export default function PaymentPopup({ showPopup, setShowPopup }: { showPopup: b
 
   return (
     <>
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
         <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl shadow-2xl p-8 w-96 relative animate-fadeIn scale-100 transform transition-all duration-300">
           <button
