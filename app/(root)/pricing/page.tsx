@@ -41,6 +41,11 @@ export default function PricingPage() {
       return;
     }
 
+    if (user.isProSubscriber) {
+      window.location.href = "/customer-portal";
+      return;
+    }
+
     setLoadingCheckout(true);
     try {
       const productId = getDodoProductIdForPlan("pro");
