@@ -69,8 +69,8 @@ export default function PricingPage() {
 
       if (!res.ok) {
         const text = await res.text();
-        console.error("Checkout session creation failed:", { status: res.status, body: text });
-        throw new Error("Failed to create checkout session. Please try again.");
+        console.error("Failed to create checkout session", { status: res.status, body: text });
+        throw new Error("Failed to create checkout session.");
       }
 
       const data = await res.json();
@@ -84,7 +84,7 @@ export default function PricingPage() {
       window.location.href = checkoutUrl;
     } catch (error: any) {
       console.error("Subscription error:", error);
-      toast.error(error.message || "Failed to initiate subscription checkout.");
+      toast.error("Failed to initiate subscription checkout.");
       setLoadingCheckout(false);
     }
   };
