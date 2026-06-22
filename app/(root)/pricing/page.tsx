@@ -69,13 +69,15 @@ export default function PricingPage() {
 
       if (!res.ok) {
         const text = await res.text();
-        throw new Error(`Failed to create checkout session: ${res.status} ${text}`);
+        console.error("Checkout session creation failed:", { status: res.status, body: text });
+        throw new Error("Failed to create checkout session. Please try again.");
       }
 
       const data = await res.json();
       const checkoutUrl = data.checkout_url || data.url;
       if (!checkoutUrl) {
-        throw new Error("No checkout URL returned from the checkout server.");
+        console.error("Checkout response data missing URL:", data);
+        throw new Error("Invalid response received from checkout server.");
       }
 
       // Redirect to Dodo hosted checkout page
