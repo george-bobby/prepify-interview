@@ -57,18 +57,27 @@ Provide specific, actionable feedback that will help improve the resume's effect
 			},
 		];
 
-		if (file.type === 'application/pdf') {
+		const isPdf =
+			file.type === 'application/pdf' ||
+			file.name.toLowerCase().endsWith('.pdf');
+
+		if (isPdf) {
 			messages[0].content.push({
 				type: 'file',
 				data: await file.arrayBuffer(),
 				mimeType: 'application/pdf',
 			});
-		} else {
+		} else if (file.type.startsWith('text/') || file.name.toLowerCase().endsWith('.txt')) {
 			const fileContent = await file.text();
 			messages[0].content.push({
 				type: 'text',
 				text: `\n\nResume content:\n${fileContent}`,
 			});
+		} else {
+			return NextResponse.json(
+				{ error: 'Unsupported resume file type. Please upload PDF or plain text.' },
+				{ status: 400 }
+			);
 		}
 
 		// Generate AI analysis using Gemini
