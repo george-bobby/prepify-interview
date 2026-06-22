@@ -147,7 +147,7 @@ export const InterviewCard = ({
 
                     <div className="mt-4 p-4 bg-white/5 border border-[#c0fe72]/20 rounded-xl">
                         <p className='line-clamp-3 text-sm text-gray-300 leading-relaxed'>
-                            {feedback?.finalAssessment || "You haven't taken this interview yet. Start now to practice your skills and get AI-powered feedback."}
+                            {feedback?.overallFeedback || feedback?.finalAssessment || "You haven't taken this interview yet. Start now to practice your skills and get AI-powered feedback."}
                         </p>
                     </div>
                 </div>

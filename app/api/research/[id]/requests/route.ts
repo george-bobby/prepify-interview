@@ -4,7 +4,7 @@ import { getCurrentUser } from '@/lib/actions/auth.action';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -12,7 +12,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const researchId = params.id;
+    const { id: researchId } = await params;
     const newRequest = await request.json();
     
     console.log('Research request data:', { researchId, newRequest, userId: user.id });

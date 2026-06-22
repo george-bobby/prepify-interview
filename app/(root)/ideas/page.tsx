@@ -429,7 +429,13 @@ const ProjectsPage = () => {
         `Optional: What role or contribution focus do you intend for this ${item.type === "project" ? "project" : "research paper"
         }? (e.g., Frontend, Data, Writing)`
       );
-      const desiredRole = desiredRoleRaw?.trim() || undefined;
+
+      // If user clicks Cancel, abort the request
+      if (desiredRoleRaw === null) {
+        return;
+      }
+
+      const desiredRole = desiredRoleRaw.trim() || undefined;
 
       const newRequest: ProjectRequest = {
         id: `req-${Date.now()}-${currentUser.id}`,
@@ -479,9 +485,9 @@ const ProjectsPage = () => {
       }
 
       toast.success("Join request sent successfully!");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error sending join request:", error);
-      toast.error("Failed to send join request. Please try again.");
+      toast.error(error.message || "Failed to send join request. Please try again.");
     }
   };
 
