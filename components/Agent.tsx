@@ -281,9 +281,11 @@ export const Agent = ({ userName, userId, type, interviewId, questions }: AgentP
 
             setResponses(prev => [...prev, newResponse]);
 
-            // Speak AI response
+            // Speak AI response and transition
             if (evaluationData.interviewerResponse) {
+                setAiMessage(evaluationData.interviewerResponse);
                 await speakText(evaluationData.interviewerResponse);
+                setAiMessage('');
             }
 
             // Move to next question or finish interview
@@ -291,12 +293,15 @@ export const Agent = ({ userName, userId, type, interviewId, questions }: AgentP
                 await finishInterview();
             } else if (questions) {
                 const nextQuestionIndex = currentQuestionIndex + 1;
+                const nextQuestion = evaluationData.followUpQuestion || questions[nextQuestionIndex];
                 setCurrentQuestionIndex(nextQuestionIndex);
-                setCurrentQuestion(questions[nextQuestionIndex]);
+                setCurrentQuestion(nextQuestion);
                 setCurrentResponse('');
 
-                // Speak next question
-                await speakText(questions[nextQuestionIndex]);
+                // Speak next question ONLY if interviewerResponse wasn't generated/spoken
+                if (!evaluationData.interviewerResponse) {
+                    await speakText(nextQuestion);
+                }
             }
         } catch (err) {
             console.error('Error submitting response:', err);

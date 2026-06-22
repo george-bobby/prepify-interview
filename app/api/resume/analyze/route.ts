@@ -27,59 +27,13 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: 'No file provided' }, { status: 400 });
 		}
 
-		// Read file content based on file type
-		let fileContent: string;
-
-		if (file.type === 'application/pdf') {
-			try {
-				const buffer = Buffer.from(await file.arrayBuffer());
-
-				// Try multiple PDF parsing approaches
-				let pdfData;
-				try {
-					// First try: Use pdf-parse with require
-					const pdf = require('pdf-parse');
-					pdfData = await pdf(buffer);
-				} catch (parseError) {
-					console.warn(
-						'pdf-parse failed, trying alternative approach:',
-						parseError
-					);
-					// Alternative: Basic text extraction (fallback)
-					const textContent = buffer.toString('utf8');
-					pdfData = { text: textContent };
-				}
-
-				fileContent = pdfData.text;
-
-				// If no text extracted, return error
-				if (!fileContent || fileContent.trim().length === 0) {
-					return NextResponse.json(
-						{
-							error:
-								'Could not extract text from PDF. Please ensure the PDF contains readable text and try again.',
-						},
-						{ status: 400 }
-					);
-				}
-			} catch (pdfError) {
-				console.error('PDF parsing error:', pdfError);
-				return NextResponse.json(
+		let messages: any[] = [
+			{
+				role: 'user',
+				content: [
 					{
-						error:
-							'Failed to parse PDF file. Please try uploading a different format or ensure the PDF is not corrupted.',
-					},
-					{ status: 400 }
-				);
-			}
-		} else {
-			fileContent = await file.text();
-		}
-
-		// Generate AI analysis using Gemini
-		const result = await generateText({
-			model: google('gemini-2.5-flash'),
-			prompt: `Analyze the following resume and provide comprehensive feedback. Please respond with a JSON object containing the following structure:
+						type: 'text',
+						text: `Analyze the following resume and provide comprehensive feedback. Please respond with a JSON object containing the following structure:
 
 {
   "overallScore": number (0-100),
@@ -97,10 +51,39 @@ Focus on:
 5. Action verbs and impact statements
 6. Contact information and professional presentation
 
-Resume content:
-${fileContent}
-
 Provide specific, actionable feedback that will help improve the resume's effectiveness.`,
+					},
+				],
+			},
+		];
+
+		const isPdf =
+			file.type === 'application/pdf' ||
+			file.name.toLowerCase().endsWith('.pdf');
+
+		if (isPdf) {
+			messages[0].content.push({
+				type: 'file',
+				data: await file.arrayBuffer(),
+				mimeType: 'application/pdf',
+			});
+		} else if (file.type.startsWith('text/') || file.name.toLowerCase().endsWith('.txt')) {
+			const fileContent = await file.text();
+			messages[0].content.push({
+				type: 'text',
+				text: `\n\nResume content:\n${fileContent}`,
+			});
+		} else {
+			return NextResponse.json(
+				{ error: 'Unsupported resume file type. Please upload PDF or plain text.' },
+				{ status: 400 }
+			);
+		}
+
+		// Generate AI analysis using Gemini
+		const result = await generateText({
+			model: google('gemini-2.5-flash'),
+			messages: messages,
 		});
 
 		// Parse the AI response

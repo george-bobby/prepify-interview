@@ -4,7 +4,7 @@ import { getCurrentUser } from '@/lib/actions/auth.action';
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -12,7 +12,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const researchId = params.id;
+    const { id: researchId } = await params;
     const researchRef = db.collection('projects').doc(researchId);
     const researchDoc = await researchRef.get();
 

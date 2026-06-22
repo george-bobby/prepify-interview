@@ -4,7 +4,7 @@ import { getCurrentUser } from '@/lib/actions/auth.action';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -12,7 +12,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const projectId = params.id;
+    const { id: projectId } = await params;
     const newRequest = await request.json();
     
     const projectRef = db.collection('projects').doc(projectId);
