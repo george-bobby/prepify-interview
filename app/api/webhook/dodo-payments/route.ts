@@ -50,7 +50,9 @@ export const POST = Webhooks({
   // Generic fallback (optional)
   onPayload: async (payload: any) => {
     const key = eventKeyFromPayload(payload);
-    const shouldProcess = await markProcessedOnce(key);
+    // Use a different key namespace for payload logging so it doesn't conflict with main event processing
+    const logKey = `payload:${key}`;
+    const shouldProcess = await markProcessedOnce(logKey);
     if (!shouldProcess) return;
 
     logDodoInfo("webhook payload", { type: payload?.type, key });
