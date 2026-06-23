@@ -18,14 +18,18 @@ const ResumePage = () => {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysis, setAnalysis] = useState<ResumeAnalysis | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [resumeCredits, setResumeCredits] = useState<number | null>(null);
+    const [resumeCredits, setResumeCredits] = useState<number | 'Unlimited' | null>(null);
 
     const fetchCredits = async () => {
         try {
             const res = await fetch('/api/resume/credits', { method: 'GET' });
             if (!res.ok) return;
             const data = await res.json();
-            setResumeCredits(data.resumeCredits);
+            if (data.isProSubscriber) {
+                setResumeCredits('Unlimited');
+            } else {
+                setResumeCredits(data.resumeCredits);
+            }
         } catch (e) {
             // ignore
         }
@@ -191,7 +195,7 @@ const ResumePage = () => {
                             <div className="flex flex-col sm:flex-row gap-3">
                                 <Button
                                     onClick={handleAnalyzeResume}
-                                    disabled={isAnalyzing || (resumeCredits !== null && resumeCredits <= 0)}
+                                    disabled={isAnalyzing || (resumeCredits !== null && resumeCredits !== 'Unlimited' && resumeCredits <= 0)}
                                     className="bg-gradient-to-r from-[#c0fe72] via-[#9cd052] to-[#c0fe72] text-black font-extrabold text-base w-full sm:flex-1 shadow-2xl shadow-[#c0fe72]/40 disabled:opacity-50 py-6 rounded-xl"
                                 >
                                     {isAnalyzing ? (
@@ -203,7 +207,7 @@ const ResumePage = () => {
                                             Analyzing Your Resume...
                                         </>
                                     ) : (
-                                        resumeCredits !== null && resumeCredits <= 0 ? '❌ No Credits Available' : '🚀 Analyze Resume Now'
+                                        resumeCredits !== null && resumeCredits !== 'Unlimited' && resumeCredits <= 0 ? '❌ No Credits Available' : '🚀 Analyze Resume Now'
                                     )}
                                 </Button>
                                 <Button

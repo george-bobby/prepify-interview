@@ -96,7 +96,7 @@ const DashboardPage = async () => {
                             </div>
                             <h3 className="text-[#c0fe72] font-bold text-xs md:text-sm">Credits</h3>
                         </div>
-                        <p className="text-2xl md:text-3xl font-bold text-white mb-1">{user.credits || 0}</p>
+                        <p className={`text-xl md:text-3xl font-bold text-white mb-1 ${user.isProSubscriber ? 'text-[1.2rem]' : ''}`}>{user.isProSubscriber ? 'Unlimited' : (user.credits || 0)}</p>
                         <p className="text-gray-400 text-xs">Available credits</p>
                     </div>
                 </div>

@@ -57,7 +57,7 @@ const EnhancedHeader = async () => {
                   <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-primary-500/20 to-primary-400/20 rounded-full border border-primary-400/30">
                     <span className="text-yellow-400 text-sm">⭐</span>
                     <span className="text-primary-200 text-sm font-medium">
-                      {user.credits || 0} credits
+                      {user.isProSubscriber ? "Unlimited credits" : `${user.credits || 0} credits`}
                     </span>
                   </div>
                   <UserDropdown user={user} />

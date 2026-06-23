@@ -307,7 +307,7 @@ export class InterviewFirebaseService {
 			const data = snapshot.data() as any;
 
 			// Pro subscribers don't need credit deduction
-			if (data?.isProSubscriber && data?.subscriptionStatus === 'active') {
+			if (data?.isProSubscriber) {
 				return; // No deduction for pro subscribers
 			}
 
@@ -367,7 +367,7 @@ export class InterviewFirebaseService {
 		const data = doc.data() as any;
 
 		// Pro subscribers get unlimited credits (999)
-		if (data?.isProSubscriber && data?.subscriptionStatus === 'active') {
+		if (data?.isProSubscriber) {
 			return 999;
 		}
 
@@ -422,7 +422,7 @@ export class InterviewFirebaseService {
 			const data = snapshot.data() as any;
 
 			// Pro subscribers don't need credit deduction
-			if (data?.isProSubscriber && data?.subscriptionStatus === 'active') {
+			if (data?.isProSubscriber) {
 				return; // No deduction for pro subscribers
 			}
 
@@ -480,7 +480,7 @@ export class InterviewFirebaseService {
 		const data = doc.data() as any;
 
 		// Pro subscribers get unlimited credits (999)
-		if (data?.isProSubscriber && data?.subscriptionStatus === 'active') {
+		if (data?.isProSubscriber) {
 			return 999;
 		}
 

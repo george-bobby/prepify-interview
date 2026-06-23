@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 			interviewService.getResumeCredits(user.id),
 		]);
 
-		return NextResponse.json({ interviewCredits, resumeCredits });
+		return NextResponse.json({ interviewCredits, resumeCredits, isProSubscriber: user.isProSubscriber });
 	} catch (error) {
 		console.error('Error fetching credits:', error);
 		return NextResponse.json(
