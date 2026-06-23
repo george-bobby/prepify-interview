@@ -11,6 +11,7 @@ interface User {
   name: string;
   email?: string;
   isProSubscriber?: boolean;
+  dodoCustomerId?: string;
 }
 
 export default function PricingPage() {
@@ -42,7 +43,11 @@ export default function PricingPage() {
     }
 
     if (user.isProSubscriber) {
-      window.location.href = "/customer-portal";
+      if (user.dodoCustomerId) {
+        window.location.href = `/customer-portal?customerId=${user.dodoCustomerId}`;
+      } else {
+        toast.error("Billing portal is unavailable. Missing billing account information.");
+      }
       return;
     }
 

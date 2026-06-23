@@ -31,6 +31,7 @@ function buildResponseFromDoc(userData: Record<string, unknown>) {
           planId: (userData.subscriptionPlanId as string | undefined) ?? null,
           currentStart: (userData.subscriptionCurrentStart as number | undefined) ?? null,
           currentEnd: (userData.subscriptionCurrentEnd as number | undefined) ?? null,
+          customerId: (userData.dodoCustomerId as string | undefined) ?? null,
         }
       : undefined,
   };
@@ -88,6 +89,7 @@ export async function GET(_request: NextRequest) {
           subscriptionCurrentEnd: periodEnd ?? userData.subscriptionCurrentEnd ?? null,
           subscriptionUpdatedAt: new Date().toISOString(),
           isProSubscriber: (sub.status ?? "").toLowerCase() === "active",
+          dodoCustomerId: sub.customer?.customer_id ?? userData.dodoCustomerId ?? null,
         },
         { merge: true }
       );
@@ -99,6 +101,7 @@ export async function GET(_request: NextRequest) {
         subscriptionCurrentStart: periodStart ?? userData.subscriptionCurrentStart,
         subscriptionCurrentEnd: periodEnd ?? userData.subscriptionCurrentEnd,
         isProSubscriber: (sub.status ?? "").toLowerCase() === "active",
+        dodoCustomerId: sub.customer?.customer_id ?? userData.dodoCustomerId,
       };
 
       return NextResponse.json(buildResponseFromDoc(merged as Record<string, unknown>));

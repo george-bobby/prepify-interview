@@ -128,6 +128,7 @@ export const POST = Webhooks({
     const email: string | undefined = (s?.customer as { email?: string } | undefined)?.email;
 
     const periods = s ? periodFieldsFromSubscriptionPayload(s) : { subscriptionCurrentStart: null, subscriptionCurrentEnd: null };
+    const customerId: string | undefined = (s?.customer as { customer_id?: string } | undefined)?.customer_id;
     await upsertUserByEmail(email!, {
       isProSubscriber: true,
       subscriptionStatus: (s?.status as string | undefined) ?? "active",
@@ -135,6 +136,7 @@ export const POST = Webhooks({
       subscriptionPlanId: (s?.product_id as string | undefined) ?? null,
       subscriptionCurrentStart: periods.subscriptionCurrentStart,
       subscriptionCurrentEnd: periods.subscriptionCurrentEnd,
+      dodoCustomerId: customerId,
     });
   },
 
