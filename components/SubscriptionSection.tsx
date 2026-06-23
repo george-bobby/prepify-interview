@@ -174,7 +174,7 @@ export default function SubscriptionSection() {
                                         asChild
                                         className="border-light-400 text-light-100"
                                     >
-                                        <a href={`/customer-portal?customerId=${subscriptionData.subscription?.customerId}`} target="_blank" rel="noopener noreferrer">
+                                        <a href={`/customer-portal?customer_id=${subscriptionData.subscription?.customerId}`} target="_blank" rel="noopener noreferrer">
                                             Manage billing
                                         </a>
                                     </Button>

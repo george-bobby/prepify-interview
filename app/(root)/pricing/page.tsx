@@ -44,7 +44,7 @@ export default function PricingPage() {
 
     if (user.isProSubscriber) {
       if (user.dodoCustomerId) {
-        window.location.href = `/customer-portal?customerId=${user.dodoCustomerId}`;
+        window.location.href = `/customer-portal?customer_id=${user.dodoCustomerId}`;
       } else {
         setLoadingCheckout(true);
         try {
@@ -52,7 +52,7 @@ export default function PricingPage() {
           if (res.ok) {
             const data = await res.json();
             if (data?.subscription?.customerId) {
-              window.location.href = `/customer-portal?customerId=${data.subscription.customerId}`;
+              window.location.href = `/customer-portal?customer_id=${data.subscription.customerId}`;
               return;
             }
           }
