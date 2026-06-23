@@ -56,6 +56,7 @@ export const POST = Webhooks({
     if (!shouldProcess) return;
 
     logDodoInfo("webhook payload", { type: payload?.type, key });
+    console.log("FULL WEBHOOK PAYLOAD:", JSON.stringify(payload, null, 2));
     await db.collection("webhook_payloads").doc(key).set({
       receivedAt: new Date().toISOString(),
       type: payload?.type,
