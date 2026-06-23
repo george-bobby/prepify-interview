@@ -46,6 +46,21 @@ export default function PricingPage() {
       if (user.dodoCustomerId) {
         window.location.href = `/customer-portal?customerId=${user.dodoCustomerId}`;
       } else {
+        setLoadingCheckout(true);
+        try {
+          const res = await fetch("/api/dodo/subscription");
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.subscription?.customerId) {
+              window.location.href = `/customer-portal?customerId=${data.subscription.customerId}`;
+              return;
+            }
+          }
+        } catch (error) {
+          console.error("Failed to fetch subscription for customer ID", error);
+        } finally {
+          setLoadingCheckout(false);
+        }
         toast.error("Billing portal is unavailable. Missing billing account information.");
       }
       return;
